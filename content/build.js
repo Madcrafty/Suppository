@@ -1,13 +1,19 @@
-var size = 200;
+var size = 500;
 var textureArr = new Uint8Array( 4 * size * size );
 
-var scale = 100;
+var scale = 30;
 for (var x = 0; x < size; x++) {                  
     for (var y = 0; y < size; y++) {
         var nx = x/size-0.5;
         var ny = y/size-0.5;                    
         var value = Math.abs(perlin.get(scale*nx, scale*ny));
         value *= 256;
+
+        if (value > 30){
+            value = 100;
+        } else {
+            value = 0;
+        }
 
         var cell = (x + y * size) * 4;
         console.log(value);                    
@@ -17,7 +23,7 @@ for (var x = 0; x < size; x++) {
 }
 
 function makeSphere(){
-    let geometry = new THREE.SphereGeometry(1,20,20);
+    let geometry = new THREE.SphereGeometry(1,100,100);
     
     let texture = new THREE.DataTexture(textureArr, size, size, THREE.RGBAFormat);
     
