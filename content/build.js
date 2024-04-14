@@ -26,7 +26,7 @@ function makeSphere(){
 
     let material = new THREE.MeshBasicMaterial({
         map: texture,
-        // env`Map: uvtexture
+        //envMap: uvtexture
     });
 
     let sphere = new THREE.Mesh(geometry,material);
