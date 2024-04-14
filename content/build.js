@@ -4,7 +4,7 @@ var offset = 0;
 var sphere;
 
 function createTexture(){
-    var scale = 30;
+    var scale = 100;
     for (var x = 0; x < size; x++) {                  
         for (var y = 0; y < size; y++) {
             var nx = (x+offset)/size-0.5;
