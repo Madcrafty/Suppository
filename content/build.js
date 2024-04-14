@@ -1,26 +1,29 @@
-var size = 500;
+var size = 200;
 var textureArr = new Uint8Array( 4 * size * size );
+var offset = 0;
+var sphere;
 
-var scale = 30;
-for (var x = 0; x < size; x++) {                  
-    for (var y = 0; y < size; y++) {
-        var nx = x/size-0.5;
-        var ny = y/size-0.5;                    
-        var value = Math.abs(perlin.get(scale*nx, scale*ny));
-        value *= 256;
+function createTexture(){
+    var scale = 30;
+    for (var x = 0; x < size; x++) {                  
+        for (var y = 0; y < size; y++) {
+            var nx = (x+offset)/size-0.5;
+            var ny = (y+offset)/size-0.5;                    
+            var value = Math.abs(perlin.get(scale*nx, scale*ny));
+            value *= 256;
+            
+            let finalV = Math.pow(1.2, value);
+            if (finalV > 100){
+                finalV = 255;
+            }
 
-        if (value > 30){
-            value = 100;
-        } else {
-            value = 0;
+            var cell = (x + y * size) * 4;                  
+            textureArr[cell] = textureArr[cell + 1] = textureArr[cell + 2] = finalV;                               
+            textureArr[cell + 3] = 255; // alpha.                                    
         }
-
-        var cell = (x + y * size) * 4;
-        console.log(value);                    
-        textureArr[cell] = textureArr[cell + 1] = textureArr[cell + 2] = Math.pow(1.2, value);                               
-        textureArr[cell + 3] = 255; // alpha.                                    
     }
 }
+
 
 function makeSphere(){
     let geometry = new THREE.SphereGeometry(1,100,100);
@@ -35,11 +38,16 @@ function makeSphere(){
         //envMap: uvtexture
     });
 
+    material.needsUpdate = true;
+
     let sphere = new THREE.Mesh(geometry,material);
     return sphere
 }
 
+createTexture();
+sphere = makeSphere();
+
 //Add initial shapes to scene
 function addShapes() {
-    scene.add(makeSphere());
+    scene.add(sphere);
 }
