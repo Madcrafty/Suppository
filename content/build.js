@@ -1,13 +1,32 @@
+var size = 200;
+var textureArr = new Uint8Array( 4 * size * size );
+
+var scale = 100;
+for (var x = 0; x < size; x++) {                  
+    for (var y = 0; y < size; y++) {
+        var nx = x/size-0.5;
+        var ny = y/size-0.5;                    
+        var value = Math.abs(perlin.get(scale*nx, scale*ny));
+        value *= 256;
+
+        var cell = (x + y * size) * 4;
+        console.log(value);                    
+        textureArr[cell] = textureArr[cell + 1] = textureArr[cell + 2] = Math.pow(1.2, value);                               
+        textureArr[cell + 3] = 255; // alpha.                                    
+    }
+}
+
 function makeSphere(){
     let geometry = new THREE.SphereGeometry(1,20,20);
     
-    let texture = new THREE.TextureLoader().load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjUpOW6kjkcc2cbPEGFK9joWPQpZlIPSAbfViGpjj8vw&s");
-    // let uvtexture = new THREE.TextureLoader().load("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/b787e3ef-24a0-4f47-9d9c-ccd031d4ad14/d9s4yz3-dcfe213e-8f45-4b81-be21-7ad694db6179.jpg/v1/fill/w_894,h_894,q_70,strp/sand_dunes_height_map__seamless__by_elmininostock_d9s4yz3-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTAyNCIsInBhdGgiOiJcL2ZcL2I3ODdlM2VmLTI0YTAtNGY0Ny05ZDljLWNjZDAzMWQ0YWQxNFwvZDlzNHl6My1kY2ZlMjEzZS04ZjQ1LTRiODEtYmUyMS03YWQ2OTRkYjYxNzkuanBnIiwid2lkdGgiOiI8PTEwMjQifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.xu7sioLtOjPeJd5X0lKaxbqo_yA6r6D6PHMFSWS3ZZs");
-    console.log(texture);
+    let texture = new THREE.DataTexture(textureArr, size, size, THREE.RGBAFormat);
+    
+    texture.type = THREE.UnsignedByteType;
+    texture.needsUpdate = true;
 
     let material = new THREE.MeshBasicMaterial({
         map: texture,
-        // envMap: uvtexture
+        // env`Map: uvtexture
     });
 
     let sphere = new THREE.Mesh(geometry,material);
