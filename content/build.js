@@ -1,4 +1,4 @@
-var size = 200;
+var size = 400;
 var textureArr = new Uint8Array( 4 * size * size );
 var offset = 0;
 var sphere;
