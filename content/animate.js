@@ -5,9 +5,6 @@ function runTheClock(){
 
 function changeTexture(){
     setTimeout(function(){requestAnimationFrame(changeTexture)}, 0);
-    
-    offset+=1;
-    createTexture();
 
     let texture = new THREE.DataTexture(textureArr, size, size, THREE.RGBAFormat);
     texture.type = THREE.UnsignedByteType;

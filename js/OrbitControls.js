@@ -70,7 +70,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 	this.enableKeys = true;
 
 	// The four arrow keys
-	this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 };
+	this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40, W:87, A: 65, S: 83, D: 68, Q: 81, E: 69 };
 
 	// Mouse buttons
 	this.mouseButtons = { ZOOM: THREE.MOUSE.MIDDLE, ORBIT: THREE.MOUSE.RIGHT };
@@ -546,6 +546,23 @@ THREE.OrbitControls = function ( object, domElement ) {
 				pan( - scope.keyPanSpeed, 0 );
 				scope.update();
 				break;
+
+			// case scope.keys.W:
+			// 	rotateEnd.set( event.clientX, event.clientY );
+			// 	rotateDelta.subVectors( rotateEnd, rotateStart );
+
+			// 	var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
+
+			// 	// rotating across whole screen goes 360 degrees around
+			// 	rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientWidth * scope.rotateSpeed );
+
+			// 	// rotating up and down along whole screen attempts to go 360, but limited to 180
+			// 	rotateUp( 2 * Math.PI * rotateDelta.y / element.clientHeight * scope.rotateSpeed );
+
+			// 	rotateStart.copy( rotateEnd );
+
+			// 	scope.update();
+			// 	break;
 
 		}
 
