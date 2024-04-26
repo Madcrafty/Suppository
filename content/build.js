@@ -31,9 +31,9 @@ function createBrush(){
             } else {
                 brush[cell + 3] = 0;
             }
-            brush[cell] = col.r*255;
+            brush[cell] = col.b*255;
             brush[cell+1] = col.g*255;
-            brush[cell+2] = col.b*255;
+            brush[cell+2] = col.r*255;
         }
     }
 }
