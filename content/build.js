@@ -4,6 +4,12 @@ var offset = 0;
 var sphere;
 var radius = 1;
 
+var brushKern = 8;
+var brush = new Uint8Array( 4 * brushKern * brushKern );
+var col = new THREE.Color(0,1,0);
+var bSize = 2;
+var alpha = 50;
+
 function createTexture(){
     for (var x = 0; x < size; x++) {                  
         for (var y = 0; y < size; y++) {
@@ -14,6 +20,37 @@ function createTexture(){
     }
 }
 
+
+function createBrush(){
+    for (var x = 0; x < brushKern; x++) {                  
+        for (var y = 0; y < brushKern; y++) {
+            var cell = (x + y * brushKern) * 4;
+            
+            if(((x-Math.ceil(brushKern/2))**2)+((y-Math.ceil(brushKern/2))**2) < bSize){
+                brush[cell + 3] = alpha;                        
+            } else {
+                brush[cell + 3] = 0;
+            }
+            brush[cell] = col.r*255;
+            brush[cell+1] = col.g*255;
+            brush[cell+2] = col.b*255;
+        }
+    }
+}
+
+function changeAreaTexture(ofx,ofy){
+    for (var x = 0; x < brushKern; x++) {                  
+        for (var y = 0; y < brushKern; y++) {
+            var texcell = (((ofx + x - Math.ceil(brushKern/2)) + ((ofy + y - Math.ceil(brushKern/2)) * size)) * 4)%(4*size*size);
+            var cell = (x + y * brushKern) * 4; 
+
+            textureArr[texcell] = Math.ceil(((brush[cell + 3]*brush[cell])+((255 - brush[cell + 3])*textureArr[texcell]))/255);
+            textureArr[texcell+1] = Math.ceil(((brush[cell + 3]*brush[cell+1])+((255 - brush[cell + 3])*textureArr[texcell+1]))/255);
+            textureArr[texcell+2] = Math.ceil(((brush[cell + 3]*brush[cell+2])+((255 - brush[cell + 3])*textureArr[texcell+2]))/255);
+        }
+    }
+    textureArr[cell] = textureArr[cell + 1] = textureArr[cell + 2] = 0;
+}
 
 function makeSphere(){
     let geometry = new THREE.SphereGeometry(radius,100,100);
@@ -35,6 +72,7 @@ function makeSphere(){
 }
 
 createTexture();
+createBrush();
 sphere = makeSphere();
 console.log(sphere);
 
@@ -88,8 +126,20 @@ function onMouseMove(event) {
         var y = Math.floor(v * size);
         console.log(x, y);
 
-        var cell = (x + y * size) * 4;
-        textureArr[cell] = textureArr[cell + 1] = textureArr[cell + 2] = 0;
+        changeAreaTexture(x,y);
     }
 }
-  
+
+
+// Creating a GUI and a subfolder.
+var gui = new dat.GUI();
+
+gui.addColor(window,'col').onChange(function(){
+    createBrush();
+});
+gui.add(window,'bSize',0,5).onChange(function(){
+    createBrush();
+});
+gui.add(window,'alpha',0,255).onChange(function(){
+    createBrush();
+});
