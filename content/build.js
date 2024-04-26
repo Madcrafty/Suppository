@@ -6,7 +6,7 @@ var radius = 1;
 
 var brushKern = 8;
 var brush = new Uint8Array( 4 * brushKern * brushKern );
-var col = new THREE.Color(0,1,0);
+var col = new THREE.Color(0,255,0);
 var bSize = 2;
 var alpha = 50;
 
@@ -31,9 +31,9 @@ function createBrush(){
             } else {
                 brush[cell + 3] = 0;
             }
-            brush[cell] = col.b*255;
-            brush[cell+1] = col.g*255;
-            brush[cell+2] = col.r*255;
+            brush[cell] = col.r;
+            brush[cell+1] = col.g;
+            brush[cell+2] = col.b;
         }
     }
 }
