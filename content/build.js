@@ -1,14 +1,17 @@
 var size = 400;
 var textureArr = new Uint8Array( 4 * size * size );
+var displaceArr = new Uint8Array( 3 * size * size );
 var offset = 0;
 var sphere;
 var radius = 1;
 
-var brushKern = 8;
+var brushKern = 30;
 var brush = new Uint8Array( 4 * brushKern * brushKern );
+var hbrush = new Int8Array( brushKern * brushKern );
 var col = new THREE.Color(0,255,0);
-var bSize = 2;
+var bSize = 5;
 var alpha = 50;
+var heightDelta = 0;
 
 function createTexture(){
     for (var x = 0; x < size; x++) {                  
@@ -18,6 +21,13 @@ function createTexture(){
             textureArr[cell + 3] = 255; // alpha.
         }
     }
+
+    for (var x = 0; x < size; x++) {                  
+        for (var y = 0; y < size; y++) {
+            var cell = (x + y * size) * 3;                  
+            displaceArr[cell] = displaceArr[cell + 1] = displaceArr[cell + 2] = 0;                               
+        }
+    }
 }
 
 
@@ -25,11 +35,14 @@ function createBrush(){
     for (var x = 0; x < brushKern; x++) {                  
         for (var y = 0; y < brushKern; y++) {
             var cell = (x + y * brushKern) * 4;
+            var hcell = (x + y * brushKern);
             
-            if(((x-Math.ceil(brushKern/2))**2)+((y-Math.ceil(brushKern/2))**2) < bSize){
-                brush[cell + 3] = alpha;                        
+            if(Math.sqrt(((x-Math.ceil(brushKern/2))**2)+((y-Math.ceil(brushKern/2))**2)) < bSize){
+                brush[cell + 3] = alpha;
+                hbrush[hcell] = heightDelta;                        
             } else {
                 brush[cell + 3] = 0;
+                brush[hcell] = 0;
             }
             brush[cell] = col.r;
             brush[cell+1] = col.g;
@@ -49,20 +62,36 @@ function changeAreaTexture(ofx,ofy){
             textureArr[texcell+2] = Math.ceil(((brush[cell + 3]*brush[cell+2])+((255 - brush[cell + 3])*textureArr[texcell+2]))/255);
         }
     }
-    textureArr[cell] = textureArr[cell + 1] = textureArr[cell + 2] = 0;
+}
+
+function changeHeightTexture(ofx,ofy){
+    for (var x = 0; x < brushKern; x++) {                  
+        for (var y = 0; y < brushKern; y++) {
+            var hcell = (((ofx + x - Math.ceil(brushKern/2)) + ((ofy + y - Math.ceil(brushKern/2)) * size)) * 3)%(3*size*size);
+            var cell = (x + y * brushKern); 
+
+            var newH = Math.min(30,Math.max(0,displaceArr[hcell] + hbrush[cell]));
+
+            displaceArr[hcell] = displaceArr[hcell+1] = displaceArr[hcell+2] = newH;
+        }
+    }
 }
 
 function makeSphere(){
     let geometry = new THREE.SphereGeometry(radius,100,100);
     
     let texture = new THREE.DataTexture(textureArr, size, size, THREE.RGBAFormat);
+    let htexture = new THREE.DataTexture(displaceArr, size, size, THREE.RGBFormat);
     
     texture.type = THREE.UnsignedByteType;
     texture.needsUpdate = true;
 
-    let material = new THREE.MeshBasicMaterial({
+    htexture.type = THREE.UnsignedByteType;
+    htexture.needsUpdate = true;
+
+    let material = new THREE.MeshPhongMaterial({
         map: texture,
-        //envMap: uvtexture
+        displacementMap:htexture
     });
 
     material.needsUpdate = true;
@@ -74,11 +103,12 @@ function makeSphere(){
 createTexture();
 createBrush();
 sphere = makeSphere();
-console.log(sphere);
 
 //Add initial shapes to scene
 function addShapes() {
     scene.add(sphere);
+    scene.add(camera);
+    scene.add(ambietLight);
 }
 
 
@@ -90,6 +120,7 @@ window.addEventListener('mousemove', onMouseMove, false);
 window.addEventListener('mousedown', function (event) {
     if(event.button == 0){
         mousedown = true;
+        onMouseMove(event);
     }
 }, false);
 
@@ -109,7 +140,7 @@ function onMouseMove(event) {
   
     raycaster.setFromCamera(mouse, camera);
   
-    const intersects = raycaster.intersectObjects(scene.children, false);
+    const intersects = raycaster.intersectObjects(scene.children, true);
 
 
     if(intersects[0] && mousedown){
@@ -120,13 +151,12 @@ function onMouseMove(event) {
 
         var u = (Math.atan2(z, x) / (2 * Math.PI) + 0.5);
         var v = ((Math.asin(y) / Math.PI) + 0.5);
-        console.log("u,v:", u, v);
 
         var x = size - Math.floor(u * size);
         var y = Math.floor(v * size);
-        console.log(x, y);
 
         changeAreaTexture(x,y);
+        changeHeightTexture(x,y);
     }
 }
 
@@ -137,9 +167,12 @@ var gui = new dat.GUI();
 gui.addColor(window,'col').onChange(function(){
     createBrush();
 });
-gui.add(window,'bSize',0,5).onChange(function(){
+gui.add(window,'bSize',0,brushKern,1).onChange(function(){
     createBrush();
 });
 gui.add(window,'alpha',0,255).onChange(function(){
+    createBrush();
+});
+gui.add(window,'heightDelta',-2,2).onChange(function(){
     createBrush();
 });
