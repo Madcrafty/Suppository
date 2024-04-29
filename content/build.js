@@ -1,11 +1,17 @@
-var size = 400;
+var size = 200;
 var textureArr = new Uint8Array( 4 * size * size );
 var displaceArr = new Uint8Array( 3 * size * size );
 var offset = 0;
 var sphere;
 var radius = 1;
 
+//The mouse position
+var offx = 0;
+var offy = 0;
+
+//Brush information
 var brushKern = 30;
+//Brush is for color, hbrush is for height stuff, the distinction is cause one needs to be an Int array, cause I want to reduce the height aswell
 var brush = new Uint8Array( 4 * brushKern * brushKern );
 var hbrush = new Int8Array( brushKern * brushKern );
 var col = new THREE.Color(0,255,0);
@@ -25,7 +31,7 @@ function createTexture(){
     for (var x = 0; x < size; x++) {                  
         for (var y = 0; y < size; y++) {
             var cell = (x + y * size) * 3;                  
-            displaceArr[cell] = displaceArr[cell + 1] = displaceArr[cell + 2] = 0;                               
+            displaceArr[cell] = displaceArr[cell + 1] = displaceArr[cell + 2] = 100;                               
         }
     }
 }
@@ -42,7 +48,7 @@ function createBrush(){
                 hbrush[hcell] = heightDelta;                        
             } else {
                 brush[cell + 3] = 0;
-                brush[hcell] = 0;
+                hbrush[hcell] = 0;
             }
             brush[cell] = col.r;
             brush[cell+1] = col.g;
@@ -50,6 +56,33 @@ function createBrush(){
         }
     }
 }
+
+function AddMarker(ofx,ofy){
+    for (var x = 0; x < brushKern; x++) {                  
+        for (var y = 0; y < brushKern; y++) {
+            var texcell = (((ofx + x - Math.ceil(brushKern/2)) + ((ofy + y - Math.ceil(brushKern/2)) * size)) * 4)%(4*size*size);
+            var cell = (x + y * brushKern) * 4; 
+
+            if(brush[cell + 3] > 0){
+                textureArr[texcell+1] = textureArr[texcell+1] + 25;
+            }
+        }
+    }
+}
+
+function RemoveMarker(ofx,ofy){
+    for (var x = 0; x < brushKern; x++) {                  
+        for (var y = 0; y < brushKern; y++) {
+            var texcell = (((ofx + x - Math.ceil(brushKern/2)) + ((ofy + y - Math.ceil(brushKern/2)) * size)) * 4)%(4*size*size);
+            var cell = (x + y * brushKern) * 4; 
+            
+            if(brush[cell + 3] > 0){
+                textureArr[texcell+1] = textureArr[texcell+1] - 25;
+            }
+        }
+    }
+}
+
 
 function changeAreaTexture(ofx,ofy){
     for (var x = 0; x < brushKern; x++) {                  
@@ -70,7 +103,7 @@ function changeHeightTexture(ofx,ofy){
             var hcell = (((ofx + x - Math.ceil(brushKern/2)) + ((ofy + y - Math.ceil(brushKern/2)) * size)) * 3)%(3*size*size);
             var cell = (x + y * brushKern); 
 
-            var newH = Math.min(30,Math.max(0,displaceArr[hcell] + hbrush[cell]));
+            var newH = Math.min(255,Math.max(0,displaceArr[hcell] + hbrush[cell]));
 
             displaceArr[hcell] = displaceArr[hcell+1] = displaceArr[hcell+2] = newH;
         }
@@ -91,7 +124,8 @@ function makeSphere(){
 
     let material = new THREE.MeshPhongMaterial({
         map: texture,
-        displacementMap:htexture
+        displacementMap:htexture,
+        displacementScale: 1
     });
 
     material.needsUpdate = true;
@@ -143,7 +177,7 @@ function onMouseMove(event) {
     const intersects = raycaster.intersectObjects(scene.children, true);
 
 
-    if(intersects[0] && mousedown){
+    if(intersects[0]){
         var p = intersects[0].point;
         var x = (p.x - sphere.position.x) / (radius);
         var y = (p.y - sphere.position.y) / radius;
@@ -152,11 +186,13 @@ function onMouseMove(event) {
         var u = (Math.atan2(z, x) / (2 * Math.PI) + 0.5);
         var v = ((Math.asin(y) / Math.PI) + 0.5);
 
-        var x = size - Math.floor(u * size);
-        var y = Math.floor(v * size);
+        offx = size - Math.floor(u * size);
+        offy = Math.floor(v * size);
 
-        changeAreaTexture(x,y);
-        changeHeightTexture(x,y);
+        if(mousedown){
+            changeAreaTexture(offx,offy);
+            changeHeightTexture(offx,offy);
+        }
     }
 }
 

@@ -6,6 +6,8 @@ function runTheClock(){
 function changeTexture(){
     setTimeout(function(){requestAnimationFrame(changeTexture)}, 0);
 
+    AddMarker(offx,offy);
+
     let texture = new THREE.DataTexture(textureArr, size, size, THREE.RGBAFormat);
     texture.type = THREE.UnsignedByteType;
     texture.needsUpdate = true;
@@ -19,4 +21,5 @@ function changeTexture(){
     sphere.material.needsUpdate = true;
 
     renderer.render(scene, camera);
+    RemoveMarker(offx,offy);
 }
