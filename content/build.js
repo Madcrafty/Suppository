@@ -140,9 +140,8 @@ sphere = makeSphere();
 
 //Add initial shapes to scene
 function addShapes() {
-    scene.add(sphere);
-    scene.add(camera);
-    scene.add(ambietLight);
+    brushScene.add(sphere);
+    brushScene.add(ambietLight);
 }
 
 
@@ -168,13 +167,13 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
 function onMouseMove(event) {
-    mouse.set((event.clientX / renderer.domElement.clientWidth) * 2 - 1, -(event.clientY / renderer.domElement.clientHeight) * 2 + 1);
+    mouse.set((event.clientX / brushRenderer.domElement.clientWidth) * 2 - 1, -(event.clientY / brushRenderer.domElement.clientHeight) * 2 + 1);
   
     // console.log(mouse)
   
-    raycaster.setFromCamera(mouse, camera);
+    raycaster.setFromCamera(mouse, brushCamera);
   
-    const intersects = raycaster.intersectObjects(scene.children, true);
+    const intersects = raycaster.intersectObjects(brushScene.children, true);
 
 
     if(intersects[0]){

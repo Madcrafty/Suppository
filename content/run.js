@@ -3,8 +3,7 @@ setLight();
 
 addShapes();
 
-runTheClock();
-changeTexture();
+animate();
+renderBrush();
 
 window.addEventListener('resize', resizeScene);
-

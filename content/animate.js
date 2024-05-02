@@ -1,11 +1,10 @@
-function runTheClock(){
-    requestAnimationFrame(runTheClock);
-    renderer.render(scene, camera);
+function animate(){
+    requestAnimationFrame(animate);
+    vsRenderer.render(vsScene, vsCamera);
+    renderBrush();
 }
 
-function changeTexture(){
-    setTimeout(function(){requestAnimationFrame(changeTexture)}, 0);
-
+function renderBrush(){
     AddMarker(offx,offy);
 
     let texture = new THREE.DataTexture(textureArr, size, size, THREE.RGBAFormat);
@@ -20,6 +19,6 @@ function changeTexture(){
     sphere.material.displacementMap = htexture;
     sphere.material.needsUpdate = true;
 
-    renderer.render(scene, camera);
+    brushRenderer.render(brushScene, brushCamera);
     RemoveMarker(offx,offy);
 }
