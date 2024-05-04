@@ -1,8 +1,3 @@
-function runTheClock(){
-    requestAnimationFrame(runTheClock);
-    renderer.render(scene, camera);
-}
-
 function changeTexture(){
     setTimeout(function(){requestAnimationFrame(changeTexture)}, 0);
 
