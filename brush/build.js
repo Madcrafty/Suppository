@@ -4,6 +4,7 @@ import {parameters} from "./parameters.js";
 var renderer;
 var scene;
 var camera;
+var gui;
 
 //Sphere Texture and Displacement Arrays
 var textureArr;
@@ -31,15 +32,29 @@ var cameraLight;
 var ambietLight;
 
 //init is used to initialise any core variables.
-export function init(brushRenderer, brushScene, brushCamera) {
-    renderer=brushRenderer;
-    scene=brushScene;
-    camera=brushCamera;
+export function init(_renderer, _scene, _camera, _gui) {
+    renderer=_renderer;
+    scene=_scene;
+    camera=_camera;
+    gui = _gui;
 
     brush = new Uint8Array( 4 * parameters.brushKern * parameters.brushKern );
     hbrush = new Int8Array( parameters.brushKern * parameters.brushKern );
     textureArr = new Uint8Array( 4 * resolution * resolution );
     displaceArr = new Uint8Array( 3 * resolution * resolution );
+
+    gui.addColor(parameters,'brushColor').onChange(function(){
+        createBrush();
+    });
+    gui.add(parameters,'brushSize',0,parameters.brushKern,1).onChange(function(){
+        createBrush();
+    });
+    gui.add(parameters,'brushAlpha',0,255).onChange(function(){
+        createBrush();
+    });
+    gui.add(parameters,'brushHeight',-2,2).onChange(function(){
+        createBrush();
+    });
 }
 
 //called on start
@@ -220,7 +235,6 @@ function addShapes() {
     scene.add(ambietLight);
 }
 
-
 function setLight(){
     cameraLight = new THREE.PointLight(new THREE.Color(0xffffff),0.5);
     camera.add(cameraLight);
@@ -252,20 +266,3 @@ function onMouseMove(event) {
         }
     }
 }
-
-
-// Creating a GUI and a subfolder.
-/*var gui = new dat.GUI();
-
-gui.addColor(window,'parameters.brushColor').onChange(function(){
-    createBrush();
-});
-gui.add(window,'parameters.brushSize',0,parameters.brushKern,1).onChange(function(){
-    createBrush();
-});
-gui.add(window,'parameters.brushAlpha',0,255).onChange(function(){
-    createBrush();
-});
-gui.add(window,'parameters.brushHeight',-2,2).onChange(function(){
-    createBrush();
-});*/

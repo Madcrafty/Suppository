@@ -7,16 +7,14 @@ var vsCamera;
 var vsCanvas;
 
 export function start() {
-    init(); 
-    run();
+
 }
 
 export function run() {
-    requestAnimationFrame(run);
     vsRenderer.render(vsScene, vsCamera);
 }
 
-function init() {
+export function init() {
     let width= window.innerWidth;
     let height = window.innerHeight;
 
