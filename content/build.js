@@ -192,6 +192,12 @@ function onMouseMove(event) {
         if(mousedown){
             changeAreaTexture(offx,offy);
             changeHeightTexture(offx,offy);
+
+            let htexture = new THREE.DataTexture(displaceArr, size, size, THREE.RGBFormat);
+            htexture.type = THREE.UnsignedByteType;
+            htexture.needsUpdate = true;
+
+            sphere.material.displacementMap = htexture;
         }
     }
 }
