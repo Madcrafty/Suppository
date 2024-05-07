@@ -79,12 +79,8 @@ function render() {
     texture.type = THREE.UnsignedByteType;
     texture.needsUpdate = true;
 
-    let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBFormat);
-    htexture.type = THREE.UnsignedByteType;
-    htexture.needsUpdate = true;
 
     sphere.material.map = texture;
-    sphere.material.displacementMap = htexture;
     sphere.material.needsUpdate = true;
 
     renderer.render(scene, camera);
@@ -263,6 +259,10 @@ function onMouseMove(event) {
         if(mouseDown){
             changeAreaTexture();
             changeHeightTexture();
+            let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBFormat);
+            htexture.type = THREE.UnsignedByteType;
+            htexture.needsUpdate = true;
+            sphere.material.displacementMap = htexture;
         }
     }
 }
