@@ -22,7 +22,7 @@ function setScene() {
 }
 
 function setLight(){
-    cameraLight = new THREE.PointLight(new THREE.Color(0xffffff),0.5);
+    cameraLight = new THREE.PointLight(new THREE.Color(0xffffff),0.2);
     camera.add(cameraLight);
     ambietLight = new THREE.AmbientLight(new THREE.Color(0xffffff),0.5);
 }

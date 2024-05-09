@@ -14,20 +14,21 @@
     </head>
 
     <body>
-        <script type='x-shader/x-vertex' id='vertexShader'>
-            attribute float alpha; varying float vAlpha; void main() { vAlpha = alpha; vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 ); gl_PointSize = 2.0; gl_Position = projectionMatrix * mvPosition; }
-        </script>
+        <div id="model">
+            <script type='x-shader/x-vertex' id='vertexShader'>
+                attribute float alpha; varying float vAlpha; void main() { vAlpha = alpha; vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 ); gl_PointSize = 2.0; gl_Position = projectionMatrix * mvPosition; }
+            </script>
 
-        <script type='x-shader/x-fragment' id='fragmentShader'>
+            <script type='x-shader/x-fragment' id='fragmentShader'>
 
-            uniform vec3 color; varying float vAlpha; void main() { gl_FragColor = vec4( color, vAlpha ); }
-        </script>
+                uniform vec3 color; varying float vAlpha; void main() { gl_FragColor = vec4( color, vAlpha ); }
+            </script>
 
-        <script src="content/setup.js"></script>
-        <script src="content/build.js"></script>
-        <script src="content/animate.js"></script>
-        <script src="content/run.js"></script>
-
+            <script src="content/setup.js"></script>
+            <script src="content/build.js"></script>
+            <script src="content/animate.js"></script>
+            <script src="content/run.js"></script>
+        </div>
     </body>
 
 </html>
