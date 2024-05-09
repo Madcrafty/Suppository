@@ -13,7 +13,7 @@ function init() {
     gui = new GUI();
     window.addEventListener('resize', onResize);
     brush.init(gui);
-    vs.init();
+    vs.init(gui);
 }
 
 //This runs on program start
