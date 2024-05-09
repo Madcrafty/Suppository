@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 //These are the brush parameters
 //Just use import { parameters } from "/brush/parameters.js"
 //use parameters.variable to access a particular variable.

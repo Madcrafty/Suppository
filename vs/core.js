@@ -1,4 +1,6 @@
 import {globals} from "/globals.js";
+import { GUI } from 'dat.gui';
+import * as THREE from 'three';
 
 //vis script
 var vsRenderer;

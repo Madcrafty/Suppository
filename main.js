@@ -1,6 +1,7 @@
 import * as vs from "./vs/core.js";
 import * as brush from "./brush/core.js";
-import {parameters} from "./brush/parameters.js";
+import { GUI } from 'dat.gui';
+import * as THREE from 'three';
 
 var gui;
 
@@ -9,7 +10,7 @@ start();
 run();
 
 function init() {
-    gui = new dat.GUI();
+    gui = new GUI();
     window.addEventListener('resize', onResize);
     brush.init(gui);
     vs.init();

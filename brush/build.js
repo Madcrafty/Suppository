@@ -1,4 +1,6 @@
 import {parameters} from "./parameters.js";
+import { GUI } from 'dat.gui';
+import * as THREE from 'three';
 
 //Core Variables
 var renderer;

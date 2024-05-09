@@ -1,5 +1,9 @@
 import { globals } from "/globals.js";
 import * as build from "./build.js";
+import * as THREE from 'three';
+import { GUI } from 'dat.gui';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
 
 var renderer;
 var scene;
@@ -25,7 +29,8 @@ export function init(_gui) {
     var ratio = window.innerWidth / window.innerHeight;
     camera = new THREE.PerspectiveCamera(45, ratio, 0.1, 1000);
     camera.position.set(45, 10, 0);
-    controls = new THREE.OrbitControls(camera,renderer.domElement);
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.mouseButtons = {MIDDLE: 1, RIGHT: 0};
     gui = _gui;
 
     build.init(renderer, scene, camera, gui);
