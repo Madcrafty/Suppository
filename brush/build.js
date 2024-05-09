@@ -43,7 +43,7 @@ export function init(_renderer, _scene, _camera, _gui) {
     brush = new Uint8Array( 4 * parameters.brushKern * parameters.brushKern );
     hbrush = new Int8Array( parameters.brushKern * parameters.brushKern );
     textureArr = new Uint8Array( 4 * resolution * resolution );
-    displaceArr = new Uint8Array( 3 * resolution * resolution );
+    displaceArr = new Uint8Array( 4 * resolution * resolution );
 
     gui.addColor(parameters,'brushColor').onChange(function(){
         createBrush();
@@ -63,8 +63,10 @@ export function init(_renderer, _scene, _camera, _gui) {
 export function start() {
     setupMouse();
     setLight();
+    
     createTexture();
     createBrush();
+
 
     sphere = makeSphere();
     addShapes();
@@ -123,8 +125,9 @@ function createTexture(){
 
     for (var x = 0; x < resolution; x++) {                  
         for (var y = 0; y < resolution; y++) {
-            var cell = (x + y * resolution) * 3;                  
-            displaceArr[cell] = displaceArr[cell + 1] = displaceArr[cell + 2] = 100;                               
+            var cell = (x + y * resolution) * 4;                  
+            displaceArr[cell] = displaceArr[cell + 1] = displaceArr[cell + 2] = 100;   
+            displaceArr[cell + 3]=0;                            
         }
     }
 }
@@ -190,10 +193,10 @@ function changeAreaTexture(){
     }
 }
 
-function changeHeightTexture(offx,offy){
+function changeHeightTexture(){
     for (var x = 0; x < parameters.brushKern; x++) {                  
         for (var y = 0; y < parameters.brushKern; y++) {
-            var hcell = (((mouseX + x - Math.ceil(parameters.brushKern/2)) + ((mouseY + y - Math.ceil(parameters.brushKern/2)) * resolution)) * 3)%(3*resolution*resolution);
+            var hcell = (((mouseX + x - Math.ceil(parameters.brushKern/2)) + ((mouseY + y - Math.ceil(parameters.brushKern/2)) * resolution)) * 4)%(4*resolution*resolution);
             var cell = (x + y * parameters.brushKern); 
 
             var newH = Math.min(255,Math.max(0,displaceArr[hcell] + hbrush[cell]));
@@ -206,9 +209,9 @@ function changeHeightTexture(offx,offy){
 function makeSphere(){
     let geometry = new THREE.SphereGeometry(radius,100,100);
     
-    let texture = new THREE.DataTexture(textureArr, resolution, resolution, THREE.RGBAFormat);
-    let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBFormat);
-    
+    let texture = new THREE.DataTexture(textureArr, parameters.resolution, parameters.resolution, THREE.RGBAFormat);
+    let htexture = new THREE.DataTexture(displaceArr, parameters.resolution, parameters.resolution, THREE.RGBAFormat);
+
     texture.type = THREE.UnsignedByteType;
     texture.needsUpdate = true;
 
@@ -261,8 +264,7 @@ function onMouseMove(event) {
         if(mouseDown){
             changeAreaTexture();
             changeHeightTexture();
-            let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBFormat);
-            htexture.type = THREE.UnsignedByteType;
+            let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
             htexture.needsUpdate = true;
             sphere.material.displacementMap = htexture;
         }

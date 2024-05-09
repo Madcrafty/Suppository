@@ -10,9 +10,6 @@ var scene;
 var camera;
 var canvas;
 var controls;
-//lights
-var cameraLight;
-var ambietLight;
 
 var gui;
 
