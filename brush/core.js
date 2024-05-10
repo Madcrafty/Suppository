@@ -14,7 +14,7 @@ var gui;
 
 //Setup the 3 main components: scene, camera, renderer
 export function init(_gui) {
-    var width=window.innerWidth;
+    var width = window.innerWidth;
     var height = window.innerHeight;
 
     canvas = document.getElementById("brushCanvas");
@@ -22,7 +22,7 @@ export function init(_gui) {
     renderer.setSize(width, height*globals.splitRatio);
     
     scene = new THREE.Scene();
-    var ratio = window.innerWidth / window.innerHeight;
+    var ratio = (window.innerWidth / window.innerHeight)/globals.splitRatio;
     camera = new THREE.PerspectiveCamera(45, ratio, 0.1, 1000);
     camera.position.set(45, 10, 0);
     controls = new THREE.OrbitControls(camera,renderer.domElement);
@@ -41,11 +41,11 @@ export function run() {
 
 //Resize the scene and update the camera aspect to the screen ration
 export function onResize() {
-    var width= window.innerWidth;
+    var width = window.innerWidth;
     var height = window.innerHeight;
-
+    var ratio = (window.innerWidth / window.innerHeight)/globals.splitRatio;
     renderer.setSize(width, height*globals.splitRatio);
-    camera.aspect = width / height;
+    camera.aspect = (window.innerWidth / window.innerHeight)/globals.splitRatio;
     camera.updateProjectionMatrix();
     renderer.render(scene, camera);
 }
