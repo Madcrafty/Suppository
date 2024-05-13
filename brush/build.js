@@ -282,6 +282,7 @@ function setLight(){
 }
 
 function onMouseMove(event) {
+    
     mouse.set((event.clientX / renderer.domElement.clientWidth) * 2 - 1, -(event.clientY / renderer.domElement.clientHeight) * 2 + 1);
     raycaster.setFromCamera(mouse, camera);
   

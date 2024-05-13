@@ -1,5 +1,6 @@
 //import React from 'react'
 import { useRete } from 'rete-react-plugin';
+import {useEffect, useState, useRef} from 'react';
 // import reactLogo from './assets/react.svg'
 // import reteLogo from './assets/rete.svg'
 // import viteLogo from '/vite.svg'
@@ -7,7 +8,7 @@ import { createEditor } from './rete';
 import './App.css'
 import './rete.css';
 
-function App() {
+export default function App() {
   const [ref] = useRete(createEditor)
 
   return (
@@ -28,5 +29,3 @@ function App() {
     </>
   )
 }
-
-export default App

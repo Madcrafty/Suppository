@@ -51,4 +51,3 @@ export function onResize() {
     camera.updateProjectionMatrix();
     renderer.render(scene, camera);
 }
-

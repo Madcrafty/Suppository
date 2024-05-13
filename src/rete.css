@@ -1,11 +1,9 @@
 .rete {
-  position: relative;
-  width: 80vw;
-  height: 90vh;
+  position: fixed;
+  width: 100%;
+  height: 50%;
   font-size: 1rem;
-  background: white;
-  margin: 1em;
-  border-radius: 1em;
+  margin-top:2px;
+  background: rgb(0, 0, 0);
   text-align: left;
-  border: 3px solid #9571ff;
 }
