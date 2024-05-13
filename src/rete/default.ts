@@ -24,6 +24,9 @@ import {
   Presets as ContextMenuPresets,
 } from 'rete-context-menu-plugin';
 
+import {parameters} from '../../brush/parameters.js';
+import * as build from '../../brush/build.js';
+
 type Node = NumberNode | AddNode;
 type Conn =
   | Connection<NumberNode, AddNode>
@@ -61,12 +64,47 @@ class NumberNode extends Classic.Node implements DataflowNode {
 
 class AddNode extends Classic.Node implements DataflowNode {
   width = 180;
-  height = 195;
+  height = 300;
 
   constructor() {
     super('Add');
 
-    this.addInput('a', new Classic.Input(socket, 'A'));
+    this.addInput('a', new Classic.Input(socket, 'Size'));
+    this.addInput('b', new Classic.Input(socket, 'Alpha'));
+    this.addInput('c', new Classic.Input(socket, 'Height'));
+    this.addInput('d', new Classic.Input(socket, 'Kern'));
+    this.addInput('e', new Classic.Input(socket, 'Shine'));
+    this.addOutput('value', new Classic.Output(socket, 'Number'));
+    this.addControl(
+      'result',
+      new Classic.InputControl('number', { initial: 0, readonly: true })
+    );
+  }
+  data(inputs: { a?: number[]; b?: number[]; c?: number[]; d?: number[]; e?: number[];}) {
+    const { a = [], b = [], c = [],d = [],e = [],} = inputs;
+    const sum = (a[0] || 0) + (b[0] || 0);
+    parameters.brushSize = (a[0]!=undefined) ? a[0] : parameters.brushSize;
+    parameters.brushAlpha = (b[0]!=undefined) ? b[0] : parameters.brushAlpha;
+    parameters.brushHeight = (c[0]!=undefined) ? c[0] : parameters.brushHeight;
+    parameters.brushKern = (d[0]!=undefined) ? d[0] : parameters.brushKern;
+    parameters.brushShine = (e[0]!=undefined) ? e[0] : parameters.brushShine;
+    build.createBrush();
+    (this.controls['result'] as Classic.InputControl<'number'>).setValue(sum);
+
+    return {
+      value: sum,
+    };
+  }
+}
+
+class BrushOutputNode extends Classic.Node implements DataflowNode {
+  width = 180;
+  height = 195;
+
+  constructor() {
+    super('Brush');
+
+    this.addInput('a', new Classic.Input(socket, 'Size'));
     this.addInput('b', new Classic.Input(socket, 'B'));
     this.addOutput('value', new Classic.Output(socket, 'Number'));
     this.addControl(
@@ -76,12 +114,12 @@ class AddNode extends Classic.Node implements DataflowNode {
   }
   data(inputs: { a?: number[]; b?: number[] }) {
     const { a = [], b = [] } = inputs;
-    const sum = (a[0] || 0) + (b[0] || 0);
-
-    (this.controls['result'] as Classic.InputControl<'number'>).setValue(sum);
+    console.log("get a load of this:" + a[0]);
+    parameters.brushSize = a[0];
+    (this.controls['result'] as Classic.InputControl<'number'>).setValue(parameters.brushSize);
 
     return {
-      value: sum,
+      value: parameters.brushSize,
     };
   }
 }
@@ -100,6 +138,7 @@ export async function createEditor(container: HTMLElement) {
     items: ContextMenuPresets.classic.setup([
       ['Number', () => new NumberNode(1, process)],
       ['Add', () => new AddNode()],
+      ['BrushOutput', () => new BrushOutputNode()],
     ]),
   });
 
@@ -145,7 +184,7 @@ export async function createEditor(container: HTMLElement) {
   const accumulating = AreaExtensions.accumulateOnCtrl();
 
   AreaExtensions.selectableNodes(area, selector, { accumulating });
-
+// make data function calls here
   async function process() {
     dataflow.reset();
 

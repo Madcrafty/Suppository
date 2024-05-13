@@ -143,7 +143,7 @@ function createTexture(){
 }
 
 
-function createBrush(){
+export function createBrush(){
     for (var x = 0; x < parameters.brushKern; x++) {                  
         for (var y = 0; y < parameters.brushKern; y++) {
             var cell = (x + y * parameters.brushKern) * 4;
