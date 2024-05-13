@@ -20,8 +20,9 @@
 
             uniform vec3 color; varying float vAlpha; void main() { gl_FragColor = vec4( color, vAlpha ); }
         </script>
-        <canvas id="brushCanvas"></canvas>
-        <canvas id="vsCanvas"></canvas>
-        <script type="module" src="./main.js"></script>
+        <div id="brush">
+            <canvas id="brushCanvas"></canvas>
+            <script type="module" src="./main.js"></script>
+        </div>
     </body>
 </html>

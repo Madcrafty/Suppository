@@ -33,6 +33,7 @@ var mouse;
 //Lighting
 var cameraLight;
 var ambietLight;
+var light_dir
 
 //init is used to initialise any core variables.
 export function init(_renderer, _scene, _camera, _gui) {
@@ -84,8 +85,7 @@ export function run() {
 function render() {
     AddMarker();
 
-    let texture = new THREE.DataTexture(textureArr, resolution, resolution, THREE.RGBAFormat);
-    texture.type = THREE.UnsignedByteType;
+    let texture = new THREE.DataTexture(textureArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
     texture.needsUpdate = true;
 
     sphere.material.map = texture;
@@ -259,6 +259,8 @@ function makeSphere(){
     material.needsUpdate = true;
 
     let sphere = new THREE.Mesh(geometry,material);
+    sphere.receiveShadow=true;
+    sphere.castShadow=true;
     return sphere
 }
 
@@ -266,12 +268,17 @@ function makeSphere(){
 function addShapes() {
     scene.add(sphere);
     scene.add(ambietLight);
+    scene.add(cameraLight);
+    scene.add(light_dir);
 }
 
 function setLight(){
     cameraLight = new THREE.PointLight(new THREE.Color(0xffffff),1);
     camera.add(cameraLight);
-    ambietLight = new THREE.AmbientLight(new THREE.Color(0xffffff),0.6);
+    ambietLight = new THREE.AmbientLight(new THREE.Color(0xffffff),0.2);
+    light_dir = new THREE.DirectionalLight(0xffffff, 1);
+    light_dir.position.set(-50, 40, 50);
+    light_dir.castShadow=true;
 }
 
 function onMouseMove(event) {
