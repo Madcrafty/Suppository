@@ -30,3 +30,8 @@ h1 {
     padding: 10px 5px;
     margin-top: auto;
 }
+
+#brush {
+    height:50%;
+    width:100%;
+}
