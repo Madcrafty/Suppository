@@ -13,12 +13,12 @@ function init() {
     gui = new GUI();
     window.addEventListener('resize', onResize);
     brush.init(gui);
-    vs.init(gui);
+    //vs.init(gui);
 }
 
 //This runs on program start
 function start() {
-    vs.start();
+    //vs.start();
     brush.start();
 }
 
@@ -26,11 +26,11 @@ function start() {
 function run() {
     requestAnimationFrame(run);
     brush.run();
-    vs.run();
+    //vs.run();
 }
 
 
 function onResize() {
     brush.onResize();
-    vs.onResize();
+    //vs.onResize();
 }
