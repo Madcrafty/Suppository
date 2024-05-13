@@ -4,4 +4,5 @@
 
 export const globals = {
     splitRatio: 0.5,
+    tickRate: 0,
 }

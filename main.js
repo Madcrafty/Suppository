@@ -1,7 +1,7 @@
 import * as brush from "./brush/core.js";
 import { GUI } from 'dat.gui';
 import * as THREE from 'three';
-
+import {globals} from './globals.js';
 var gui;
 
 init();
@@ -10,6 +10,7 @@ run();
 
 function init() {
     gui = new GUI();
+    gui.add(globals, "tickRate", 0, 1000);
     window.addEventListener('resize', onResize);
     brush.init(gui);
 }
@@ -21,7 +22,7 @@ function start() {
 
 //Main Loop
 function run() {
-    requestAnimationFrame(run);
+    setTimeout(() => requestAnimationFrame(run), globals.tickRate);
     brush.run();
 }
 
