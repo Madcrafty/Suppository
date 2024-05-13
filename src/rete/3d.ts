@@ -102,6 +102,7 @@ export async function createEditor(container: HTMLElement) {
     items: ContextMenuPresets.classic.setup([
       ['Number', () => new NumberNode(1, process)],
       ['Add', () => new AddNode()],
+      ['Add2', () => new AddNode()],
     ]),
   });
 
@@ -126,10 +127,12 @@ export async function createEditor(container: HTMLElement) {
   const a = new NumberNode(1, process);
   const b = new NumberNode(1, process);
   const add = new AddNode();
+  const add2 = new AddNode();
 
   await editor.addNode(a);
   await editor.addNode(b);
   await editor.addNode(add);
+  await editor.addNode(add2);
 
   await editor.addConnection(new Connection(a, 'value', add, 'a'));
   await editor.addConnection(new Connection(b, 'value', add, 'b'));

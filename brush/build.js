@@ -30,6 +30,8 @@ var mouseDown;
 var raycaster;
 var mouse;
 
+var active;
+
 //Lighting
 var cameraLight;
 var ambietLight;
