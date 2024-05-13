@@ -154,6 +154,7 @@ function makeSphere(){
     var specCol = new THREE.Color(10,10,10);
 
     let material = new THREE.MeshPhongMaterial({
+        //flatShading: true,
         map: texture,
         displacementMap:htexture,
         displacementScale: 1,
@@ -164,6 +165,8 @@ function makeSphere(){
     material.needsUpdate = true;
 
     let sphere = new THREE.Mesh(geometry,material);
+    sphere.castShadow = true;
+    sphere.receiveShadow = true;
     return sphere
 }
 

@@ -7,6 +7,7 @@ var renderer;
 var controls;
 var cameraLight;
 var ambietLight;
+var light;
 
 //Setup the 3 main components: scene, camera, renderer
 function setScene() {
@@ -16,13 +17,15 @@ function setScene() {
     camera.position.set(45, 10, 0);
     camera.lookAt(0, 0, 0);
     renderer = new THREE.WebGLRenderer();
+    renderer.shadowMap.enabled = true;
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
     controls = new THREE.OrbitControls(camera,renderer.domElement);
 }
 
 function setLight(){
-    cameraLight = new THREE.PointLight(new THREE.Color(0xffffff),0.2);
+    cameraLight = new THREE.PointLight(new THREE.Color(0xffffff),0.5);
+    cameraLight.castShadow = true;
     camera.add(cameraLight);
     ambietLight = new THREE.AmbientLight(new THREE.Color(0xffffff),0.5);
 }
