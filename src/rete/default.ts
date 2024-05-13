@@ -26,6 +26,7 @@ import {
 
 import {parameters} from '../../brush/parameters.js';
 import * as build from '../../brush/build.js';
+import * as THREE from 'three';
 
 type Node = NumberNode | AddNode;
 type Conn =
@@ -64,7 +65,7 @@ class NumberNode extends Classic.Node implements DataflowNode {
 
 class AddNode extends Classic.Node implements DataflowNode {
   width = 180;
-  height = 300;
+  height = 400;
 
   constructor() {
     super('Add');
@@ -74,20 +75,27 @@ class AddNode extends Classic.Node implements DataflowNode {
     this.addInput('c', new Classic.Input(socket, 'Height'));
     this.addInput('d', new Classic.Input(socket, 'Kern'));
     this.addInput('e', new Classic.Input(socket, 'Shine'));
+    // color
+    this.addInput('f', new Classic.Input(socket, 'Red'));
+    this.addInput('g', new Classic.Input(socket, 'Green'));
+    this.addInput('h', new Classic.Input(socket, 'Blue'));
+
     this.addOutput('value', new Classic.Output(socket, 'Number'));
     this.addControl(
       'result',
       new Classic.InputControl('number', { initial: 0, readonly: true })
     );
   }
-  data(inputs: { a?: number[]; b?: number[]; c?: number[]; d?: number[]; e?: number[];}) {
-    const { a = [], b = [], c = [],d = [],e = [],} = inputs;
+  data(inputs: { a?: number[]; b?: number[]; c?: number[]; d?: number[]; e?: number[]; f?: number[]; g?: number[]; h?: number[];}) {
+    const { a = [], b = [], c = [],d = [],e = [],f = [],g = [],h = [],} = inputs;
     const sum = (a[0] || 0) + (b[0] || 0);
     parameters.brushSize = (a[0]!=undefined) ? a[0] : parameters.brushSize;
     parameters.brushAlpha = (b[0]!=undefined) ? b[0] : parameters.brushAlpha;
     parameters.brushHeight = (c[0]!=undefined) ? c[0] : parameters.brushHeight;
     parameters.brushKern = (d[0]!=undefined) ? d[0] : parameters.brushKern;
     parameters.brushShine = (e[0]!=undefined) ? e[0] : parameters.brushShine;
+    // color
+    parameters.brushColor = (f[0]!=undefined && g[0]!=undefined && h[0]!=undefined) ? new THREE.Color(f[0],g[0],h[0]) : parameters.brushColor;
     build.createBrush();
     (this.controls['result'] as Classic.InputControl<'number'>).setValue(sum);
 
