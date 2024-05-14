@@ -7,46 +7,15 @@ import { DataflowEngine, DataflowNode } from 'rete-engine';
 import {AutoArrangePlugin,Presets as ArrangePresets,} from 'rete-auto-arrange-plugin';
 import {ContextMenuPlugin,ContextMenuExtra,Presets as ContextMenuPresets,} from 'rete-context-menu-plugin';
 
+import { Schemes } from './schemes.js';
+import { Connection } from './connection.js';
 import {parameters} from '../../brush/parameters.js';
+import {NumberNode, AddNode, BrushNode} from '../nodes';
 import * as THREE from 'three';
 
-type Node = NumberNode | BrushNode;
-type Conn =
-  | Connection<NumberNode, BrushNode>
-  | Connection<BrushNode, NumberNode>
-  | Connection<NumberNode, AddNode>
-  | Connection<AddNode, AddNode>
-  | Connection<AddNode, BrushNode>;
-type Schemes = GetSchemes<Node, Conn>;
-
-class Connection<A extends Node, B extends Node> extends Classic.Connection<A, B> {}
-
-class NumberNode extends Classic.Node implements DataflowNode {
+/*class BrushNode extends Classic.Node implements DataflowNode {
   width = 180;
-  height = 120;
-
-  constructor(initial: number, change?: (value: number) => void) {
-    super('Number');
-
-    this.addOutput('value', new Classic.Output(socket, 'Number'));
-    this.addControl(
-      'value',
-      new Classic.InputControl('number', { initial, change })
-    );
-  }
-  data() {
-    const value = (this.controls['value'] as Classic.InputControl<'number'>)
-      .value;
-
-    return {
-      value,
-    };
-  }
-}
-
-class BrushNode extends Classic.Node implements DataflowNode {
-  width = 180;
-  height = 400;
+  height = 335;
 
   constructor() {
     super('Brush');
@@ -76,38 +45,9 @@ class BrushNode extends Classic.Node implements DataflowNode {
       value: 1,
     };
   }
-}
-
-class AddNode extends Classic.Node implements DataflowNode {
-  width = 180;
-  height = 195;
-
-  constructor() {
-    super('Add');
-
-    this.addInput('a', new Classic.Input(socket, 'A'));
-    this.addInput('b', new Classic.Input(socket, 'B'));
-    this.addOutput('value', new Classic.Output(socket, 'Number'));
-    this.addControl(
-      'result',
-      new Classic.InputControl('number', { initial: 0, readonly: true })
-    );
-  }
-  data(inputs: { a?: number[]; b?: number[] }) {
-    const { a = [], b = [] } = inputs;
-    const sum = (a[0] || 0) + (b[0] || 0);
-
-    (this.controls['result'] as Classic.InputControl<'number'>).setValue(sum);
-
-    return {
-      value: sum,
-    };
-  }
-}
+}*/
 
 type AreaExtra = Area2D<Schemes> | ReactArea2D<Schemes> | ContextMenuExtra;
-
-const socket = new Classic.Socket('socket');
 
 export async function createEditor(container: HTMLElement) {
   //Core
@@ -120,7 +60,7 @@ export async function createEditor(container: HTMLElement) {
     items: ContextMenuPresets.classic.setup([
       ['Number', () => new NumberNode(1, process)],
       ['Add', () => new AddNode()],
-      ['Brush', () => new BrushNode()],
+      ['Brush', () => new BrushNode(dataflow)],
     ]),
   });
 
@@ -138,17 +78,32 @@ export async function createEditor(container: HTMLElement) {
   //Create Starting Nodes
   const a = new NumberNode(5, process);
   const b = new NumberNode(5, process);
-  const brush = new BrushNode();
+  const c = new NumberNode(-10, process);
+  const brush = new BrushNode(dataflow);
   const add = new AddNode();
+  const add2 = new AddNode();
 
   //Add Nodes and Connections to Editor
   await editor.addNode(a);
   await editor.addNode(b);
+  await editor.addNode(c);
   await editor.addNode(add);
+  await editor.addNode(add2);
   await editor.addNode(brush);
+
   await editor.addConnection(new Connection(a, 'value', add, 'a'));
   await editor.addConnection(new Connection(b, 'value', add, 'b'));
+  await editor.addConnection(new Connection(b, 'value', add2, 'a'));
+  await editor.addConnection(new Connection(c, 'value', add2, 'b'));
+
   await editor.addConnection(new Connection(add, 'value', brush, 'a'));
+  await editor.addConnection(new Connection(add, 'value', brush, 'b'));
+  await editor.addConnection(new Connection(add, 'value', brush, 'c'));
+  await editor.addConnection(new Connection(add, 'value', brush, 'g'));
+  await editor.addConnection(new Connection(add, 'value', brush, 'h'));
+  await editor.addConnection(new Connection(add2, 'value', brush, 'e'));
+  await editor.addConnection(new Connection(add2, 'value', brush, 'f'));
+
 
   //Arrange
   const arrange = new AutoArrangePlugin<Schemes>();
