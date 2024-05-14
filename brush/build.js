@@ -170,9 +170,6 @@ export function createBrush(){
 function AddMarker(){
     for (var x = 0; x < parameters.brushKern; x++) {                  
         for (var y = 0; y < parameters.brushKern; y++) {
-            if((ofy + y - Math.ceil(brushKern/2)) >= size || (ofy + y - Math.ceil(brushKern/2)) < 0){
-                continue;
-            }
 
             var texcell = (((mouseX + x - Math.ceil(parameters.brushKern/2)) + ((mouseY + y - Math.ceil(parameters.brushKern/2)) * resolution)) * 4)%(4*resolution*resolution);
             var cell = (x + y * parameters.brushKern) * 4; 
@@ -188,9 +185,6 @@ function AddMarker(){
 function RemoveMarker(){
     for (var x = 0; x < parameters.brushKern; x++) {                  
         for (var y = 0; y < parameters.brushKern; y++) {
-            if((ofy + y - Math.ceil(brushKern/2)) >= size || (ofy + y - Math.ceil(brushKern/2)) < 0){
-                continue;
-            }
 
             var texcell = (((mouseX + x - Math.ceil(parameters.brushKern/2)) + ((mouseY + y - Math.ceil(parameters.brushKern/2)) * resolution)) * 4)%(4*resolution*resolution);
             var cell = (x + y * parameters.brushKern) * 4;
@@ -207,9 +201,6 @@ function RemoveMarker(){
 function changeAreaTexture(){
     for (var x = 0; x < parameters.brushKern; x++) {                  
         for (var y = 0; y < parameters.brushKern; y++) {
-            if((ofy + y - Math.ceil(brushKern/2)) >= size || (ofy + y - Math.ceil(brushKern/2)) < 0){
-                continue;
-            }
 
             var texcell = (((mouseX + x - Math.ceil(parameters.brushKern/2)) + ((mouseY + y - Math.ceil(parameters.brushKern/2)) * resolution)) * 4)%(4*resolution*resolution);
             var cell = (x + y * parameters.brushKern) * 4; 
@@ -224,9 +215,6 @@ function changeAreaTexture(){
 function changeHeightTexture(){
     for (var x = 0; x < parameters.brushKern; x++) {                  
         for (var y = 0; y < parameters.brushKern; y++) {
-            if((ofy + y - Math.ceil(brushKern/2)) >= size || (ofy + y - Math.ceil(brushKern/2)) < 0){
-                continue;
-            }
 
             var hcell = (((mouseX + x - Math.ceil(parameters.brushKern/2)) + ((mouseY + y - Math.ceil(parameters.brushKern/2)) * resolution)) * 4)%(4*resolution*resolution);
             var cell = (x + y * parameters.brushKern) * 2; 
@@ -241,9 +229,6 @@ function changeHeightTexture(){
 function changeShineTexture(){
     for (var x = 0; x < parameters.brushKern; x++) {                  
         for (var y = 0; y < parameters.brushKern; y++) {
-            if((ofy + y - Math.ceil(brushKern/2)) >= size || (ofy + y - Math.ceil(brushKern/2)) < 0){
-                continue;
-            }
 
             var hcell = (((mouseX + x - Math.ceil(parameters.brushKern/2)) + ((mouseY + y - Math.ceil(parameters.brushKern/2)) * resolution)) * 4)%(4*resolution*resolution);
             var cell = (x + y * parameters.brushKern) * 2; 
