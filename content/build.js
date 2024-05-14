@@ -19,6 +19,7 @@ var bSize = 5;
 var alpha = 50;
 var heightDelta = 0;
 var shine = 0;
+var tickrate = 0;
 
 function createTexture(){
     for (var x = 0; x < size; x++) {                  
@@ -208,6 +209,8 @@ function addShapes() {
 
 //Raycaster mouse tracking setup
 var mousedown = false;
+//mouse tickrate setup
+var  active = true;
 
 window.addEventListener('mousemove', onMouseMove, false);
 
@@ -251,7 +254,7 @@ function onMouseMove(event) {
         offx = size - Math.floor(u * size);
         offy = Math.floor(v * size);
 
-        if(mousedown){
+        if(mousedown && active){
             changeAreaTexture(offx,offy);
             changeHeightTexture(offx,offy);
             changeShineTexture(offx,offy);
@@ -266,6 +269,8 @@ function onMouseMove(event) {
 
             sphere.material.displacementMap = htexture;
             sphere.material.specularMap = stexture;
+            active = false;
+            setTimeout(() => {active = true;},tickrate);
         }
     }
 }
@@ -290,3 +295,4 @@ gui.add(window,'heightDelta',-4,4,2).onChange(function(){
 gui.add(window,'shine',-4,4,2).onChange(function(){
     createBrush();
 });
+gui.add(window,'tickrate',0,1000,50);
