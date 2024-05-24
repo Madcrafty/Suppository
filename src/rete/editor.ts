@@ -9,43 +9,7 @@ import {ContextMenuPlugin,ContextMenuExtra,Presets as ContextMenuPresets,} from 
 
 import { Schemes } from './schemes.js';
 import { Connection } from './connection.js';
-import {parameters} from '../../brush/parameters.js';
 import {NumberNode, AddNode, BrushNode} from '../nodes';
-import * as THREE from 'three';
-
-/*class BrushNode extends Classic.Node implements DataflowNode {
-  width = 180;
-  height = 335;
-
-  constructor() {
-    super('Brush');
-
-    this.addInput('a', new Classic.Input(socket, 'Size'));
-    this.addInput('b', new Classic.Input(socket, 'Alpha'));
-    this.addInput('c', new Classic.Input(socket, 'Height'));
-    this.addInput('d', new Classic.Input(socket, 'Kern'));
-    this.addInput('e', new Classic.Input(socket, 'Shine'));
-    // color
-    this.addInput('f', new Classic.Input(socket, 'Red'));
-    this.addInput('g', new Classic.Input(socket, 'Green'));
-    this.addInput('h', new Classic.Input(socket, 'Blue'));
-  }
-  data(inputs: { a?: number[]; b?: number[]; c?: number[]; d?: number[]; e?: number[]; f?: number[]; g?: number[]; h?: number[];}) {
-    const { a = [], b = [], c = [],d = [],e = [],f = [],g = [],h = [],} = inputs;
-    parameters.brushSize = (a[0]!=undefined) ? a[0] : parameters.brushSize;
-    parameters.brushAlpha = (b[0]!=undefined) ? b[0] : parameters.brushAlpha;
-    parameters.brushHeight = (c[0]!=undefined) ? c[0] : parameters.brushHeight;
-    parameters.brushKern = (d[0]!=undefined) ? d[0] : parameters.brushKern;
-    parameters.brushShine = (e[0]!=undefined) ? e[0] : parameters.brushShine;
-    // color
-    parameters.brushColor = (f[0]!=undefined && g[0]!=undefined && h[0]!=undefined) ? new THREE.Color(f[0],g[0],h[0]) : parameters.brushColor;
-    parameters.update();
-
-    return {
-      value: 1,
-    };
-  }
-}*/
 
 type AreaExtra = Area2D<Schemes> | ReactArea2D<Schemes> | ContextMenuExtra;
 
@@ -64,6 +28,7 @@ export async function createEditor(container: HTMLElement) {
     ]),
   });
 
+  
   //References
   editor.use(area);
   editor.use(dataflow);
@@ -104,7 +69,6 @@ export async function createEditor(container: HTMLElement) {
   await editor.addConnection(new Connection(add2, 'value', brush, 'e'));
   await editor.addConnection(new Connection(add2, 'value', brush, 'f'));
 
-
   //Arrange
   const arrange = new AutoArrangePlugin<Schemes>();
   arrange.addPreset(ArrangePresets.classic.setup());
@@ -124,18 +88,13 @@ export async function createEditor(container: HTMLElement) {
 // Will need an upgrade soon!
   async function process() {
     dataflow.reset();
-
-    editor
-      .getNodes()
-      .filter((node) => node instanceof Classic.Node)
-      .forEach(async (node) => {
-        //Retrieve / Update the Data of the node
-        await dataflow.fetch(node.id);
-        area.update(
-          'control',
-          (node.controls['result'] as Classic.InputControl<'number'>).id
-        );
-      });
+    let nodes = editor.getNodes();
+    nodes.filter((node) => node instanceof AddNode);
+    nodes.forEach(async (node) => {
+      //Retrieve / Update the Data of the node
+      await dataflow.fetch(node.id);
+      area.update('node',node.id);
+    }); 
   }
 
   editor.addPipe((context) => {

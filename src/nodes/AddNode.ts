@@ -1,4 +1,4 @@
-import { ClassicPreset as Classic, GetSchemes, NodeEditor } from 'rete';
+import { ClassicPreset as Classic } from 'rete';
 import {NumSocket} from "../sockets/NumSocket.js"
 
 export class AddNode extends Classic.Node {
