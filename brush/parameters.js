@@ -8,7 +8,7 @@ export const parameters = {
     brushSize:5,
     brushAlpha:50,
     brushHeight:0,
-    brushKern:30,
+    brushKern:140,
     brushColor:new THREE.Color(0,255,0),
     brushShine:0,
     update() {

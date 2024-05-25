@@ -7,9 +7,12 @@ import { DataflowEngine, DataflowNode } from 'rete-engine';
 import {AutoArrangePlugin,Presets as ArrangePresets,} from 'rete-auto-arrange-plugin';
 import {ContextMenuPlugin,ContextMenuExtra,Presets as ContextMenuPresets,} from 'rete-context-menu-plugin';
 
-import { Schemes } from './schemes.js';
+import { Preview } from '../controls/preview.js';
+import { PreviewUI } from '../controls/previewui.js';
+import { Schemes } from './schemes.ts';
 import { Connection } from './connection.js';
-import {NumberNode, AddNode, BrushNode} from '../nodes';
+import {NumberNode, AddNode, OutputNode, TextureNode, XNode} from '../nodes';
+import { getConnectionSockets } from './utils.ts';
 
 type AreaExtra = Area2D<Schemes> | ReactArea2D<Schemes> | ContextMenuExtra;
 
@@ -18,37 +21,44 @@ export async function createEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
   const area = new AreaPlugin<Schemes, AreaExtra>(container);
   const connection = new ConnectionPlugin<Schemes, AreaExtra>();
-  const reactRender = new ReactPlugin<Schemes, AreaExtra>({ createRoot });
+  const render = new ReactPlugin<Schemes, AreaExtra>({ createRoot });
   const dataflow = new DataflowEngine<Schemes>();
   const contextMenu = new ContextMenuPlugin<Schemes>({
     items: ContextMenuPresets.classic.setup([
       ['Number', () => new NumberNode(1, process)],
       ['Add', () => new AddNode()],
-      ['Brush', () => new BrushNode(dataflow)],
+      ['Brush', () => new OutputNode()],
+      ['Texture', () => new TextureNode("Texture")],
+      ['X-Coords', () => new XNode()]
     ]),
   });
 
-  
   //References
   editor.use(area);
   editor.use(dataflow);
-  area.use(reactRender);
+  area.use(render);
   area.use(connection);
   area.use(contextMenu);
 
   connection.addPreset(ConnectionPresets.classic.setup());
-  reactRender.addPreset(ReactPresets.classic.setup());
-  reactRender.addPreset(ReactPresets.contextMenu.setup());
+  render.addPreset(ReactPresets.classic.setup({
+    customize: {
+      control(data) {
+        if (data.payload instanceof Preview) return PreviewUI
+        return ReactPresets.classic.InputControl as any
+      },
+    }
+  }));
+  render.addPreset(ReactPresets.contextMenu.setup());
 
-  //Create Starting Nodes
-  const a = new NumberNode(5, process);
-  const b = new NumberNode(5, process);
-  const c = new NumberNode(-10, process);
-  const brush = new BrushNode(dataflow);
+  // #region Add Nodes and Connections to Editor
+  const a = new NumberNode(5);
+  const b = new NumberNode(5);
+  const c = new NumberNode(-10);
+  const brush = new OutputNode();
   const add = new AddNode();
   const add2 = new AddNode();
 
-  //Add Nodes and Connections to Editor
   await editor.addNode(a);
   await editor.addNode(b);
   await editor.addNode(c);
@@ -68,7 +78,7 @@ export async function createEditor(container: HTMLElement) {
   await editor.addConnection(new Connection(add, 'value', brush, 'h'));
   await editor.addConnection(new Connection(add2, 'value', brush, 'e'));
   await editor.addConnection(new Connection(add2, 'value', brush, 'f'));
-
+  //#endregion
   //Arrange
   const arrange = new AutoArrangePlugin<Schemes>();
   arrange.addPreset(ArrangePresets.classic.setup());
@@ -84,22 +94,34 @@ export async function createEditor(container: HTMLElement) {
   const accumulating = AreaExtensions.accumulateOnCtrl();
   AreaExtensions.selectableNodes(area, selector, { accumulating });
 
-// This function basically updates each node that connects to a BrushNode.
-// Will need an upgrade soon!
+  //Dataflow
   async function process() {
     dataflow.reset();
     let nodes = editor.getNodes();
-    nodes.filter((node) => node instanceof AddNode);
+    nodes.filter((node) => node instanceof OutputNode);
     nodes.forEach(async (node) => {
       //Retrieve / Update the Data of the node
       await dataflow.fetch(node.id);
       area.update('node',node.id);
     }); 
   }
-
+  
   editor.addPipe((context) => {
     if (context.type === 'connectioncreated' || context.type === 'connectionremoved') {
       process();
+    }
+    return context;
+  });
+
+  editor.addPipe((context) => {
+    if (context.type === "connectioncreate") {
+      const { data } = context;
+      const { source, target } = getConnectionSockets(editor, data);
+
+      if (!source.isCompatibleWith(target)) {
+        console.log("Sockets are not compatible", "error");
+        return;
+      }
     }
     return context;
   });

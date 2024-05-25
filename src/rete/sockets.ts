@@ -9,3 +9,12 @@ export class NumSocket extends ClassicPreset.Socket {
     return socket instanceof NumSocket;
   }
 }
+
+export class TexSocket extends ClassicPreset.Socket {
+  constructor() {
+    super("Texture");
+  }
+  isCompatibleWith(socket: ClassicPreset.Socket) {
+    return socket instanceof TexSocket;
+  }
+}

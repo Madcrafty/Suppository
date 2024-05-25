@@ -1,15 +1,15 @@
 import { GetSchemes } from 'rete';
-import {AddNode, BrushNode, NumberNode} from '../nodes';
+import * as Nodes from '../nodes';
 import {Connection} from './connection';
 
 export type Node = 
-  | NumberNode
-  | AddNode 
-  | BrushNode;
-export type Conn =
-  | Connection<NumberNode, BrushNode>
-  | Connection<BrushNode, NumberNode>
-  | Connection<NumberNode, AddNode>
-  | Connection<AddNode, AddNode>
-  | Connection<AddNode, BrushNode>;
-export type Schemes = GetSchemes<Node, Conn>;
+  | Nodes.NumberNode
+  | Nodes.AddNode 
+  | Nodes.OutputNode
+  | Nodes.TextureNode
+  | Nodes.XNode;
+export type Conn = 
+  | Connection<Nodes.NumberNode, Nodes.OutputNode>
+  | Connection<Nodes.NumberNode, Nodes.AddNode>
+  | Connection<Nodes.AddNode, Nodes.OutputNode>
+export type Schemes = GetSchemes<Node, Conn>; 

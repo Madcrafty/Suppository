@@ -1,5 +1,5 @@
 import { ClassicPreset as Classic } from 'rete';
-import {NumSocket} from "../sockets/NumSocket.js"
+import {NumSocket} from "./sockets"
 
 export class AddNode extends Classic.Node {
     width = 180;
