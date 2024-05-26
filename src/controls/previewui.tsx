@@ -17,7 +17,7 @@ export function PreviewUI(props:{data:Preview}){
         image.data.set(props.data.texture);
         
         context.putImageData(image, 0, 0);
-    }, []);
+    });
   
     return (
         <canvas ref={canvasRef} width={globals.textureRes} height={globals.textureRes} />
