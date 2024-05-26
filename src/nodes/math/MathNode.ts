@@ -41,7 +41,7 @@ export class MathNode extends ClassicPreset.Node {
                         result[cell] = f((a[cell])/255, b[cell]/255)*255;   
                         result[cell + 1] = f(a[cell+1]/255, b[cell+1]/255)*255;    
                         result[cell + 2] = f(a[cell+2]/255, b[cell+2]/255)*255;    
-                        result[cell + 3] = 255;     
+                        result[cell + 3] = f(a[cell+3]/255, b[cell+3]/255)*255;     
                     }
                 }
             } else {
@@ -51,7 +51,7 @@ export class MathNode extends ClassicPreset.Node {
                         result[cell] = f((a[cell])/255, b)*255;   
                         result[cell + 1] = f(a[cell+1]/255, b)*255;    
                         result[cell + 2] = f(a[cell+2]/255, b)*255;    
-                        result[cell + 3] = 255;
+                        result[cell + 3] = a[cell+3];
                     }
                 }
             }

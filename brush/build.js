@@ -193,8 +193,7 @@ function changeHeightTexture(){
             var cell = (x + y * globals.textureRes) * 4; 
             var brushHeight = ((material.heightTexture[cell] + material.heightTexture[cell+1] + material.heightTexture[cell+2])/3);
             var finalBrushHeight = brushHeight * (material.heightTexture[cell+3]/255);
-            var newH = Math.min(255,Math.max(0,displaceArr[hcell] + finalBrushHeight));
-
+            var newH = Math.min(255,Math.max(0,displaceArr[hcell] + brushHeight));
             displaceArr[hcell] = displaceArr[hcell+1] = displaceArr[hcell+2] = newH;
         }
     }

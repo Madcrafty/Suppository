@@ -14,9 +14,9 @@ export class OutputNode extends Classic.Node {
       this.addInput('Shine', new Classic.Input(sockets.tex, 'Shine'));
     }
     data(inputs: any) {
-      const texture = inputs['Texture'] && inputs['Texture'][0] instanceof Uint8ClampedArray ? inputs['Texture'][0] : new Uint8ClampedArray();
-      const htexture = inputs['Height'] && inputs['Height'][0] instanceof Uint8ClampedArray ? inputs['Height'][0] : new Uint8ClampedArray();
-      material.brushTexture = texture;
+      const texture = inputs['Texture'] && inputs['Texture'][0] instanceof Uint8ClampedArray ? inputs['Texture'][0] : null;
+      const htexture = inputs['Height'] && inputs['Height'][0] instanceof Uint8ClampedArray ? inputs['Height'][0] : null;
+      material.brushTexture = texture ? texture : material.brushTexture;
       material.heightTexture = htexture;
       return {};
     }

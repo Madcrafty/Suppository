@@ -18,10 +18,15 @@ export class CircleNode extends TextureNode {
                 if(((xval-0.5)*(xval-0.5))+((yval-0.5)*(yval-0.5)) < 0.1) {
                     val = 255;
                 }
+                if(this.alpha) {
+                    var alpha = (this.alpha[cell] + this.alpha[cell+1] + this.alpha[cell+2])/3;
+                  } else {
+                    var alpha = 255;
+                  }
                 this.texture[cell] = val;   
                 this.texture[cell + 1] = val;   
                 this.texture[cell + 2] = val;   
-                this.texture[cell + 3] = 255;   
+                this.texture[cell + 3] = alpha;   
             }
         }
     }
