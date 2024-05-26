@@ -1,7 +1,7 @@
 import { ClassicPreset as Classic, GetSchemes, NodeEditor } from 'rete';
 import { Preview } from '../controls/preview';
 import {globals} from "../../globals";
-import { TexSocket } from './sockets';
+import sockets from '../rete/sockets';
 
 export class TextureNode extends Classic.Node {
     width = 180;
@@ -9,7 +9,7 @@ export class TextureNode extends Classic.Node {
     texture: null | Uint8ClampedArray = null;
     constructor(label: string) {
       super(label);
-      this.addOutput('value', new Classic.Output(new TexSocket, 'Texture'));
+      this.addOutput('value', new Classic.Output(sockets.tex, 'Texture'));
       this.addControl('preview', new Preview());
       this.makeTexture();
       if(!this.texture) return;
