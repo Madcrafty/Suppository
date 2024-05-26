@@ -5,7 +5,7 @@ export class DivideNode extends MathNode {
     width=180;
     height=180;
     constructor() {
-        super("Add");
+        super("Divide");
     }
     data(inputs: any) {
         var result = super.calculate(inputs, 'a / b');

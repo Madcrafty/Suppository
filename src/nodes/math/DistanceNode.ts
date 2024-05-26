@@ -5,7 +5,7 @@ export class DistanceNode extends MathNode {
     width=180;
     height=180;
     constructor() {
-        super("Add");
+        super("Distance");
     }
     data(inputs: any) {
         var result = super.calculate(inputs, 'abs(a - b)');

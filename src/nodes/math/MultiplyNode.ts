@@ -5,7 +5,7 @@ export class MultiplyNode extends MathNode {
     width=180;
     height=180;
     constructor() {
-        super("Add");
+        super("Multiply");
     }
     data(inputs: any) {
         var result = super.calculate(inputs, 'a * b');
