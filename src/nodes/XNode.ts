@@ -2,7 +2,6 @@ import { ClassicPreset as Classic, GetSchemes, NodeEditor } from 'rete';
 import { Preview } from '../controls/preview';
 import {globals} from "../../globals";
 import { TextureNode } from './TextureNode';
-import { TexSocket } from './sockets';
 
 export class XNode extends TextureNode {
     constructor() {

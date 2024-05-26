@@ -1,6 +1,6 @@
 import { ClassicPreset as Classic, GetSchemes, NodeEditor } from 'rete';
 import {parameters} from '../../brush/parameters.js';
-import {NumSocket} from "./sockets"
+import sockets from '../rete/sockets.js';
 import * as THREE from 'three';
 
 export class OutputNode extends Classic.Node {
@@ -8,17 +8,17 @@ export class OutputNode extends Classic.Node {
     height = 335;
   
     constructor() {
-      super('Brush');
+      super('Output');
   
-      this.addInput('a', new Classic.Input(new NumSocket(), 'Size'));
-      this.addInput('b', new Classic.Input(new NumSocket(), 'Alpha'));
-      this.addInput('c', new Classic.Input(new NumSocket(), 'Height'));
-      this.addInput('d', new Classic.Input(new NumSocket(), 'Kern'));
-      this.addInput('e', new Classic.Input(new NumSocket(), 'Shine'));
+      this.addInput('a', new Classic.Input(sockets.num, 'Size'));
+      this.addInput('b', new Classic.Input(sockets.num, 'Alpha'));
+      this.addInput('c', new Classic.Input(sockets.num, 'Height'));
+      this.addInput('d', new Classic.Input(sockets.num, 'Kern'));
+      this.addInput('e', new Classic.Input(sockets.num, 'Shine'));
       // color
-      this.addInput('f', new Classic.Input(new NumSocket(), 'Red'));
-      this.addInput('g', new Classic.Input(new NumSocket(), 'Green'));
-      this.addInput('h', new Classic.Input(new NumSocket(), 'Blue'));
+      this.addInput('f', new Classic.Input(sockets.num, 'Red'));
+      this.addInput('g', new Classic.Input(sockets.num, 'Green'));
+      this.addInput('h', new Classic.Input(sockets.num, 'Blue'));
     }
     data(inputs: { a?: number[]; b?: number[]; c?: number[]; d?: number[]; e?: number[]; f?: number[]; g?: number[]; h?: number[];}) {
       const { a = [], b = [], c = [],d = [],e = [],f = [],g = [],h = [],} = inputs;

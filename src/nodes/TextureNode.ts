@@ -1,15 +1,16 @@
 import { ClassicPreset as Classic, GetSchemes, NodeEditor } from 'rete';
 import { Preview } from '../controls/preview';
 import {globals} from "../../globals";
-import { TexSocket } from './sockets';
+import sockets from '../rete/sockets';
+import {DataflowNode} from "rete-engine";
 
-export class TextureNode extends Classic.Node {
+export class TextureNode extends Classic.Node implements DataflowNode {
     width = 180;
     height = 300;
     texture: null | Uint8ClampedArray = null;
     constructor(label: string) {
       super(label);
-      this.addOutput('value', new Classic.Output(new TexSocket, 'Texture'));
+      this.addOutput('value', new Classic.Output(sockets.tex, 'Value'));
       this.addControl('preview', new Preview());
       this.makeTexture();
       if(!this.texture) return;
@@ -31,6 +32,6 @@ export class TextureNode extends Classic.Node {
     data () {
       if(!this.texture) return {};
       (this.controls['preview'] as Preview).setTexture(this.texture);
-      return {};
+      return this.texture;
     }
   }
