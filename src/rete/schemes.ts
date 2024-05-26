@@ -7,6 +7,9 @@ export type Node =
   | Nodes.OutputNode
   | Nodes.TextureNode
   | Nodes.XNode
+  | Nodes.YNode
+  | Nodes.CircleNode
+  | Nodes.ColorNode
   | Nodes.AddNode
   | Nodes.SubtractNode
   | Nodes.MultiplyNode
@@ -14,4 +17,6 @@ export type Node =
   | Nodes.DistanceNode;
 export type Conn = 
   | Connection<Nodes.NumberNode, Nodes.OutputNode>
+  | Connection<Nodes.NumberNode, Nodes.AddNode>
+  | Connection<Nodes.AddNode, Nodes.OutputNode>
 export type Schemes = GetSchemes<Node, Conn>; 

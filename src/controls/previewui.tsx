@@ -12,10 +12,11 @@ export function PreviewUI(props:{data:Preview}){
     
         const context = canvas.getContext('2d');
         if (!context) return;
-
+        console.log("bruh");
         var image = context.createImageData(globals.textureRes, globals.textureRes);
         image.data.set(props.data.texture);
-        context.putImageData(image, 0, 0, 0, 0, globals.textureRes, globals.textureRes);
+        
+        context.putImageData(image, 0, 0);
     }, []);
   
     return (

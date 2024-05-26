@@ -1,6 +1,8 @@
 import {parameters} from "./parameters.js";
 import { GUI } from 'dat.gui';
 import * as THREE from 'three';
+import {material} from './material.js'
+import { globals } from "../globals.js";
 
 //Core Variables
 var renderer;
@@ -13,12 +15,8 @@ var textureArr;
 var displaceArr;
 var specArr;
 
-//Brush and Height Brush Arrays
-var brush;
-var hbrush;
-
 //Sphere variables
-var resolution=200;
+var resolution=1000;
 var offset = 0;
 var sphere;
 var radius = 1;
@@ -44,27 +42,9 @@ export function init(_renderer, _scene, _camera, _gui) {
     camera=_camera;
     gui = _gui;
 
-    brush = new Uint8Array( 4 * parameters.brushKern * parameters.brushKern );
-    hbrush = new Int8Array( 2 * parameters.brushKern * parameters.brushKern );
-    textureArr = new Uint8Array( 4 * resolution * resolution );
-    displaceArr = new Uint8Array( 4 * resolution * resolution );
-    specArr = new Uint8Array( 4 * resolution * resolution );
-
-    gui.addColor(parameters,'brushColor').onChange(function(){
-        createBrush();
-    });
-    gui.add(parameters,'brushSize',0,parameters.brushKern,1).onChange(function(){
-        createBrush();
-    });
-    gui.add(parameters,'brushAlpha',0,255).onChange(function(){
-        createBrush();
-    });
-    gui.add(parameters,'brushHeight',-4,4,2).onChange(function(){
-        createBrush();
-    });
-    gui.add(parameters,'brushShine',-4,4,2).onChange(function(){
-        createBrush();
-    });
+    textureArr = new Uint8ClampedArray( 4 * resolution * resolution );
+    displaceArr = new Uint8ClampedArray( 4 * resolution * resolution );
+    specArr = new Uint8ClampedArray( 4 * resolution * resolution );
 }
 
 //called on start
@@ -73,8 +53,6 @@ export function start() {
     setLight();
     
     createTexture();
-    createBrush();
-
 
     sphere = makeSphere();
     addShapes();
@@ -85,7 +63,7 @@ export function run() {
 }
 
 function render() {
-    AddMarker();
+    //AddMarker();
 
     let texture = new THREE.DataTexture(textureArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
     texture.needsUpdate = true;
@@ -94,7 +72,7 @@ function render() {
     sphere.material.needsUpdate = true;
 
     renderer.render(scene, camera);
-    RemoveMarker();
+    //RemoveMarker();
 }
 
 function setupMouse() {
@@ -121,61 +99,41 @@ function setupMouse() {
 }
 
 function createTexture(){
-    for (var x = 0; x < resolution; x++) {                  
-        for (var y = 0; y < resolution; y++) {
+    for (var y = 0; y < resolution; y++) {                  
+        for (var x = 0; x < resolution; x++) {
             var cell = (x + y * resolution) * 4;                  
-            textureArr[cell] = textureArr[cell + 1] = textureArr[cell + 2] = 255;                               
+            textureArr[cell] = textureArr[cell + 1] = textureArr[cell + 2] = (y/resolution)*255;                               
             textureArr[cell + 3] = 255; // parameters.brushAlpha.
         }
     }
 
-    for (var x = 0; x < resolution; x++) {                  
-        for (var y = 0; y < resolution; y++) {
+    for (var y = 0; y < resolution; y++) {                  
+        for (var x = 0; x < resolution; x++) {
             var cell = (x + y * resolution) * 4;                  
             displaceArr[cell] = displaceArr[cell + 1] = displaceArr[cell + 2] = 100;   
             displaceArr[cell + 3]=0;                            
         }
     }
-    for (var x = 0; x < resolution; x++) {                  
-        for (var y = 0; y < resolution; y++) {
+    for (var y = 0; y < resolution; y++) {                  
+        for (var x = 0; x < resolution; x++) {
             var cell = (x + y * resolution) * 4;                  
-            specArr[cell] = specArr[cell + 1] = specArr[cell + 2] = 10;                               
-        }
-    }
-}
-
-
-export function createBrush(){
-    for (var x = 0; x < parameters.brushKern; x++) {                  
-        for (var y = 0; y < parameters.brushKern; y++) {
-            var cell = (x + y * parameters.brushKern) * 4;
-            var hcell = (x + y * parameters.brushKern) * 2;
-            
-            if(Math.sqrt(((x-Math.ceil(parameters.brushKern/2))**2)+((y-Math.ceil(parameters.brushKern/2))**2)) < parameters.brushSize){
-                brush[cell + 3] = parameters.brushAlpha;
-                hbrush[hcell] = parameters.brushHeight;   
-                hbrush[hcell+1] = parameters.brushShine;                     
-            } else {
-                brush[cell + 3] = 0;
-                hbrush[hcell] = 0;
-                hbrush[hcell + 1] = 0;
-            }
-            brush[cell] = parameters.brushColor.r;
-            brush[cell+1] = parameters.brushColor.g;
-            brush[cell+2] = parameters.brushColor.b;
+            specArr[cell] = specArr[cell + 1] = specArr[cell + 2] = 0;                               
         }
     }
 }
 
 function AddMarker(){
-    for (var x = 0; x < parameters.brushKern; x++) {                  
-        for (var y = 0; y < parameters.brushKern; y++) {
+    if(!material.brushTexture) return;
+    for (var y = 0; y < globals.textureRes; y++) {
+        for (var x = 0; x < globals.textureRes; x++){
 
-            var texcell = (((mouseX + x - Math.ceil(parameters.brushKern/2)) + ((mouseY + y - Math.ceil(parameters.brushKern/2)) * resolution)) * 4)%(4*resolution*resolution);
-            var cell = (x + y * parameters.brushKern) * 4; 
-            var hcell = (x + y * parameters.brushKern) * 2;
+            //here, ytexcell has parameters flipped to align the axes of the brush texture and the sphere texture!
+            var xtexcell = (mouseX + x - Math.ceil(globals.textureRes/2))
+            var ytexcell = (mouseY - y + Math.ceil(globals.textureRes/2))
+            var texcell = ((xtexcell + (ytexcell* resolution)) * 4) % (4*resolution*resolution);
+            var cell = (x + y * globals.textureRes) * 4; 
 
-            if(brush[cell + 3] > 0 || hbrush[hcell] != 0 || hbrush[hcell+1] != 0){
+            if(material.brushTexture[cell + 3] > 0){
                 textureArr[texcell+1] = textureArr[texcell+1] + 25;
             }
         }
@@ -183,14 +141,17 @@ function AddMarker(){
 }
 
 function RemoveMarker(){
-    for (var x = 0; x < parameters.brushKern; x++) {                  
-        for (var y = 0; y < parameters.brushKern; y++) {
+    if(!material.brushTexture) return;
+    for (var y = 0; y < globals.textureRes; y++) {
+        for (var x = 0; x < globals.textureRes; x++){
 
-            var texcell = (((mouseX + x - Math.ceil(parameters.brushKern/2)) + ((mouseY + y - Math.ceil(parameters.brushKern/2)) * resolution)) * 4)%(4*resolution*resolution);
-            var cell = (x + y * parameters.brushKern) * 4;
-            var hcell = (x + y * parameters.brushKern) * 2;
+            //here, ytexcell has parameters flipped to align the axes of the brush texture and the sphere texture!
+            var xtexcell = (mouseX + x - Math.ceil(globals.textureRes/2))
+            var ytexcell = (mouseY - y + Math.ceil(globals.textureRes/2))
+            var texcell = ((xtexcell + (ytexcell* resolution)) * 4) % (4*resolution*resolution);
+            var cell = (x + y * globals.textureRes) * 4; 
             
-            if(brush[cell + 3] > 0 || hbrush[hcell] != 0 || hbrush[hcell+1] != 0){
+            if(material.brushTexture[cell + 3] > 0){
                 textureArr[texcell+1] = textureArr[texcell+1] - 25;
             }
         }
@@ -199,27 +160,40 @@ function RemoveMarker(){
 
 
 function changeAreaTexture(){
-    for (var x = 0; x < parameters.brushKern; x++) {                  
-        for (var y = 0; y < parameters.brushKern; y++) {
-
-            var texcell = (((mouseX + x - Math.ceil(parameters.brushKern/2)) + ((mouseY + y - Math.ceil(parameters.brushKern/2)) * resolution)) * 4)%(4*resolution*resolution);
-            var cell = (x + y * parameters.brushKern) * 4; 
-
-            textureArr[texcell] = Math.ceil(((brush[cell + 3]*brush[cell])+((255 - brush[cell + 3])*textureArr[texcell]))/255);
-            textureArr[texcell+1] = Math.ceil(((brush[cell + 3]*brush[cell+1])+((255 - brush[cell + 3])*textureArr[texcell+1]))/255);
-            textureArr[texcell+2] = Math.ceil(((brush[cell + 3]*brush[cell+2])+((255 - brush[cell + 3])*textureArr[texcell+2]))/255);
+    if(!material.brushTexture) return; 
+    for (var y = 0; y < globals.textureRes; y++) {
+        for (var x = 0; x < globals.textureRes; x++){
+            //here, ytexcell has parameters flipped to align the axes of the brush texture and the sphere texture!
+            var xtexcell = (mouseX + x - Math.ceil(globals.textureRes/2))
+            var ytexcell = (mouseY - y + Math.ceil(globals.textureRes/2))
+            var texcell = ((xtexcell + (ytexcell* resolution)) * 4) % (4*resolution*resolution);
+            var cell = (x + y * globals.textureRes) * 4; 
+            let alpha = material.brushTexture[cell+3]/255;
+            let brushR =  alpha*material.brushTexture[cell];
+            let brushG = alpha*material.brushTexture[cell+1];
+            let brushB = alpha*material.brushTexture[cell+2];
+            let texR = (1-alpha)*textureArr[texcell]
+            let texG = (1-alpha)*textureArr[texcell+1]
+            let texB = (1-alpha)*textureArr[texcell+2]
+            textureArr[texcell] = Math.ceil(brushR+texR);
+            textureArr[texcell+1] = Math.ceil(brushG+texG);
+            textureArr[texcell+2] = Math.ceil(brushB+texB);
         }
     }
 }
 
 function changeHeightTexture(){
-    for (var x = 0; x < parameters.brushKern; x++) {                  
-        for (var y = 0; y < parameters.brushKern; y++) {
-
-            var hcell = (((mouseX + x - Math.ceil(parameters.brushKern/2)) + ((mouseY + y - Math.ceil(parameters.brushKern/2)) * resolution)) * 4)%(4*resolution*resolution);
-            var cell = (x + y * parameters.brushKern) * 2; 
-
-            var newH = Math.min(255,Math.max(0,displaceArr[hcell] + hbrush[cell]));
+    if(!material.heightTexture) return;
+    for (var y = 0; y < globals.textureRes; y++) {
+        for (var x = 0; x < globals.textureRes; x++){
+            //here, yhcell has parameters flipped to align the axes of the brush texture and the sphere texture!
+            var xhcell = (mouseX + x - Math.ceil(globals.textureRes/2))
+            var yhcell = (mouseY - y + Math.ceil(globals.textureRes/2))
+            var hcell = ((xhcell + (yhcell* resolution)) * 4) % (4*resolution*resolution);
+            var cell = (x + y * globals.textureRes) * 4; 
+            var brushHeight = ((material.heightTexture[cell] + material.heightTexture[cell+1] + material.heightTexture[cell+2])/3);
+            var finalBrushHeight = brushHeight * (material.heightTexture[cell+3]/255);
+            var newH = Math.min(255,Math.max(0,displaceArr[hcell] + finalBrushHeight));
 
             displaceArr[hcell] = displaceArr[hcell+1] = displaceArr[hcell+2] = newH;
         }
@@ -227,11 +201,14 @@ function changeHeightTexture(){
 }
 
 function changeShineTexture(){
-    for (var x = 0; x < parameters.brushKern; x++) {                  
-        for (var y = 0; y < parameters.brushKern; y++) {
-
-            var hcell = (((mouseX + x - Math.ceil(parameters.brushKern/2)) + ((mouseY + y - Math.ceil(parameters.brushKern/2)) * resolution)) * 4)%(4*resolution*resolution);
-            var cell = (x + y * parameters.brushKern) * 2; 
+    for (var y = 0; y < globals.textureRes; y++) {
+        for (var x = 0; x < globals.textureRes; x++){
+            //here, yhcell has parameters flipped to align the axes of the brush texture and the sphere texture!
+            var xhcell = (mouseX + x - Math.ceil(globals.textureRes/2))
+            var yhcell = (mouseY - y + Math.ceil(globals.textureRes/2))
+            var hcell = ((xhcell + (yhcell* resolution)) * 4) % (4*resolution*resolution);
+            var cell = (x + y * globals.textureRes) * 4; 
+            var cell = (x + y * globals.textureRes) * 2; 
 
             var newSH = Math.min(100,Math.max(0,specArr[hcell] + hbrush[cell+1]));
 
@@ -253,7 +230,7 @@ function makeSphere(){
     htexture.needsUpdate = true;
     stexture.needsUpdate = true;
 
-    var specCol = new THREE.Color(10,10,10);
+    var specCol = new THREE.Color(0,0,0);
 
     let material = new THREE.MeshPhongMaterial({
         map: texture,
@@ -313,7 +290,7 @@ function onMouseMove(event) {
         if(mouseDown){
             changeAreaTexture();
             changeHeightTexture();
-            changeShineTexture();
+            //changeShineTexture();
             let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
             htexture.needsUpdate = true;
 

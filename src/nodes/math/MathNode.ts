@@ -33,25 +33,25 @@ export class MathNode extends ClassicPreset.Node {
             return f(a, b);
 
         if (a instanceof Uint8ClampedArray) {
-            const result = new Uint8ClampedArray();
+            const result = new Uint8ClampedArray(4 * globals.textureRes * globals.textureRes);
             if(b instanceof Uint8ClampedArray) {
                 for (var x = 0; x < globals.textureRes; x++) {                  
                     for (var y = 0; y < globals.textureRes; y++) {
                         var cell = (x + y * globals.textureRes) * 4;
-                        result[cell] = f(a[cell], b[cell]);   
-                        result[cell + 1] = f(a[cell+1], b[cell+1]);    
-                        result[cell + 2] = f(a[cell+2], b[cell+2]);    
-                        result[cell + 3] = f(a[cell+3], b[cell+3]);     
+                        result[cell] = f((a[cell])/255, b[cell]/255)*255;   
+                        result[cell + 1] = f(a[cell+1]/255, b[cell+1]/255)*255;    
+                        result[cell + 2] = f(a[cell+2]/255, b[cell+2]/255)*255;    
+                        result[cell + 3] = 255;     
                     }
                 }
             } else {
                 for (var x = 0; x < globals.textureRes; x++) {                  
                     for (var y = 0; y < globals.textureRes; y++) {
                         var cell = (x + y * globals.textureRes) * 4;
-                        result[cell] = f(a[cell], b);   
-                        result[cell + 1] = f(a[cell+1], b);    
-                        result[cell + 2] = f(a[cell+2], b);    
-                        result[cell + 3] = f(a[cell+3], b);     
+                        result[cell] = f((a[cell])/255, b)*255;   
+                        result[cell + 1] = f(a[cell+1]/255, b)*255;    
+                        result[cell + 2] = f(a[cell+2]/255, b)*255;    
+                        result[cell + 3] = 255;
                     }
                 }
             }

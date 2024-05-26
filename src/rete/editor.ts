@@ -11,7 +11,7 @@ import { Preview } from '../controls/preview.js';
 import { PreviewUI } from '../controls/previewui.js';
 import { Schemes } from './schemes.ts';
 import { Connection } from './connection.js';
-import {NumberNode, OutputNode, TextureNode, XNode, AddNode, SubtractNode, MultiplyNode, DivideNode, DistanceNode} from '../nodes';
+import * as Nodes from '../nodes';
 import { getConnectionSockets } from './utils.ts';
 
 type AreaExtra = Area2D<Schemes> | ReactArea2D<Schemes> | ContextMenuExtra;
@@ -25,17 +25,22 @@ export async function createEditor(container: HTMLElement) {
   const dataflow = new DataflowEngine<Schemes>();
   const contextMenu = new ContextMenuPlugin<Schemes>({
     items: ContextMenuPresets.classic.setup([
-      ['Brush', () => new OutputNode()],
-      ['Texture', () => new TextureNode("Texture")],
-      ['X-Coords', () => new XNode()],
-      ["Math", [
-        ['Number', () => new NumberNode(1, process)],
-        ["Add", () => new AddNode()],
-        ["Subtract", () => new SubtractNode()],
-        ["Distance", () => new DistanceNode()],
-        ["Divide", () => new DivideNode()],
-        ["Multiply", () => new MultiplyNode()],
+      ["Textures", [
+        ['Blank', () => new Nodes.TextureNode("Blank")],
+        ['X-Coords', () => new Nodes.XNode()],
+        ['Y-Coords', () => new Nodes.YNode()],
+        ["Circle", ()=> new Nodes.CircleNode()],
+        ["Color", () => new Nodes.ColorNode(process)]
       ]],
+      ["Math", [
+        ['Number', () => new Nodes.NumberNode(1, process)],
+        ["Add", () => new Nodes.AddNode()],
+        ["Subtract", () => new Nodes.SubtractNode()],
+        ["Distance", () => new Nodes.DistanceNode()],
+        ["Divide", () => new Nodes.DivideNode()],
+        ["Multiply", () => new Nodes.MultiplyNode()],
+      ]],
+      ['Output', () => new Nodes.OutputNode()],
     ]),
   });
 
@@ -58,15 +63,19 @@ export async function createEditor(container: HTMLElement) {
   render.addPreset(ReactPresets.contextMenu.setup());
 
   // #region Add Nodes and Connections to Editor
-  const a = new NumberNode(5);
-  const b = new NumberNode(5);
-  const c = new NumberNode(-10);
-  const brush = new OutputNode();
+  //Create Starting Nodes
+  const a = new Nodes.NumberNode(5, process);
+  const b = new Nodes.NumberNode(5, process);
+  const brush = new Nodes.OutputNode();
+  const add = new Nodes.AddNode();
 
+  //Add Nodes and Connections to Editor
   await editor.addNode(a);
   await editor.addNode(b);
-  await editor.addNode(c);
+  await editor.addNode(add);
   await editor.addNode(brush);
+  await editor.addConnection(new Connection(a, 'value', add, 'value1'));
+  await editor.addConnection(new Connection(b, 'value', add, 'value2'));
   //#endregion
   //Arrange
   const arrange = new AutoArrangePlugin<Schemes>();
@@ -87,7 +96,7 @@ export async function createEditor(container: HTMLElement) {
   async function process() {
     dataflow.reset();
     let nodes = editor.getNodes();
-    nodes.filter((node) => node instanceof OutputNode);
+    nodes.filter((node) => node instanceof Nodes.OutputNode);
     nodes.forEach(async (node) => {
       //Retrieve / Update the Data of the node
       await dataflow.fetch(node.id);
