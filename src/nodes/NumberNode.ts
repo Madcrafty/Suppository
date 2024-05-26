@@ -1,5 +1,5 @@
 import { ClassicPreset as Classic, GetSchemes, NodeEditor } from 'rete';
-import sockets from '../rete/sockets';
+import {NumSocket} from "./sockets"
 
 export class NumberNode extends Classic.Node {
     width = 180;
@@ -8,7 +8,7 @@ export class NumberNode extends Classic.Node {
     constructor(initial: number, change?: () => void) {
       super('Number');
   
-      this.addOutput('value', new Classic.Output(sockets.num, 'Number'));
+      this.addOutput('value', new Classic.Output(new NumSocket(), 'Number'));
       this.addControl('value',new Classic.InputControl('number', { initial, change }));
     }
     data() {

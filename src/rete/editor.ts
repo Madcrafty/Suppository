@@ -11,10 +11,10 @@ import { Preview } from '../controls/preview.js';
 import { PreviewUI } from '../controls/previewui.js';
 import { Schemes } from './schemes.ts';
 import { Connection } from './connection.js';
-import {NumberNode, OutputNode, TextureNode, XNode} from '../nodes';
+import {NumberNode, AddNode, OutputNode, TextureNode, XNode} from '../nodes';
 import { getConnectionSockets } from './utils.ts';
 
-type AreaExtra = ReactArea2D<Schemes> | ContextMenuExtra;
+type AreaExtra = Area2D<Schemes> | ReactArea2D<Schemes> | ContextMenuExtra;
 
 export async function createEditor(container: HTMLElement) {
   //Core
@@ -23,11 +23,11 @@ export async function createEditor(container: HTMLElement) {
   const connection = new ConnectionPlugin<Schemes, AreaExtra>();
   const render = new ReactPlugin<Schemes, AreaExtra>({ createRoot });
   const dataflow = new DataflowEngine<Schemes>();
-  const arrange = new AutoArrangePlugin<Schemes>();
   const contextMenu = new ContextMenuPlugin<Schemes>({
     items: ContextMenuPresets.classic.setup([
       ['Number', () => new NumberNode(1, process)],
-      ['Output', () => new OutputNode()],
+      ['Add', () => new AddNode()],
+      ['Brush', () => new OutputNode()],
       ['Texture', () => new TextureNode("Texture")],
       ['X-Coords', () => new XNode()]
     ]),
@@ -56,13 +56,31 @@ export async function createEditor(container: HTMLElement) {
   const b = new NumberNode(5);
   const c = new NumberNode(-10);
   const brush = new OutputNode();
+  const add = new AddNode();
+  const add2 = new AddNode();
 
   await editor.addNode(a);
   await editor.addNode(b);
   await editor.addNode(c);
+  await editor.addNode(add);
+  await editor.addNode(add2);
   await editor.addNode(brush);
+
+  await editor.addConnection(new Connection(a, 'value', add, 'a'));
+  await editor.addConnection(new Connection(b, 'value', add, 'b'));
+  await editor.addConnection(new Connection(b, 'value', add2, 'a'));
+  await editor.addConnection(new Connection(c, 'value', add2, 'b'));
+
+  await editor.addConnection(new Connection(add, 'value', brush, 'a'));
+  await editor.addConnection(new Connection(add, 'value', brush, 'b'));
+  await editor.addConnection(new Connection(add, 'value', brush, 'c'));
+  await editor.addConnection(new Connection(add, 'value', brush, 'g'));
+  await editor.addConnection(new Connection(add, 'value', brush, 'h'));
+  await editor.addConnection(new Connection(add2, 'value', brush, 'e'));
+  await editor.addConnection(new Connection(add2, 'value', brush, 'f'));
   //#endregion
   //Arrange
+  const arrange = new AutoArrangePlugin<Schemes>();
   arrange.addPreset(ArrangePresets.classic.setup());
   area.use(arrange);
   await arrange.layout();

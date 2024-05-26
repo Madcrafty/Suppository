@@ -1,26 +1,20 @@
 import { ClassicPreset } from "rete";
 
-export class Socket extends ClassicPreset.Socket {
-  compatible: Socket[] = [];
-  addCompatible(socket: Socket) {
-    this.compatible.push(socket);
+
+export class NumSocket extends ClassicPreset.Socket {
+  constructor() {
+    super("Number");
   }
-  isCompatibleWith(socket: Socket) {
-    return this === socket || this.compatible.includes(socket);
+  isCompatibleWith(socket: ClassicPreset.Socket) {
+    return socket instanceof NumSocket;
   }
 }
 
-const val = new Socket('Value');
-const num = new Socket('Number');
-const tex = new Socket('Texture');
-val.addCompatible(num);
-val.addCompatible(tex);
-
-num.addCompatible(val);
-tex.addCompatible(val);
-
-export default {
-  val,
-  num,
-  tex
+export class TexSocket extends ClassicPreset.Socket {
+  constructor() {
+    super("Texture");
+  }
+  isCompatibleWith(socket: ClassicPreset.Socket) {
+    return socket instanceof TexSocket;
+  }
 }
