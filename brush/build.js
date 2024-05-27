@@ -63,7 +63,7 @@ export function run() {
 }
 
 function render() {
-    AddMarker();
+    AddMarker(false,true);
 
     let texture = new THREE.DataTexture(textureArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
     texture.needsUpdate = true;
@@ -72,7 +72,7 @@ function render() {
     sphere.material.needsUpdate = true;
 
     renderer.render(scene, camera);
-    RemoveMarker();
+    RemoveMarker(false,true);
 }
 
 function setupMouse() {
@@ -122,25 +122,32 @@ function createTexture(){
     }
 }
 
-function AddMarker(){
+function AddMarker(wrapX, wrapY){
     if(!material.brushTexture) return;
     for (var y = 0; y < globals.textureRes; y++) {
         for (var x = 0; x < globals.textureRes; x++){
-
             //here, ytexcell has parameters flipped to align the axes of the brush texture and the sphere texture!
             var xtexcell = (mouseX + x - Math.ceil(globals.textureRes/2))
             var ytexcell = (mouseY - y + Math.ceil(globals.textureRes/2))
+
+            if(wrapY && (ytexcell >= resolution || ytexcell < 0)){
+                continue;
+            }
+            if(wrapX && (xtexcell >= resolution || xtexcell < 0)){
+                continue;
+            }
+
             var texcell = ((xtexcell + (ytexcell* resolution)) * 4) % (4*resolution*resolution);
             var cell = (x + y * globals.textureRes) * 4; 
 
-            if(material.brushTexture[cell + 3] > 0){
-                textureArr[texcell+1] = textureArr[texcell+1] + 25;
+            if(material.brushTexture[cell + 3] > 0 || material.heightTexture[cell + 3] > 0 || material.shineTexture[cell + 3] > 0){
+                textureArr[texcell+1] = textureArr[texcell+1] + 50;
             }
         }
     }
 }
 
-function RemoveMarker(){
+function RemoveMarker(wrapX,wrapY){
     if(!material.brushTexture) return;
     for (var y = 0; y < globals.textureRes; y++) {
         for (var x = 0; x < globals.textureRes; x++){
@@ -148,24 +155,40 @@ function RemoveMarker(){
             //here, ytexcell has parameters flipped to align the axes of the brush texture and the sphere texture!
             var xtexcell = (mouseX + x - Math.ceil(globals.textureRes/2))
             var ytexcell = (mouseY - y + Math.ceil(globals.textureRes/2))
+
+            if(wrapY && (ytexcell >= resolution || ytexcell < 0)){
+                continue;
+            }
+            if(wrapX && (xtexcell >= resolution || xtexcell < 0)){
+                continue;
+            }
+
             var texcell = ((xtexcell + (ytexcell* resolution)) * 4) % (4*resolution*resolution);
             var cell = (x + y * globals.textureRes) * 4; 
             
-            if(material.brushTexture[cell + 3] > 0){
-                textureArr[texcell+1] = textureArr[texcell+1] - 25;
+            if(material.brushTexture[cell + 3] > 0 || material.heightTexture[cell + 3] > 0 || material.shineTexture[cell + 3] > 0){
+                textureArr[texcell+1] = textureArr[texcell+1] - 50;
             }
         }
     }
 }
 
 
-function changeAreaTexture(){
+function changeAreaTexture(wrapX, wrapY){
     if(!material.brushTexture) return; 
     for (var y = 0; y < globals.textureRes; y++) {
         for (var x = 0; x < globals.textureRes; x++){
             //here, ytexcell has parameters flipped to align the axes of the brush texture and the sphere texture!
             var xtexcell = (mouseX + x - Math.ceil(globals.textureRes/2))
             var ytexcell = (mouseY - y + Math.ceil(globals.textureRes/2))
+
+            if(wrapY && (ytexcell >= resolution || ytexcell < 0)){
+                continue;
+            }
+            if(wrapX && (xtexcell >= resolution || xtexcell < 0)){
+                continue;
+            }
+
             var texcell = ((xtexcell + (ytexcell*resolution)) * 4) % (4*resolution*resolution);
             var cell = (x + y * globals.textureRes) * 4; 
             let alpha = material.brushTexture[cell+3]/255;
@@ -182,13 +205,21 @@ function changeAreaTexture(){
     }
 }
 
-function changeHeightTexture(){
+function changeHeightTexture(wrapX, wrapY){
     if(!material.heightTexture) return;
     for (var y = 0; y < globals.textureRes; y++) {
         for (var x = 0; x < globals.textureRes; x++){
             //here, yhcell has parameters flipped to align the axes of the brush texture and the sphere texture!
             var xhcell = (mouseX + x - Math.ceil(globals.textureRes/2))
             var yhcell = (mouseY - y + Math.ceil(globals.textureRes/2))
+
+            if(wrapY && (yhcell >= resolution || yhcell < 0)){
+                continue;
+            }
+            if(wrapX && (xhcell >= resolution || xhcell < 0)){
+                continue;
+            }
+
             var hcell = ((xhcell + (yhcell* resolution)) * 4) % (4*resolution*resolution);
             var cell = (x + y * globals.textureRes) * 4; 
             var brushHeight = ((material.heightTexture[cell] + material.heightTexture[cell+1] + material.heightTexture[cell+2])/3);
@@ -199,12 +230,20 @@ function changeHeightTexture(){
     }
 }
 
-function changeShineTexture(){
+function changeShineTexture(wrapX,wrapY){
     for (var y = 0; y < globals.textureRes; y++) {
         for (var x = 0; x < globals.textureRes; x++){
             //here, yhcell has parameters flipped to align the axes of the brush texture and the sphere texture!
             var xscell = (mouseX + x - Math.ceil(globals.textureRes/2))
             var yscell = (mouseY - y + Math.ceil(globals.textureRes/2))
+
+            if(wrapY && (yscell >= resolution || yscell < 0)){
+                continue;
+            }
+            if(wrapX && (xscell >= resolution || xscell < 0)){
+                continue;
+            }
+
             var scell = ((xscell + (yscell* resolution)) * 4) % (4*resolution*resolution);
             var cell = (x + y * globals.textureRes) * 4; 
             var brushShine = ((material.shineTexture[cell] + material.shineTexture[cell+1] + material.shineTexture[cell+2])/3);
@@ -280,9 +319,9 @@ function onMouseMove(event) {
         mouseY = Math.floor(v * resolution);
 
         if(mouseDown && active){
-            changeAreaTexture();
-            changeHeightTexture();
-            changeShineTexture();
+            changeAreaTexture(false,true);
+            changeHeightTexture(false,true);
+            changeShineTexture(false,true);
             let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
             htexture.needsUpdate = true;
 
