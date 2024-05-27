@@ -1,11 +1,10 @@
-import * as perlin from "./../../../misc/perlin";
+import * as perlin from "../../../misc/perlin";
 import {globals} from "../../../globals";
-import { TextureNode } from './TextureNode';
 import { ClassicPreset as Classic }  from "rete";
 import { Preview } from "../../controls/preview";
 import sockets from "../../rete/sockets";
 
-export class NoiseNode extends Classic.Node {
+export class LayeredNoiseNode extends Classic.Node {
     gridSize:number=40;
     perl: number[][]=[];
     width = 180;
@@ -13,7 +12,7 @@ export class NoiseNode extends Classic.Node {
     texture: null | Uint8ClampedArray = null;
     alpha: null | Uint8ClampedArray = null;
     constructor() {
-      super("Noise");
+      super("Layered Noise");
       this.makePerlin();
       this.addControl('preview', new Preview());
       this.addOutput('value', new Classic.Output(sockets.tex, 'Texture'));
@@ -25,7 +24,7 @@ export class NoiseNode extends Classic.Node {
     makePerlin() {
         this.gridSize=20;
         var grid = perlin.create_grid(this.gridSize);
-        this.perl = perlin.create_map(grid, this.gridSize);
+        this.perl = perlin.create_layered_map(grid, this.gridSize, 4, 0.5, 2);
     }
     makeTexture() {
         this.texture=new Uint8ClampedArray(4 * globals.textureRes * globals.textureRes);

@@ -1,3 +1,5 @@
+import { globals } from "../globals";
+
 type vector = {
     x: number,
     y: number
@@ -50,36 +52,35 @@ function dot_product_grid(grid:vector[][], x:number, y:number, ix:number, iy:num
     return (dx*grid[ix][iy].x+dy*grid[ix][iy].y);
 }
 
-export function create_map(resolution:number, grid:vector[][], grid_size:number) {
+export function create_map(grid:vector[][], grid_size:number) {
     var map:number[][] = []
-    var sample_size = grid_size/(resolution+1);
-    for(var row=0;row<(resolution+1); row++) {
+    var sample_size = grid_size/(globals.textureRes+1);
+    for(var row=0;row<(globals.textureRes+1); row++) {
         map[row]=[];
-        for(var column=0;column<(resolution+1);column++) {
+        for(var column=0;column<(globals.textureRes+1);column++) {
             map[row][column] = get_perlin(grid, sample_size*column, sample_size*row);
         }
     }
     return map;
 }
 
-export function create_layered_map(resolution:number, grid:vector[][], grid_size:number, map_scale:number, octaves:number, persistance:number, lacunarity:number) {
-    if(map_scale == 0) return; 
+export function create_layered_map(grid:vector[][], grid_size:number, octaves:number, persistance:number, lacunarity:number) {
     var map:number[][] = [];
-    var sample_size = grid_size/(resolution+1)*map_scale;
+    var sample_size = grid_size/(globals.textureRes+1);
     var lacunarity_scale_factor = Math.pow(lacunarity, octaves-1);
-    for(var row=0;row<(resolution+1)*(1/map_scale); row++) {
+    for(var row=0;row<(globals.textureRes+1); row++) {
         map[row]=[];
-        for(var column=0;column<(resolution+1)*(1/map_scale);column++) {
+        for(var column=0;column<(globals.textureRes+1);column++) {
             var value = 0;
             var frequency = 1;
             var amplitude = 1;
             for(var i=0; i<octaves; i++) {
                 value += get_perlin(grid, sample_size*column*frequency/lacunarity_scale_factor, 
-                    sample_size*row*frequency/lacunarity_scale_factor) * amplitude;
+                sample_size*row*frequency/lacunarity_scale_factor) * amplitude;
                 amplitude*=persistance;
                 frequency*=lacunarity;
             }
-            map[column][row] = value;
+            map[row][column] = value;
         }
     }
     return map;

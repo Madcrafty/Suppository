@@ -4,6 +4,7 @@ export {TextureNode} from './textures/TextureNode.ts';
 export {XNode} from "./textures/XNode.ts";
 export {YNode} from "./textures/YNode.ts";
 export {NoiseNode} from "./textures/NoiseNode.ts";
+export {LayeredNoiseNode} from "./textures/LayeredNoiseNode.ts";
 export {CircleNode} from "./textures/CircleNode.ts";
 export {ColorNode} from "./ColorNode.ts";
 export {AddNode} from "./math/AddNode.ts";
