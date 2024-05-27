@@ -10,10 +10,10 @@ var scene;
 var camera;
 var gui;
 
-//Sphere Texture and Displacement Arrays
-var textureArr;
-var displaceArr;
-var specArr;
+//Sphere Texture and Displacement Arrays (now moved to makeSphere())
+// var textureArr;
+// var displaceArr;
+// var specArr;
 
 //Sphere variables
 var resolution=1000;
@@ -24,6 +24,7 @@ var radius = 1;
 //The mouse position
 var mouseX;
 var mouseY;
+var intersectedObject;
 var mouseDown;
 var raycaster;
 var mouse;
@@ -35,6 +36,9 @@ var cameraLight;
 var ambietLight;
 var light_dir
 
+// Shape Array
+var spheres = [];
+
 //init is used to initialise any core variables.
 export function init(_renderer, _scene, _camera, _gui) {
     renderer=_renderer;
@@ -42,9 +46,7 @@ export function init(_renderer, _scene, _camera, _gui) {
     camera=_camera;
     gui = _gui;
 
-    textureArr = new Uint8ClampedArray( 4 * resolution * resolution );
-    displaceArr = new Uint8ClampedArray( 4 * resolution * resolution );
-    specArr = new Uint8ClampedArray( 4 * resolution * resolution );
+    
 }
 
 //called on start
@@ -52,9 +54,21 @@ export function start() {
     setupMouse();
     setLight();
     
-    createTexture();
 
-    sphere = makeSphere();
+    for (let i = 0; i < 3; i++) {
+        let sphere = makeSphere();
+        sphere.position.set(i * 3, 0, 0);
+        spheres.push(sphere);
+        scene.add(sphere);
+    }
+
+    // for (let i = 0; i < 3; i++) {
+    //     let cube = makeCube();
+    //     cube.position.set(i * 6, 0, 0);
+    //     spheres.push(cube);
+    //     scene.add(cube);
+    // }
+
     addShapes();
 }
 
@@ -63,16 +77,24 @@ export function run() {
 }
 
 function render() {
-    //AddMarker();
+    if (intersectedObject) {
+        AddMarker(intersectedObject.textureArr);
+    }
 
-    let texture = new THREE.DataTexture(textureArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
-    texture.needsUpdate = true;
+    for (let i = 0; i < spheres.length; i++) {
 
-    sphere.material.map = texture;
-    sphere.material.needsUpdate = true;
-
+        let texture = new THREE.DataTexture(spheres[i].textureArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
+        texture.needsUpdate = true;
+    
+        spheres[i].material.map = texture;
+        spheres[i].material.needsUpdate = true;
+    }
+    
     renderer.render(scene, camera);
-    //RemoveMarker();
+
+    if (intersectedObject) {
+        RemoveMarker(intersectedObject.textureArr);
+    }
 }
 
 function setupMouse() {
@@ -98,7 +120,7 @@ function setupMouse() {
     }, false);
 }
 
-function createTexture(){
+function createTexture(textureArr, displaceArr, specArr) {
     for (var y = 0; y < resolution; y++) {                  
         for (var x = 0; x < resolution; x++) {
             var cell = (x + y * resolution) * 4;                  
@@ -122,11 +144,10 @@ function createTexture(){
     }
 }
 
-function AddMarker(){
+function AddMarker(textureArr){
     if(!material.brushTexture) return;
     for (var y = 0; y < globals.textureRes; y++) {
         for (var x = 0; x < globals.textureRes; x++){
-
             //here, ytexcell has parameters flipped to align the axes of the brush texture and the sphere texture!
             var xtexcell = (mouseX + x - Math.ceil(globals.textureRes/2))
             var ytexcell = (mouseY - y + Math.ceil(globals.textureRes/2))
@@ -140,11 +161,10 @@ function AddMarker(){
     }
 }
 
-function RemoveMarker(){
+function RemoveMarker(textureArr){
     if(!material.brushTexture) return;
     for (var y = 0; y < globals.textureRes; y++) {
         for (var x = 0; x < globals.textureRes; x++){
-
             //here, ytexcell has parameters flipped to align the axes of the brush texture and the sphere texture!
             var xtexcell = (mouseX + x - Math.ceil(globals.textureRes/2))
             var ytexcell = (mouseY - y + Math.ceil(globals.textureRes/2))
@@ -159,7 +179,7 @@ function RemoveMarker(){
 }
 
 
-function changeAreaTexture(){
+function changeAreaTexture(textureArr){
     if(!material.brushTexture) return; 
     for (var y = 0; y < globals.textureRes; y++) {
         for (var x = 0; x < globals.textureRes; x++){
@@ -182,7 +202,7 @@ function changeAreaTexture(){
     }
 }
 
-function changeHeightTexture(){
+function changeHeightTexture(displaceArr){
     if(!material.heightTexture) return;
     for (var y = 0; y < globals.textureRes; y++) {
         for (var x = 0; x < globals.textureRes; x++){
@@ -199,7 +219,7 @@ function changeHeightTexture(){
     }
 }
 
-function changeShineTexture(){
+function changeShineTexture(specArr){
     for (var y = 0; y < globals.textureRes; y++) {
         for (var x = 0; x < globals.textureRes; x++){
             //here, yhcell has parameters flipped to align the axes of the brush texture and the sphere texture!
@@ -221,6 +241,12 @@ function changeShineTexture(){
 function makeSphere(){
     let geometry = new THREE.SphereGeometry(radius,100,100);
     
+    let textureArr = new Uint8ClampedArray( 4 * resolution * resolution );
+    let displaceArr = new Uint8ClampedArray( 4 * resolution * resolution );
+    let specArr = new Uint8ClampedArray( 4 * resolution * resolution );
+
+    createTexture(textureArr, displaceArr, specArr);
+
     let texture = new THREE.DataTexture(textureArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
     let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
     let stexture = new THREE.DataTexture(specArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
@@ -244,12 +270,56 @@ function makeSphere(){
     let sphere = new THREE.Mesh(geometry,material);
     sphere.receiveShadow=true;
     sphere.castShadow=true;
-    return sphere
+
+    sphere.textureArr = new Uint8ClampedArray(textureArr);
+    sphere.displaceArr = new Uint8ClampedArray(displaceArr);
+    sphere.specArr = new Uint8ClampedArray(specArr);
+
+    return sphere;
+}
+
+function makeCube(){
+    let geometry = new THREE.BoxGeometry(1, 1, 1);
+    
+    let textureArr = new Uint8ClampedArray( 4 * resolution * resolution );
+    let displaceArr = new Uint8ClampedArray( 4 * resolution * resolution );
+    let specArr = new Uint8ClampedArray( 4 * resolution * resolution );
+
+    createTexture(textureArr, displaceArr, specArr);
+
+    let texture = new THREE.DataTexture(textureArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
+    let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
+    let stexture = new THREE.DataTexture(specArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
+
+    texture.needsUpdate = true;
+    htexture.needsUpdate = true;
+    stexture.needsUpdate = true;
+
+    var specCol = new THREE.Color(0,0,0);
+
+    let material = new THREE.MeshPhongMaterial({
+        map: texture,
+        displacementMap:htexture,
+        displacementScale: 1,
+        specularMap:stexture,
+        specular:specCol
+    });
+
+    material.needsUpdate = true;
+
+    let cube = new THREE.Mesh(geometry,material);
+    cube.receiveShadow=true;
+    cube.castShadow=true;
+
+    cube.textureArr = new Uint8ClampedArray(textureArr);
+    cube.displaceArr = new Uint8ClampedArray(displaceArr);
+    cube.specArr = new Uint8ClampedArray(specArr);
+
+    return cube;
 }
 
 //Add initial shapes to scene
 function addShapes() {
-    scene.add(sphere);
     scene.add(ambietLight);
     scene.add(cameraLight);
     scene.add(light_dir);
@@ -276,6 +346,11 @@ function onMouseMove(event) {
         let p = intersects[0].point;
         let obj = intersects[0].object;
         let eradius = obj.position.distanceTo(p);
+
+        let textureArr = obj.textureArr;
+        let displaceArr = obj.displaceArr;
+        let specArr = obj.specArr;
+
         let x = (p.x - obj.position.x) / (eradius);
         let y = (p.y - obj.position.y) / eradius;
         let z = (p.z - obj.position.z) / eradius;
@@ -283,12 +358,14 @@ function onMouseMove(event) {
         let u = (Math.atan2(z, x) / (2 * Math.PI) + 0.5);
         let v = ((Math.asin(y) / Math.PI) + 0.5);
 
+        intersectedObject = obj;
+
         mouseX = resolution - Math.floor(u * resolution);
         mouseY = Math.floor(v * resolution);
 
         if(mouseDown){
-            changeAreaTexture();
-            changeHeightTexture();
+            changeAreaTexture(textureArr);
+            changeHeightTexture(displaceArr);
             //changeShineTexture();
             let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
             htexture.needsUpdate = true;
@@ -296,8 +373,8 @@ function onMouseMove(event) {
             let stexture = new THREE.DataTexture(specArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
             stexture.needsUpdate = true;
 
-            sphere.material.displacementMap = htexture;
-            sphere.material.specularMap = stexture;
+            obj.material.displacementMap = htexture;
+            obj.material.specularMap = stexture;
         }
     }
 }
