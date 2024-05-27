@@ -36,22 +36,31 @@ export class MathNode extends ClassicPreset.Node {
 
         return f.bind(null, Math.sqrt, Math.abs, Math.pow);
     }
-    
-    order(a: any, b: any) {
-        if (a instanceof Uint8ClampedArray)
-            return [a, b]
-
-        if (b instanceof Uint8ClampedArray)
-            return [b, a]
-        return [a, b]
-    }
 
     calculate(inputs: any, expression: any) {
-        const [a, b] = this.order(inputs['value1'] && inputs['value1'][0], inputs['value2'] && inputs['value2'][0]);
+        const a = inputs['value1'] && inputs['value1'][0]
+        const b = inputs['value2'] && inputs['value2'][0]
         const f = this.getFunction(expression);
 
-        if (typeof a === 'number')
-            return f(a, b);
+        if (typeof a === 'number') {
+            if(b instanceof Uint8ClampedArray) {
+                const result = new Uint8ClampedArray(4 * globals.textureRes * globals.textureRes);
+                b instanceof Uint8ClampedArray;
+                for (var x = 0; x < globals.textureRes; x++) {                  
+                    for (var y = 0; y < globals.textureRes; y++) {
+                        var cell = (x + y * globals.textureRes) * 4;
+                        result[cell] = f(a, b[cell]/255)*255;   
+                        result[cell + 1] = f(a, b[cell+1]/255)*255;    
+                        result[cell + 2] = f(a, b[cell+2]/255)*255;    
+                        result[cell + 3] = Math.max(a, b[cell+3]);
+                    }
+                }
+                return result;
+            } else {
+                return f(a, b);
+            }
+        }
+
 
         if (a instanceof Uint8ClampedArray) {
             const result = new Uint8ClampedArray(4 * globals.textureRes * globals.textureRes);
