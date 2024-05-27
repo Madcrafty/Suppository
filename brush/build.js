@@ -63,7 +63,7 @@ export function run() {
 }
 
 function render() {
-    //AddMarker();
+    AddMarker();
 
     let texture = new THREE.DataTexture(textureArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
     texture.needsUpdate = true;
@@ -72,7 +72,7 @@ function render() {
     sphere.material.needsUpdate = true;
 
     renderer.render(scene, camera);
-    //RemoveMarker();
+    RemoveMarker();
 }
 
 function setupMouse() {
@@ -166,7 +166,7 @@ function changeAreaTexture(){
             //here, ytexcell has parameters flipped to align the axes of the brush texture and the sphere texture!
             var xtexcell = (mouseX + x - Math.ceil(globals.textureRes/2))
             var ytexcell = (mouseY - y + Math.ceil(globals.textureRes/2))
-            var texcell = ((xtexcell + (ytexcell* resolution)) * 4) % (4*resolution*resolution);
+            var texcell = ((xtexcell + (ytexcell*resolution)) * 4) % (4*resolution*resolution);
             var cell = (x + y * globals.textureRes) * 4; 
             let alpha = material.brushTexture[cell+3]/255;
             let brushR =  alpha*material.brushTexture[cell];
