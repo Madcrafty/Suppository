@@ -16,6 +16,8 @@ export class OutputNode extends Classic.Node {
     data(inputs: any) {
       material.brushTexture = inputs['Texture'] && inputs['Texture'][0] instanceof Uint8ClampedArray ? <Uint8ClampedArray>inputs['Texture'][0] : material.brushTexture;
       material.heightTexture = inputs['Height'] && inputs['Height'][0] instanceof Uint8ClampedArray ? <Uint8ClampedArray>inputs['Height'][0] : material.heightTexture;
+      material.shineTexture = inputs['Shine'] && inputs['Shine'][0] instanceof Uint8ClampedArray ? <Uint8ClampedArray>inputs['Shine'][0] : material.shineTexture;
+
       return {};
     }
   }

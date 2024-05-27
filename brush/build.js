@@ -202,15 +202,15 @@ function changeShineTexture(){
     for (var y = 0; y < globals.textureRes; y++) {
         for (var x = 0; x < globals.textureRes; x++){
             //here, yhcell has parameters flipped to align the axes of the brush texture and the sphere texture!
-            var xhcell = (mouseX + x - Math.ceil(globals.textureRes/2))
-            var yhcell = (mouseY - y + Math.ceil(globals.textureRes/2))
-            var hcell = ((xhcell + (yhcell* resolution)) * 4) % (4*resolution*resolution);
+            var xscell = (mouseX + x - Math.ceil(globals.textureRes/2))
+            var yscell = (mouseY - y + Math.ceil(globals.textureRes/2))
+            var scell = ((xscell + (yscell* resolution)) * 4) % (4*resolution*resolution);
             var cell = (x + y * globals.textureRes) * 4; 
-            var cell = (x + y * globals.textureRes) * 2; 
+            var brushShine = ((material.shineTexture[cell] + material.shineTexture[cell+1] + material.shineTexture[cell+2])/3);
+            var finalBrushShine = brushShine * (material.shineTexture[cell+3]/255);
+            var newSH = Math.min(100,Math.max(0,specArr[scell] + brushShine));
 
-            var newSH = Math.min(100,Math.max(0,specArr[hcell] + hbrush[cell+1]));
-
-            specArr[hcell] = specArr[hcell+1] = specArr[hcell+2] = newSH;
+            specArr[scell] = specArr[scell+1] = specArr[scell+2] = newSH;
         }
     }
 }
@@ -228,7 +228,7 @@ function makeSphere(){
     htexture.needsUpdate = true;
     stexture.needsUpdate = true;
 
-    var specCol = new THREE.Color(0,0,0);
+    var specCol = new THREE.Color(10,10,10);
 
     let material = new THREE.MeshPhongMaterial({
         map: texture,
@@ -288,7 +288,7 @@ function onMouseMove(event) {
         if(mouseDown && active){
             changeAreaTexture();
             changeHeightTexture();
-            //changeShineTexture();
+            changeShineTexture();
             let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
             htexture.needsUpdate = true;
 
