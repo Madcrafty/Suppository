@@ -11,9 +11,9 @@ export class MathNode extends ClassicPreset.Node {
         this.addControl('result',new ClassicPreset.InputControl('number', { initial: 0, readonly: true }));
     }
     getFunction(expression: any) {
-        const f = new Function('sqrt, abs, a, b', 'return ' + expression);
+        const f = new Function('sqrt, abs, pow, a, b', 'return ' + expression);
 
-        return f.bind(null, Math.sqrt, Math.abs);
+        return f.bind(null, Math.sqrt, Math.abs, Math.pow);
     }
     
     order(a: any, b: any) {
@@ -41,7 +41,7 @@ export class MathNode extends ClassicPreset.Node {
                         result[cell] = f((a[cell])/255, b[cell]/255)*255;   
                         result[cell + 1] = f(a[cell+1]/255, b[cell+1]/255)*255;    
                         result[cell + 2] = f(a[cell+2]/255, b[cell+2]/255)*255;    
-                        result[cell + 3] = f(a[cell+3]/255, b[cell+3]/255)*255;     
+                        result[cell + 3] = Math.min(a[cell+3], b[cell+3]);     
                     }
                 }
             } else {
@@ -51,7 +51,7 @@ export class MathNode extends ClassicPreset.Node {
                         result[cell] = f((a[cell])/255, b)*255;   
                         result[cell + 1] = f(a[cell+1]/255, b)*255;    
                         result[cell + 2] = f(a[cell+2]/255, b)*255;    
-                        result[cell + 3] = a[cell+3];
+                        result[cell + 3] = Math.min(a[cell+3], b);
                     }
                 }
             }

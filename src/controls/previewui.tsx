@@ -12,7 +12,6 @@ export function PreviewUI(props:{data:Preview}){
     
         const context = canvas.getContext('2d');
         if (!context) return;
-        console.log("bruh");
         var image = context.createImageData(globals.textureRes, globals.textureRes);
         image.data.set(props.data.texture);
         

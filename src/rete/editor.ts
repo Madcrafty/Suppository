@@ -26,10 +26,10 @@ export async function createEditor(container: HTMLElement) {
   const contextMenu = new ContextMenuPlugin<Schemes>({
     items: ContextMenuPresets.classic.setup([
       ["Textures", [
-        ['Blank', () => new Nodes.TextureNode("Blank")],
         ['X-Coords', () => new Nodes.XNode()],
         ['Y-Coords', () => new Nodes.YNode()],
         ["Circle", ()=> new Nodes.CircleNode()],
+        ["Noise", ()=> new Nodes.NoiseNode()],
         ["Color", () => new Nodes.ColorNode(process)]
       ]],
       ["Math", [
@@ -39,6 +39,7 @@ export async function createEditor(container: HTMLElement) {
         ["Distance", () => new Nodes.DistanceNode()],
         ["Divide", () => new Nodes.DivideNode()],
         ["Multiply", () => new Nodes.MultiplyNode()],
+        ["Power", () => new Nodes.PowerNode()],
       ]],
       ['Output', () => new Nodes.OutputNode()],
     ]),
@@ -64,7 +65,7 @@ export async function createEditor(container: HTMLElement) {
 
   // #region Add Nodes and Connections to Editor
   //Create Starting Nodes
-  const a = new Nodes.NumberNode(5, process);
+  /*const a = new Nodes.NumberNode(5, process);
   const b = new Nodes.NumberNode(5, process);
   const brush = new Nodes.OutputNode();
   const add = new Nodes.AddNode();
@@ -75,7 +76,7 @@ export async function createEditor(container: HTMLElement) {
   await editor.addNode(add);
   await editor.addNode(brush);
   await editor.addConnection(new Connection(a, 'value', add, 'value1'));
-  await editor.addConnection(new Connection(b, 'value', add, 'value2'));
+  await editor.addConnection(new Connection(b, 'value', add, 'value2'));*/
   //#endregion
   //Arrange
   const arrange = new AutoArrangePlugin<Schemes>();
