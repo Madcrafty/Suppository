@@ -22,7 +22,7 @@ function start() {
 
 //Main Loop
 function run() {
-    setTimeout(() => requestAnimationFrame(run), globals.tickRate);
+    requestAnimationFrame(run);
     brush.run();
 }
 
