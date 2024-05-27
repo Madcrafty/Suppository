@@ -30,6 +30,7 @@ export async function createEditor(container: HTMLElement) {
         ['Y-Coords', () => new Nodes.YNode()],
         ["Circle", ()=> new Nodes.CircleNode()],
         ["Noise", ()=> new Nodes.NoiseNode()],
+        ["Layered Noise", ()=> new Nodes.LayeredNoiseNode()],
         ["Color", () => new Nodes.ColorNode(process)]
       ]],
       ["Math", [

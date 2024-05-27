@@ -9,6 +9,7 @@ export type Node =
   | Nodes.XNode
   | Nodes.YNode
   | Nodes.NoiseNode
+  | Nodes.LayeredNoiseNode
   | Nodes.CircleNode
   | Nodes.ColorNode
   | Nodes.AddNode
