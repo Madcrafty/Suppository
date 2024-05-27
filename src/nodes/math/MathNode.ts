@@ -49,9 +49,9 @@ export class MathNode extends ClassicPreset.Node {
                 for (var x = 0; x < globals.textureRes; x++) {                  
                     for (var y = 0; y < globals.textureRes; y++) {
                         var cell = (x + y * globals.textureRes) * 4;
-                        result[cell] = f(a, b[cell]/255)*255;   
-                        result[cell + 1] = f(a, b[cell+1]/255)*255;    
-                        result[cell + 2] = f(a, b[cell+2]/255)*255;    
+                        result[cell] = f(a, b[cell]);   
+                        result[cell + 1] = f(a, b[cell+1]);    
+                        result[cell + 2] = f(a, b[cell+2]);    
                         result[cell + 3] = Math.max(a, b[cell+3]);
                     }
                 }
@@ -78,9 +78,9 @@ export class MathNode extends ClassicPreset.Node {
                 for (var x = 0; x < globals.textureRes; x++) {                  
                     for (var y = 0; y < globals.textureRes; y++) {
                         var cell = (x + y * globals.textureRes) * 4;
-                        result[cell] = f((a[cell])/255, b)*255;   
-                        result[cell + 1] = f(a[cell+1]/255, b)*255;    
-                        result[cell + 2] = f(a[cell+2]/255, b)*255;    
+                        result[cell] = f((a[cell]), b);   
+                        result[cell + 1] = f(a[cell+1], b);    
+                        result[cell + 2] = f(a[cell+2], b);    
                         result[cell + 3] = Math.max(a[cell+3], b);
                     }
                 }
