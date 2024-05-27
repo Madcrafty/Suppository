@@ -62,12 +62,12 @@ export function start() {
         scene.add(sphere);
     }
 
-    // for (let i = 0; i < 3; i++) {
-    //     let cube = makeCube();
-    //     cube.position.set(i * 6, 0, 0);
-    //     spheres.push(cube);
-    //     scene.add(cube);
-    // }
+    for (let i = 0; i < 3; i++) {
+        let cube = makeCube();
+        cube.position.set(i * 3, 3, 0);
+        spheres.push(cube);
+        scene.add(cube);
+    }
 
     addShapes();
 }
@@ -78,7 +78,12 @@ export function run() {
 
 function render() {
     if (intersectedObject) {
-        AddMarker(intersectedObject.textureArr);
+        if (intersectedObject.geometry instanceof THREE.BoxGeometry) {
+
+        } else {
+            AddMarker(intersectedObject.textureArr);
+        }
+        
     }
 
     for (let i = 0; i < spheres.length; i++) {
@@ -93,7 +98,12 @@ function render() {
     renderer.render(scene, camera);
 
     if (intersectedObject) {
-        RemoveMarker(intersectedObject.textureArr);
+        if (intersectedObject.geometry instanceof THREE.BoxGeometry) {
+
+        } else {
+            RemoveMarker(intersectedObject.textureArr);
+        }
+        
     }
 }
 
@@ -120,7 +130,7 @@ function setupMouse() {
     }, false);
 }
 
-function createTexture(textureArr, displaceArr, specArr) {
+function createTexture(textureArr, displaceArr, specArr, factor) {
     for (var y = 0; y < resolution; y++) {                  
         for (var x = 0; x < resolution; x++) {
             var cell = (x + y * resolution) * 4;                  
@@ -132,7 +142,7 @@ function createTexture(textureArr, displaceArr, specArr) {
     for (var y = 0; y < resolution; y++) {                  
         for (var x = 0; x < resolution; x++) {
             var cell = (x + y * resolution) * 4;                  
-            displaceArr[cell] = displaceArr[cell + 1] = displaceArr[cell + 2] = 100;   
+            displaceArr[cell] = displaceArr[cell + 1] = displaceArr[cell + 2] = factor;   
             displaceArr[cell + 3]=0;                            
         }
     }
@@ -238,14 +248,14 @@ function changeShineTexture(specArr){
 
 
 
-function makeSphere(){
+function makeSphere() {
     let geometry = new THREE.SphereGeometry(radius,100,100);
     
     let textureArr = new Uint8ClampedArray( 4 * resolution * resolution );
     let displaceArr = new Uint8ClampedArray( 4 * resolution * resolution );
     let specArr = new Uint8ClampedArray( 4 * resolution * resolution );
 
-    createTexture(textureArr, displaceArr, specArr);
+    createTexture(textureArr, displaceArr, specArr, 100);
 
     let texture = new THREE.DataTexture(textureArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
     let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
@@ -274,46 +284,45 @@ function makeSphere(){
     sphere.textureArr = new Uint8ClampedArray(textureArr);
     sphere.displaceArr = new Uint8ClampedArray(displaceArr);
     sphere.specArr = new Uint8ClampedArray(specArr);
+    sphere.wrapX = true;
+    sphere.wrapY = false;
 
     return sphere;
 }
 
 function makeCube(){
     let geometry = new THREE.BoxGeometry(1, 1, 1);
-    
-    let textureArr = new Uint8ClampedArray( 4 * resolution * resolution );
-    let displaceArr = new Uint8ClampedArray( 4 * resolution * resolution );
-    let specArr = new Uint8ClampedArray( 4 * resolution * resolution );
 
-    createTexture(textureArr, displaceArr, specArr);
+    let textureArr = new Uint8ClampedArray(4 * resolution * resolution);
+    let displaceArr = new Uint8ClampedArray(4 * resolution * resolution);
+    let specArr = new Uint8ClampedArray(4 * resolution * resolution);
 
-    let texture = new THREE.DataTexture(textureArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
-    let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
-    let stexture = new THREE.DataTexture(specArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
+    createTexture(textureArr, displaceArr, specArr, 0);
+
+    let texture = new THREE.DataTexture(textureArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
+    let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
+    let stexture = new THREE.DataTexture(specArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
 
     texture.needsUpdate = true;
     htexture.needsUpdate = true;
     stexture.needsUpdate = true;
 
-    var specCol = new THREE.Color(0,0,0);
-
     let material = new THREE.MeshPhongMaterial({
         map: texture,
-        displacementMap:htexture,
+        displacementMap: htexture,
         displacementScale: 1,
-        specularMap:stexture,
-        specular:specCol
+        specularMap: stexture,
     });
 
     material.needsUpdate = true;
 
-    let cube = new THREE.Mesh(geometry,material);
+    let cube = new THREE.Mesh(geometry, material);
     cube.receiveShadow=true;
     cube.castShadow=true;
 
-    cube.textureArr = new Uint8ClampedArray(textureArr);
-    cube.displaceArr = new Uint8ClampedArray(displaceArr);
-    cube.specArr = new Uint8ClampedArray(specArr);
+    cube.textureArr = textureArr;
+    cube.displaceArr = displaceArr;
+    cube.specArr = specArr;
 
     return cube;
 }
@@ -343,27 +352,56 @@ function onMouseMove(event) {
 
 
     if(intersects[0]){
-        let p = intersects[0].point;
         let obj = intersects[0].object;
-        let eradius = obj.position.distanceTo(p);
 
-        let textureArr = obj.textureArr;
-        let displaceArr = obj.displaceArr;
-        let specArr = obj.specArr;
+        let u = intersects[0].uv.x;
+        let v = intersects[0].uv.y;
 
-        let x = (p.x - obj.position.x) / (eradius);
-        let y = (p.y - obj.position.y) / eradius;
-        let z = (p.z - obj.position.z) / eradius;
+        let textureArr;
+        let displaceArr;
+        let specArr;
 
-        let u = (Math.atan2(z, x) / (2 * Math.PI) + 0.5);
-        let v = ((Math.asin(y) / Math.PI) + 0.5);
+        let faceIndexOut;
 
         intersectedObject = obj;
 
-        mouseX = resolution - Math.floor(u * resolution);
+        mouseX = Math.floor(u * resolution);
         mouseY = Math.floor(v * resolution);
 
         if(mouseDown){
+            if (obj.geometry instanceof THREE.BoxGeometry) {
+                let faceNormal = intersects[0].face.normal;
+                console.log("cube")
+    
+                let faceIndex;
+    
+                if (faceNormal.x === 1) {
+                    faceIndex = 0;
+                } else if (faceNormal.x === -1) {
+                    faceIndex = 1;
+                } else if (faceNormal.y === 1) {
+                    faceIndex = 2;
+                } else if (faceNormal.y === -1) {
+                    faceIndex = 3;
+                } else if (faceNormal.z === 1) {
+                    faceIndex = 4;
+                } else if (faceNormal.z === -1) {
+                    faceIndex = 5;
+                }
+
+                console.log("got face " + faceIndex);
+    
+                textureArr = obj.textureArr;
+                displaceArr = obj.displaceArr;
+                specArr = obj.specArr;
+                faceIndexOut = faceIndex;
+
+            } else {
+                textureArr = obj.textureArr;
+                displaceArr = obj.displaceArr;
+                specArr = obj.specArr;
+            }
+
             changeAreaTexture(textureArr);
             changeHeightTexture(displaceArr);
             //changeShineTexture();
@@ -375,6 +413,7 @@ function onMouseMove(event) {
 
             obj.material.displacementMap = htexture;
             obj.material.specularMap = stexture;
+            obj.material.needsUpdate = true;
         }
     }
 }
