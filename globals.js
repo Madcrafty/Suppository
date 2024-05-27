@@ -3,5 +3,7 @@
 //use globals.variable to access a particular variable.
 
 export const globals = {
-    splitRatio: 0.7,
+    splitRatio: 0.5,
+    tickRate: 1,
+    textureRes: 140
 }

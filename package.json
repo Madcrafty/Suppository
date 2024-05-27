@@ -1,16 +1,20 @@
 {
-    "name": "CGLabs",
-    "version": "1.0.0",
-    "description": "",
-    "main": "bounce.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "dependencies": {
-        "@types/three": "^0.125.3",
-        "three-mtl-loader": "^1.0.2"
-    }
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "dat.gui": "^0.7.9",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "rete": "^2.0.3",
+    "rete-area-plugin": "^2.0.4",
+    "rete-connection-plugin": "^2.0.2",
+    "rete-react-plugin": "^2.0.5",
+    "rete-render-utils": "^2.0.2",
+    "three": "^0.164.1"
+  },
+  "devDependencies": {
+    "vite": "^5.2.11"
+  }
 }

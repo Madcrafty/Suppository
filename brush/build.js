@@ -1,4 +1,8 @@
-import {parameters} from "./parameters.js";
+import { GUI } from 'dat.gui';
+import * as THREE from 'three';
+import {material} from './material.js'
+import { globals } from "../globals.js";
+import { uv } from 'three/examples/jsm/nodes/Nodes.js';
 
 //Core Variables
 var renderer;
@@ -9,13 +13,10 @@ var gui;
 //Sphere Texture and Displacement Arrays
 var textureArr;
 var displaceArr;
-
-//Brush and Height Brush Arrays
-var brush;
-var hbrush;
+var specArr;
 
 //Sphere variables
-var resolution=200;
+var resolution=1000;
 var offset = 0;
 var sphere;
 var radius = 1;
@@ -27,9 +28,12 @@ var mouseDown;
 var raycaster;
 var mouse;
 
+var active = true;
+
 //Lighting
 var cameraLight;
 var ambietLight;
+var light_dir
 
 //init is used to initialise any core variables.
 export function init(_renderer, _scene, _camera, _gui) {
@@ -38,31 +42,17 @@ export function init(_renderer, _scene, _camera, _gui) {
     camera=_camera;
     gui = _gui;
 
-    brush = new Uint8Array( 4 * parameters.brushKern * parameters.brushKern );
-    hbrush = new Int8Array( parameters.brushKern * parameters.brushKern );
-    textureArr = new Uint8Array( 4 * resolution * resolution );
-    displaceArr = new Uint8Array( 3 * resolution * resolution );
-
-    gui.addColor(parameters,'brushColor').onChange(function(){
-        createBrush();
-    });
-    gui.add(parameters,'brushSize',0,parameters.brushKern,1).onChange(function(){
-        createBrush();
-    });
-    gui.add(parameters,'brushAlpha',0,255).onChange(function(){
-        createBrush();
-    });
-    gui.add(parameters,'brushHeight',-2,2).onChange(function(){
-        createBrush();
-    });
+    textureArr = new Uint8ClampedArray( 4 * resolution * resolution );
+    displaceArr = new Uint8ClampedArray( 4 * resolution * resolution );
+    specArr = new Uint8ClampedArray( 4 * resolution * resolution );
 }
 
 //called on start
 export function start() {
     setupMouse();
     setLight();
+    
     createTexture();
-    createBrush();
 
     sphere = makeSphere();
     addShapes();
@@ -75,10 +65,8 @@ export function run() {
 function render() {
     AddMarker();
 
-    let texture = new THREE.DataTexture(textureArr, resolution, resolution, THREE.RGBAFormat);
-    texture.type = THREE.UnsignedByteType;
+    let texture = new THREE.DataTexture(textureArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
     texture.needsUpdate = true;
-
 
     sphere.material.map = texture;
     sphere.material.needsUpdate = true;
@@ -111,50 +99,41 @@ function setupMouse() {
 }
 
 function createTexture(){
-    for (var x = 0; x < resolution; x++) {                  
-        for (var y = 0; y < resolution; y++) {
+    for (var y = 0; y < resolution; y++) {                  
+        for (var x = 0; x < resolution; x++) {
             var cell = (x + y * resolution) * 4;                  
-            textureArr[cell] = textureArr[cell + 1] = textureArr[cell + 2] = 255;                               
+            textureArr[cell] = textureArr[cell + 1] = textureArr[cell + 2] = (y/resolution)*255;                               
             textureArr[cell + 3] = 255; // parameters.brushAlpha.
         }
     }
 
-    for (var x = 0; x < resolution; x++) {                  
-        for (var y = 0; y < resolution; y++) {
-            var cell = (x + y * resolution) * 3;                  
-            displaceArr[cell] = displaceArr[cell + 1] = displaceArr[cell + 2] = 100;                               
+    for (var y = 0; y < resolution; y++) {                  
+        for (var x = 0; x < resolution; x++) {
+            var cell = (x + y * resolution) * 4;                  
+            displaceArr[cell] = displaceArr[cell + 1] = displaceArr[cell + 2] = 100;   
+            displaceArr[cell + 3]=0;                            
         }
     }
-}
-
-
-function createBrush(){
-    for (var x = 0; x < parameters.brushKern; x++) {                  
-        for (var y = 0; y < parameters.brushKern; y++) {
-            var cell = (x + y * parameters.brushKern) * 4;
-            var hcell = (x + y * parameters.brushKern);
-            
-            if(Math.sqrt(((x-Math.ceil(parameters.brushKern/2))**2)+((y-Math.ceil(parameters.brushKern/2))**2)) < parameters.brushSize){
-                brush[cell + 3] = parameters.brushAlpha;
-                hbrush[hcell] = parameters.brushHeight;                        
-            } else {
-                brush[cell + 3] = 0;
-                hbrush[hcell] = 0;
-            }
-            brush[cell] = parameters.brushColor.r;
-            brush[cell+1] = parameters.brushColor.g;
-            brush[cell+2] = parameters.brushColor.b;
+    for (var y = 0; y < resolution; y++) {                  
+        for (var x = 0; x < resolution; x++) {
+            var cell = (x + y * resolution) * 4;                  
+            specArr[cell] = specArr[cell + 1] = specArr[cell + 2] = 0;                               
         }
     }
 }
 
 function AddMarker(){
-    for (var x = 0; x < parameters.brushKern; x++) {                  
-        for (var y = 0; y < parameters.brushKern; y++) {
-            var texcell = (((mouseX + x - Math.ceil(parameters.brushKern/2)) + ((mouseY + y - Math.ceil(parameters.brushKern/2)) * resolution)) * 4)%(4*resolution*resolution);
-            var cell = (x + y * parameters.brushKern) * 4; 
+    if(!material.brushTexture) return;
+    for (var y = 0; y < globals.textureRes; y++) {
+        for (var x = 0; x < globals.textureRes; x++){
 
-            if(brush[cell + 3] > 0){
+            //here, ytexcell has parameters flipped to align the axes of the brush texture and the sphere texture!
+            var xtexcell = (mouseX + x - Math.ceil(globals.textureRes/2))
+            var ytexcell = (mouseY - y + Math.ceil(globals.textureRes/2))
+            var texcell = ((xtexcell + (ytexcell* resolution)) * 4) % (4*resolution*resolution);
+            var cell = (x + y * globals.textureRes) * 4; 
+
+            if(material.brushTexture[cell + 3] > 0){
                 textureArr[texcell+1] = textureArr[texcell+1] + 25;
             }
         }
@@ -162,12 +141,17 @@ function AddMarker(){
 }
 
 function RemoveMarker(){
-    for (var x = 0; x < parameters.brushKern; x++) {                  
-        for (var y = 0; y < parameters.brushKern; y++) {
-            var texcell = (((mouseX + x - Math.ceil(parameters.brushKern/2)) + ((mouseY + y - Math.ceil(parameters.brushKern/2)) * resolution)) * 4)%(4*resolution*resolution);
-            var cell = (x + y * parameters.brushKern) * 4; 
+    if(!material.brushTexture) return;
+    for (var y = 0; y < globals.textureRes; y++) {
+        for (var x = 0; x < globals.textureRes; x++){
+
+            //here, ytexcell has parameters flipped to align the axes of the brush texture and the sphere texture!
+            var xtexcell = (mouseX + x - Math.ceil(globals.textureRes/2))
+            var ytexcell = (mouseY - y + Math.ceil(globals.textureRes/2))
+            var texcell = ((xtexcell + (ytexcell* resolution)) * 4) % (4*resolution*resolution);
+            var cell = (x + y * globals.textureRes) * 4; 
             
-            if(brush[cell + 3] > 0){
+            if(material.brushTexture[cell + 3] > 0){
                 textureArr[texcell+1] = textureArr[texcell+1] - 25;
             }
         }
@@ -176,52 +160,90 @@ function RemoveMarker(){
 
 
 function changeAreaTexture(){
-    for (var x = 0; x < parameters.brushKern; x++) {                  
-        for (var y = 0; y < parameters.brushKern; y++) {
-            var texcell = (((mouseX + x - Math.ceil(parameters.brushKern/2)) + ((mouseY + y - Math.ceil(parameters.brushKern/2)) * resolution)) * 4)%(4*resolution*resolution);
-            var cell = (x + y * parameters.brushKern) * 4; 
-
-            textureArr[texcell] = Math.ceil(((brush[cell + 3]*brush[cell])+((255 - brush[cell + 3])*textureArr[texcell]))/255);
-            textureArr[texcell+1] = Math.ceil(((brush[cell + 3]*brush[cell+1])+((255 - brush[cell + 3])*textureArr[texcell+1]))/255);
-            textureArr[texcell+2] = Math.ceil(((brush[cell + 3]*brush[cell+2])+((255 - brush[cell + 3])*textureArr[texcell+2]))/255);
+    if(!material.brushTexture) return; 
+    for (var y = 0; y < globals.textureRes; y++) {
+        for (var x = 0; x < globals.textureRes; x++){
+            //here, ytexcell has parameters flipped to align the axes of the brush texture and the sphere texture!
+            var xtexcell = (mouseX + x - Math.ceil(globals.textureRes/2))
+            var ytexcell = (mouseY - y + Math.ceil(globals.textureRes/2))
+            var texcell = ((xtexcell + (ytexcell*resolution)) * 4) % (4*resolution*resolution);
+            var cell = (x + y * globals.textureRes) * 4; 
+            let alpha = material.brushTexture[cell+3]/255;
+            let brushR =  alpha*material.brushTexture[cell];
+            let brushG = alpha*material.brushTexture[cell+1];
+            let brushB = alpha*material.brushTexture[cell+2];
+            let texR = (1-alpha)*textureArr[texcell]
+            let texG = (1-alpha)*textureArr[texcell+1]
+            let texB = (1-alpha)*textureArr[texcell+2]
+            textureArr[texcell] = Math.ceil(brushR+texR);
+            textureArr[texcell+1] = Math.ceil(brushG+texG);
+            textureArr[texcell+2] = Math.ceil(brushB+texB);
         }
     }
 }
 
-function changeHeightTexture(offx,offy){
-    for (var x = 0; x < parameters.brushKern; x++) {                  
-        for (var y = 0; y < parameters.brushKern; y++) {
-            var hcell = (((mouseX + x - Math.ceil(parameters.brushKern/2)) + ((mouseY + y - Math.ceil(parameters.brushKern/2)) * resolution)) * 3)%(3*resolution*resolution);
-            var cell = (x + y * parameters.brushKern); 
-
-            var newH = Math.min(255,Math.max(0,displaceArr[hcell] + hbrush[cell]));
-
+function changeHeightTexture(){
+    if(!material.heightTexture) return;
+    for (var y = 0; y < globals.textureRes; y++) {
+        for (var x = 0; x < globals.textureRes; x++){
+            //here, yhcell has parameters flipped to align the axes of the brush texture and the sphere texture!
+            var xhcell = (mouseX + x - Math.ceil(globals.textureRes/2))
+            var yhcell = (mouseY - y + Math.ceil(globals.textureRes/2))
+            var hcell = ((xhcell + (yhcell* resolution)) * 4) % (4*resolution*resolution);
+            var cell = (x + y * globals.textureRes) * 4; 
+            var brushHeight = ((material.heightTexture[cell] + material.heightTexture[cell+1] + material.heightTexture[cell+2])/3);
+            var finalBrushHeight = brushHeight * (material.heightTexture[cell+3]/255);
+            var newH = Math.min(255,Math.max(0,displaceArr[hcell] + brushHeight));
             displaceArr[hcell] = displaceArr[hcell+1] = displaceArr[hcell+2] = newH;
         }
     }
 }
 
+function changeShineTexture(){
+    for (var y = 0; y < globals.textureRes; y++) {
+        for (var x = 0; x < globals.textureRes; x++){
+            //here, yhcell has parameters flipped to align the axes of the brush texture and the sphere texture!
+            var xscell = (mouseX + x - Math.ceil(globals.textureRes/2))
+            var yscell = (mouseY - y + Math.ceil(globals.textureRes/2))
+            var scell = ((xscell + (yscell* resolution)) * 4) % (4*resolution*resolution);
+            var cell = (x + y * globals.textureRes) * 4; 
+            var brushShine = ((material.shineTexture[cell] + material.shineTexture[cell+1] + material.shineTexture[cell+2])/3);
+            var finalBrushShine = brushShine * (material.shineTexture[cell+3]/255);
+            var newSH = Math.min(100,Math.max(0,specArr[scell] + brushShine));
+
+            specArr[scell] = specArr[scell+1] = specArr[scell+2] = newSH;
+        }
+    }
+}
+
+
+
 function makeSphere(){
     let geometry = new THREE.SphereGeometry(radius,100,100);
     
-    let texture = new THREE.DataTexture(textureArr, resolution, resolution, THREE.RGBAFormat);
-    let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBFormat);
-    
-    texture.type = THREE.UnsignedByteType;
-    texture.needsUpdate = true;
+    let texture = new THREE.DataTexture(textureArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
+    let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
+    let stexture = new THREE.DataTexture(specArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
 
-    htexture.type = THREE.UnsignedByteType;
+    texture.needsUpdate = true;
     htexture.needsUpdate = true;
+    stexture.needsUpdate = true;
+
+    var specCol = new THREE.Color(10,10,10);
 
     let material = new THREE.MeshPhongMaterial({
         map: texture,
         displacementMap:htexture,
-        displacementScale: 1
+        displacementScale: 1,
+        specularMap:stexture,
+        specular:specCol
     });
 
     material.needsUpdate = true;
 
     let sphere = new THREE.Mesh(geometry,material);
+    sphere.receiveShadow=true;
+    sphere.castShadow=true;
     return sphere
 }
 
@@ -229,15 +251,21 @@ function makeSphere(){
 function addShapes() {
     scene.add(sphere);
     scene.add(ambietLight);
+    scene.add(cameraLight);
+    scene.add(light_dir);
 }
 
 function setLight(){
-    cameraLight = new THREE.PointLight(new THREE.Color(0xffffff),0.5);
+    cameraLight = new THREE.PointLight(new THREE.Color(0xffffff),1);
     camera.add(cameraLight);
-    ambietLight = new THREE.AmbientLight(new THREE.Color(0xffffff),0.5);
+    ambietLight = new THREE.AmbientLight(new THREE.Color(0xffffff),0.2);
+    light_dir = new THREE.DirectionalLight(0xffffff, 1);
+    light_dir.position.set(-50, 40, 50);
+    light_dir.castShadow=true;
 }
 
 function onMouseMove(event) {
+    
     mouse.set((event.clientX / renderer.domElement.clientWidth) * 2 - 1, -(event.clientY / renderer.domElement.clientHeight) * 2 + 1);
     raycaster.setFromCamera(mouse, camera);
   
@@ -245,24 +273,29 @@ function onMouseMove(event) {
 
 
     if(intersects[0]){
-        let p = intersects[0].point;
-        let x = (p.x - sphere.position.x) / (radius);
-        let y = (p.y - sphere.position.y) / radius;
-        let z = (p.z - sphere.position.z) / radius;
+        let u = intersects[0].uv.x;
+        let v = intersects[0].uv.y;
 
-        let u = (Math.atan2(z, x) / (2 * Math.PI) + 0.5);
-        let v = ((Math.asin(y) / Math.PI) + 0.5);
-
-        mouseX = resolution - Math.floor(u * resolution);
+        mouseX = Math.floor(u * resolution);
         mouseY = Math.floor(v * resolution);
 
-        if(mouseDown){
+        if(mouseDown && active){
             changeAreaTexture();
             changeHeightTexture();
-            let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBFormat);
-            htexture.type = THREE.UnsignedByteType;
+            changeShineTexture();
+            let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
             htexture.needsUpdate = true;
+
+            let stexture = new THREE.DataTexture(specArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
+            stexture.needsUpdate = true;
+
             sphere.material.displacementMap = htexture;
+            sphere.material.specularMap = stexture;
+
+            active = false;
+            setTimeout(() => {
+                active = true;
+            },globals.tickRate)
         }
     }
 }

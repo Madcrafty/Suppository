@@ -1,16 +1,16 @@
-import { DepthPackingStrategies } from '../constants';
-import { MaterialParameters, Material } from './Material';
-import { Texture } from './../textures/Texture';
+import { DepthPackingStrategies } from '../constants.js';
+import { MaterialParameters, Material } from './Material.js';
+import { Texture } from './../textures/Texture.js';
 
 export interface MeshDepthMaterialParameters extends MaterialParameters {
-    map?: Texture | null;
-    alphaMap?: Texture | null;
-    depthPacking?: DepthPackingStrategies;
-    displacementMap?: Texture | null;
-    displacementScale?: number;
-    displacementBias?: number;
-    wireframe?: boolean;
-    wireframeLinewidth?: number;
+    map?: Texture | null | undefined;
+    alphaMap?: Texture | null | undefined;
+    depthPacking?: DepthPackingStrategies | undefined;
+    displacementMap?: Texture | null | undefined;
+    displacementScale?: number | undefined;
+    displacementBias?: number | undefined;
+    wireframe?: boolean | undefined;
+    wireframeLinewidth?: number | undefined;
 }
 
 export class MeshDepthMaterial extends Material {
