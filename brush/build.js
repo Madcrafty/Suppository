@@ -27,7 +27,7 @@ var mouseDown;
 var raycaster;
 var mouse;
 
-var active;
+var active = true;
 
 //Lighting
 var cameraLight;
@@ -285,7 +285,7 @@ function onMouseMove(event) {
         mouseX = resolution - Math.floor(u * resolution);
         mouseY = Math.floor(v * resolution);
 
-        if(mouseDown){
+        if(mouseDown && active){
             changeAreaTexture();
             changeHeightTexture();
             //changeShineTexture();
@@ -297,6 +297,11 @@ function onMouseMove(event) {
 
             sphere.material.displacementMap = htexture;
             sphere.material.specularMap = stexture;
+
+            active = false;
+            setTimeout(() => {
+                active = true;
+            },globals.tickRate)
         }
     }
 }
