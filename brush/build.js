@@ -2,6 +2,7 @@ import { GUI } from 'dat.gui';
 import * as THREE from 'three';
 import {material} from './material.js'
 import { globals } from "../globals.js";
+import { uv } from 'three/examples/jsm/nodes/Nodes.js';
 
 //Core Variables
 var renderer;
@@ -272,17 +273,10 @@ function onMouseMove(event) {
 
 
     if(intersects[0]){
-        let p = intersects[0].point;
-        let obj = intersects[0].object;
-        let eradius = obj.position.distanceTo(p);
-        let x = (p.x - obj.position.x) / (eradius);
-        let y = (p.y - obj.position.y) / eradius;
-        let z = (p.z - obj.position.z) / eradius;
+        let u = intersects[0].uv.x;
+        let v = intersects[0].uv.y;
 
-        let u = (Math.atan2(z, x) / (2 * Math.PI) + 0.5);
-        let v = ((Math.asin(y) / Math.PI) + 0.5);
-
-        mouseX = resolution - Math.floor(u * resolution);
+        mouseX = Math.floor(u * resolution);
         mouseY = Math.floor(v * resolution);
 
         if(mouseDown && active){
