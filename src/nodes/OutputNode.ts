@@ -1,4 +1,4 @@
-import { ClassicPreset as Classic, GetSchemes, NodeEditor } from 'rete';
+import { ClassicPreset as Classic } from 'rete';
 import sockets from '../rete/sockets';
 import {material} from "../../brush/material"
 
@@ -14,10 +14,8 @@ export class OutputNode extends Classic.Node {
       this.addInput('Shine', new Classic.Input(sockets.tex, 'Shine'));
     }
     data(inputs: any) {
-      const texture = inputs['Texture'] && inputs['Texture'][0] instanceof Uint8ClampedArray ? inputs['Texture'][0] : null;
-      const htexture = inputs['Height'] && inputs['Height'][0] instanceof Uint8ClampedArray ? inputs['Height'][0] : null;
-      material.brushTexture = texture ? texture : material.brushTexture;
-      material.heightTexture = htexture;
+      material.brushTexture = inputs['Texture'] && inputs['Texture'][0] instanceof Uint8ClampedArray ? <Uint8ClampedArray>inputs['Texture'][0] : material.brushTexture;
+      material.heightTexture = inputs['Height'] && inputs['Height'][0] instanceof Uint8ClampedArray ? <Uint8ClampedArray>inputs['Height'][0] : material.heightTexture;
       return {};
     }
   }
