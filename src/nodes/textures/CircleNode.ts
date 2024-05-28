@@ -30,7 +30,7 @@ export class CircleNode extends Classic.Node {
                 var xval = (x/globals.textureRes);
                 var yval = 1-(y/globals.textureRes);
                 var val = 0;
-                if(((xval-0.5)*(xval-0.5))+((yval-0.5)*(yval-0.5)) < Math.sqrt(this.size/100)) {
+                if(((xval-0.5)*(xval-0.5))+((yval-0.5)*(yval-0.5)) <= (this.size*this.size)) {
                     val = 255;
                 }
                 if(this.alpha) {
