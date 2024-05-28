@@ -9,14 +9,14 @@ export class OutputNode extends Classic.Node {
     constructor() {
       super('Output');
   
-      this.addInput('Texture', new Classic.Input(sockets.tex, 'Texture'));
-      this.addInput('Height', new Classic.Input(sockets.tex, 'Height'));
-      this.addInput('Shine', new Classic.Input(sockets.tex, 'Shine'));
+      this.addInput('texture', new Classic.Input(sockets.tex, 'Texture'));
+      this.addInput('height', new Classic.Input(sockets.tex, 'Height'));
+      this.addInput('shine', new Classic.Input(sockets.tex, 'Shine'));
     }
     data(inputs: any) {
-      material.brushTexture = inputs['Texture'] && inputs['Texture'][0] instanceof Int16Array ? utils.int16touint8clamped(inputs['Texture'][0]) : material.brushTexture;
-      material.heightTexture = inputs['Height'] && inputs['Height'][0] instanceof Int16Array ? inputs['Height'][0] : material.heightTexture;
-      material.shineTexture = inputs['Shine'] && inputs['Shine'][0] instanceof Int16Array ? utils.int16touint8clamped(inputs['Shine'][0]) : material.shineTexture;
+      material.brushTexture = inputs['texture'] && inputs['texture'][0] instanceof Int16Array ? utils.int16touint8clamped(inputs['texture'][0]) : material.brushTexture;
+      material.heightTexture = inputs['height'] && inputs['height'][0] instanceof Int16Array ? inputs['height'][0] : material.heightTexture;
+      material.shineTexture = inputs['shine'] && inputs['shine'][0] instanceof Int16Array ? utils.int16touint8clamped(inputs['shine'][0]) : material.shineTexture;
       return {};
     }
   }

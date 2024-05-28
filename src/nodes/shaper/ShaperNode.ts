@@ -6,6 +6,8 @@ import { Preview } from '../../controls/preview';
 export class ShaperNode extends ClassicPreset.Node {
     texture: null | Int16Array = null;
     alpha: null | Int16Array = null;
+    width = 180;
+    height = 350;
     constructor(label:string) {
         super(label);
         this.addInput('input', new ClassicPreset.Input(sockets.val, 'Value'));

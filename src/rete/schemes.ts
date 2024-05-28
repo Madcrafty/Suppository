@@ -5,7 +5,6 @@ import {Connection} from './connection';
 export type Node = 
   | Nodes.NumberNode
   | Nodes.OutputNode
-  | Nodes.TextureNode
   | Nodes.XNode
   | Nodes.YNode
   | Nodes.NoiseNode
@@ -26,5 +25,17 @@ export type Node =
 export type Conn = 
   | Connection<Nodes.NumberNode, Nodes.OutputNode>
   | Connection<Nodes.NumberNode, Nodes.AddNode>
-  | Connection<Nodes.AddNode, Nodes.OutputNode>
+  | Connection<Nodes.NumberNode, Nodes.SubtractNode>
+  | Connection<Nodes.NumberNode, Nodes.MultiplyNode>
+  | Connection<Nodes.NumberNode, Nodes.DistanceNode>
+  | Connection<Nodes.NumberNode, Nodes.DivideNode>
+  | Connection<Nodes.AddNode, Nodes.SinNode>
+  | Connection<Nodes.AddNode, Nodes.CosNode>
+  | Connection<Nodes.CircleNode, Nodes.OutputNode>
+  | Connection<Nodes.ColorNode, Nodes.OutputNode>
+  | Connection<Nodes.ColorNode, Nodes.CircleNode>
+  | Connection<Nodes.ColorNode, Nodes.SinNode>
+  | Connection<Nodes.PiNode, Nodes.SinNode>
+  | Connection<Nodes.PiNode, Nodes.MultiplyNode>
+  | Connection<Nodes.CircleNode, Nodes.SubtractNode>
 export type Schemes = GetSchemes<Node, Conn>; 

@@ -74,20 +74,48 @@ export async function createEditor(container: HTMLElement) {
 
   
   const output = new Nodes.OutputNode();
+  const x = new Nodes.XNode();
+  const y = new Nodes.YNode();
+  const multi1 = new Nodes.MultiplyNode();
+  const multi2 = new Nodes.MultiplyNode();
+  const pi = new Nodes.PiNode();
+  const sin1 = new Nodes.SinNode();
+  const sin2 = new Nodes.SinNode();
+  const dist = new Nodes.DistanceNode();
+  const num = new Nodes.NumberNode(255, process);
+  const circle = new Nodes.CircleNode(0.3, process);
+  const sub = new Nodes.SubtractNode();
+
   // #region Add Nodes and Connections to Editor
   //Create Starting Nodes
-  /*const a = new Nodes.NumberNode(5, process);
-  const b = new Nodes.NumberNode(5, process);
-  const brush = new Nodes.OutputNode();
-  const add = new Nodes.AddNode();
-
   //Add Nodes and Connections to Editor
-  await editor.addNode(a);
-  await editor.addNode(b);
-  await editor.addNode(add);
-  await editor.addNode(brush);
-  await editor.addConnection(new Connection(a, 'value', add, 'value1'));
-  await editor.addConnection(new Connection(b, 'value', add, 'value2'));*/
+
+  await editor.addNode(output);
+  await editor.addNode(x);
+  await editor.addNode(y);
+  await editor.addNode(multi1);
+  await editor.addNode(multi2);
+  await editor.addNode(pi);
+  await editor.addNode(sin1);
+  await editor.addNode(sin2);
+  await editor.addNode(dist);
+  await editor.addNode(num);
+  await editor.addNode(circle);
+  await editor.addNode(sub);
+
+  await editor.addConnection(new Connection(x, 'value', multi1, 'value1'));
+  await editor.addConnection(new Connection(pi, 'value', multi1, 'value2'));
+  await editor.addConnection(new Connection(y, 'value', multi2, 'value1'));
+  await editor.addConnection(new Connection(pi, 'value', multi2, 'value2'));
+  await editor.addConnection(new Connection(multi1, 'value', sin1, 'input'));
+  await editor.addConnection(new Connection(multi2, 'value', sin2, 'input'));
+  await editor.addConnection(new Connection(sin1, 'value', dist, 'value1'));
+  await editor.addConnection(new Connection(sin2, 'value', dist, 'value2'));
+  await editor.addConnection(new Connection(num, 'value', sub, 'value1'));
+  await editor.addConnection(new Connection(dist, 'value', sub, 'value2'));
+  await editor.addConnection(new Connection(circle, 'value', sub, 'alpha'));
+  await editor.addConnection(new Connection(sub, 'value', output, 'texture'));
+  await editor.addConnection(new Connection(sub, 'value', output, 'height'));
   //#endregion
   //Arrange
   const arrange = new AutoArrangePlugin<Schemes>();

@@ -6,6 +6,8 @@ import { Preview } from '../../controls/preview';
 export class MathNode extends ClassicPreset.Node {
     texture: null | Int16Array = null;
     alpha: null | Int16Array = null;
+    width = 180;
+    height = 380;
     constructor(label:string) {
         super(label);
         

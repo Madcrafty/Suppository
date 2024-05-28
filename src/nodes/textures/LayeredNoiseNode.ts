@@ -7,6 +7,8 @@ import sockets from "../../rete/sockets";
 export class LayeredNoiseNode extends Classic.Node {
     gridSize:number=40;
     perl: number[][]=[];
+    width = 180;
+    height = 270;
     texture: null | Int16Array = null;
     alpha: null | Int16Array = null;
     constructor() {
