@@ -60,9 +60,9 @@ export class MathNode extends ClassicPreset.Node {
                           } else {
                             var alpha = 255;
                           }
-                        result[cell] = f(a, b[cell]);   
-                        result[cell + 1] = f(a, b[cell+1]);    
-                        result[cell + 2] = f(a, b[cell+2]);    
+                        result[cell] = f(a*255, b[cell]);   
+                        result[cell + 1] = f(a*255, b[cell+1]);    
+                        result[cell + 2] = f(a*255, b[cell+2]);    
                         result[cell + 3] = alpha;
                     }
                 }
@@ -99,9 +99,9 @@ export class MathNode extends ClassicPreset.Node {
                           } else {
                             var alpha = 255;
                           }
-                        result[cell] = f((a[cell]), b);   
-                        result[cell + 1] = f(a[cell+1], b);    
-                        result[cell + 2] = f(a[cell+2], b);    
+                        result[cell] = f((a[cell]), b*255);   
+                        result[cell + 1] = f(a[cell+1], b*255);    
+                        result[cell + 2] = f(a[cell+2], b*255);    
                         result[cell + 3] = alpha;
                     }
                 }
