@@ -28,7 +28,7 @@ export async function createEditor(container: HTMLElement) {
       ["Textures", [
         ['X-Coords', () => new Nodes.XNode()],
         ['Y-Coords', () => new Nodes.YNode()],
-        ["Circle", ()=> new Nodes.CircleNode()],
+        ["Circle", ()=> new Nodes.CircleNode(1, process)],
         ["Noise", ()=> new Nodes.NoiseNode()],
         ["Layered Noise", ()=> new Nodes.LayeredNoiseNode()],
         ["Color", () => new Nodes.ColorNode(process)]

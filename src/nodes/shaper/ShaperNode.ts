@@ -8,7 +8,6 @@ export class ShaperNode extends ClassicPreset.Node {
     alpha: null | Int16Array = null;
     constructor(label:string) {
         super(label);
-        
         this.addInput('input', new ClassicPreset.Input(sockets.val, 'Value'));
         this.addControl('preview', new Preview());
         this.addInput('alpha', new ClassicPreset.Input(sockets.tex, "Alpha"));
