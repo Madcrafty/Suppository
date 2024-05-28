@@ -88,7 +88,7 @@ export function run() {
 
 function render() {
     if (intersectedObject) {
-        if (intersectedObject.geometry instanceof THREE.BoxGeometry) {
+        if ((intersectedObject.geometry instanceof THREE.BoxGeometry) || (intersectedObject.geometry instanceof THREE.CylinderGeometry)) {
             AddMarker(intersectedObject.textureArrs[faceIndexOut]);
         } else {
             AddMarker(intersectedObject.textureArr);
@@ -115,7 +115,7 @@ function render() {
     renderer.render(scene, camera);
 
     if (intersectedObject) {
-        if (intersectedObject.geometry instanceof THREE.BoxGeometry) {
+        if ((intersectedObject.geometry instanceof THREE.BoxGeometry) || (intersectedObject.geometry instanceof THREE.CylinderGeometry)) {
             RemoveMarker(intersectedObject.textureArrs[faceIndexOut]);
         } else {
             RemoveMarker(intersectedObject.textureArr);
