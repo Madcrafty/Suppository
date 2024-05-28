@@ -102,7 +102,7 @@ function createTexture(){
     for (var y = 0; y < resolution; y++) {                  
         for (var x = 0; x < resolution; x++) {
             var cell = (x + y * resolution) * 4;                  
-            textureArr[cell] = textureArr[cell + 1] = textureArr[cell + 2] = (y/resolution)*255;                               
+            textureArr[cell] = textureArr[cell + 1] = textureArr[cell + 2] = 255;                               
             textureArr[cell + 3] = 255; // parameters.brushAlpha.
         }
     }
@@ -295,10 +295,10 @@ function addShapes() {
 }
 
 function setLight(){
-    cameraLight = new THREE.PointLight(new THREE.Color(0xffffff),0.5);
+    cameraLight = new THREE.PointLight(new THREE.Color(0xffffff),1.0);
     camera.add(cameraLight);
-    ambietLight = new THREE.AmbientLight(new THREE.Color(0xffffff),1.0);
-    light_dir = new THREE.DirectionalLight(0xffffff, 1.0);
+    ambietLight = new THREE.AmbientLight(new THREE.Color(0xffffff),0.2);
+    light_dir = new THREE.DirectionalLight(0xffffff, 0.0);
     light_dir.position.set(-50, 40, 50);
     light_dir.castShadow=true;
 }
