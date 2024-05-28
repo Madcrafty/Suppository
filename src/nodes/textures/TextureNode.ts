@@ -12,7 +12,7 @@ export class TextureNode extends Classic.Node {
       super(label);
       this.addControl('preview', new Preview());
       this.addOutput('value', new Classic.Output(sockets.tex, 'Texture'));
-      this.addInput('alpha', new Classic.Input(sockets.tex, "alpha"));
+      this.addInput('alpha', new Classic.Input(sockets.tex, "Alpha"));
       this.makeTexture();
       if(!this.texture) return;
       (this.controls['preview'] as Preview).setTexture(this.texture);

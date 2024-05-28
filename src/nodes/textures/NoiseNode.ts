@@ -8,8 +8,6 @@ import sockets from "../../rete/sockets";
 export class NoiseNode extends Classic.Node {
     gridSize:number=20;
     perl: number[][]=[];
-    width = 180;
-    height = 270;
     texture: null | Int16Array = null;
     alpha: null | Int16Array = null;
     constructor() {
@@ -17,7 +15,7 @@ export class NoiseNode extends Classic.Node {
       this.makePerlin();
       this.addControl('preview', new Preview());
       this.addOutput('value', new Classic.Output(sockets.tex, 'Texture'));
-      this.addInput('alpha', new Classic.Input(sockets.tex, "alpha"));
+      this.addInput('alpha', new Classic.Input(sockets.tex, "Alpha"));
       this.makeTexture();
       if(!this.texture) return;
       (this.controls['preview'] as Preview).setTexture(this.texture);
