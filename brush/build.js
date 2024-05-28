@@ -59,21 +59,21 @@ export function start() {
     
 
     for (let i = 0; i < 3; i++) {
-        let sphere = makeSphere();
+        let sphere = makeSphere(1);
         sphere.position.set(i * 3, 0, 0);
         spheres.push(sphere);
         scene.add(sphere);
     }
 
     for (let i = 0; i < 3; i++) {
-        let cube = makeCube();
+        let cube = makeCube(1, 1, 1);
         cube.position.set(i * 3, 3, 0);
         spheres.push(cube);
         scene.add(cube);
     }
 
     for (let i = 0; i < 3; i++) {
-        let cylinder = makeCylinder();
+        let cylinder = makeCylinder(1, 1, 2);
         cylinder.position.set(i * 3, -3, 0);
         spheres.push(cylinder);
         scene.add(cylinder);
@@ -265,7 +265,7 @@ function changeShineTexture(specArr){
 
 
 
-function makeSphere() {
+function makeSphere(radius) {
     let geometry = new THREE.SphereGeometry(radius,100,100);
     
     let textureArr = new Uint8ClampedArray( 4 * resolution * resolution );
@@ -307,8 +307,8 @@ function makeSphere() {
     return sphere;
 }
 
-function makeCube(){
-    let geometry = new THREE.BoxGeometry(1, 1, 1, 20, 20, 20);
+function makeCube(wi, hi, le){
+    let geometry = new THREE.BoxGeometry(wi, hi, le, 20, 20, 20);
 
     let textureArrs = [];
     let displaceArrs = [];
@@ -400,8 +400,8 @@ function makeCube(){
 //     return sphere;
 // }
 
-function makeCylinder(){
-    let geometry = new THREE.CylinderGeometry(1, 1, 2, 200, 200);
+function makeCylinder(rtop, rbot, height){
+    let geometry = new THREE.CylinderGeometry(rtop, rbot, height, 200, 200);
 
     let textureArrs = [];
     let displaceArrs = [];
