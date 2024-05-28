@@ -22,7 +22,7 @@ export class LayeredNoiseNode extends Classic.Node {
       (this.controls['preview'] as Preview).setTexture(this.texture);
     }
     makePerlin() {
-        this.gridSize=20;
+        this.gridSize=5;
         var grid = perlin.create_grid(this.gridSize);
         this.perl = perlin.create_layered_map(grid, this.gridSize, 4, 0.5, 2);
     }

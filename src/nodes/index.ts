@@ -1,4 +1,5 @@
 export {NumberNode} from './NumberNode.ts';
+export {PiNode} from './PiNode.ts';
 export {OutputNode} from './OutputNode.ts';
 export {TextureNode} from './textures/TextureNode.ts';
 export {XNode} from "./textures/XNode.ts";

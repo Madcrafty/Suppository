@@ -35,6 +35,7 @@ export async function createEditor(container: HTMLElement) {
       ]],
       ["Math", [
         ['Number', () => new Nodes.NumberNode(1, process)],
+        ['PI', ()=> new Nodes.PiNode()],
         ["Add", () => new Nodes.AddNode()],
         ["Subtract", () => new Nodes.SubtractNode()],
         ["Distance", () => new Nodes.DistanceNode()],

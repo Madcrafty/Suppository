@@ -6,7 +6,7 @@ import { Preview } from "../../controls/preview";
 import sockets from "../../rete/sockets";
 
 export class NoiseNode extends Classic.Node {
-    gridSize:number=40;
+    gridSize:number=20;
     perl: number[][]=[];
     width = 180;
     height = 270;
@@ -23,7 +23,7 @@ export class NoiseNode extends Classic.Node {
       (this.controls['preview'] as Preview).setTexture(this.texture);
     }
     makePerlin() {
-        this.gridSize=20;
+        this.gridSize=5;
         var grid = perlin.create_grid(this.gridSize);
         this.perl = perlin.create_map(grid, this.gridSize);
     }
