@@ -7,7 +7,7 @@ import { globals } from '../globals.js';
 
 export const material = {
     brushTexture: new Uint8ClampedArray(4*globals.textureRes* globals.textureRes),
-    heightTexture: new Uint8ClampedArray(4*globals.textureRes* globals.textureRes),
+    heightTexture: new Int16Array(4*globals.textureRes* globals.textureRes),
     shineTexture: new Uint8ClampedArray(4*globals.textureRes* globals.textureRes),
     normalTexture: new Uint8ClampedArray(4*globals.textureRes* globals.textureRes),
     roughTexture: new Uint8ClampedArray(4*globals.textureRes* globals.textureRes),

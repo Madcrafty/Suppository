@@ -1,4 +1,5 @@
 export {NumberNode} from './NumberNode.ts';
+export {PiNode} from './PiNode.ts';
 export {OutputNode} from './OutputNode.ts';
 export {TextureNode} from './textures/TextureNode.ts';
 export {XNode} from "./textures/XNode.ts";
@@ -13,3 +14,8 @@ export {MultiplyNode} from "./math/MultiplyNode.ts";
 export {DivideNode} from "./math/DivideNode.ts";
 export {DistanceNode} from "./math/DistanceNode.ts";
 export {PowerNode} from "./math/PowerNode.ts";
+export {SinNode} from "./shaper/SinNode.ts";
+export {CosNode} from "./shaper/CosNode.ts";
+export {TanNode} from "./shaper/TanNode.ts";
+export {AbsNode} from "./shaper/AbsNode.ts";
+export {SqrtNode} from "./shaper/SqrtNode.ts";

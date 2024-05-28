@@ -6,8 +6,8 @@ import { globals } from '../../globals';
 export class ColorNode extends Classic.Node {
     width=180;
     height=380;
-    texture: null | Uint8ClampedArray = null;
-    alpha: null | Uint8ClampedArray = null;
+    texture: null | Int16Array = null;
+    alpha: null | Int16Array = null;
     red=255;
     green=255;
     blue=255;
@@ -26,7 +26,7 @@ export class ColorNode extends Classic.Node {
     }
     makeTexture() {
         //Assumes RGBA
-        this.texture=new Uint8ClampedArray(4 * globals.textureRes * globals.textureRes);
+        this.texture=new Int16Array(4 * globals.textureRes * globals.textureRes);
         for (var y = 0; y < globals.textureRes; y++) {
           for (var x = 0; x < globals.textureRes; x++){
                 var cell = (x + y * globals.textureRes) * 4;
@@ -43,7 +43,7 @@ export class ColorNode extends Classic.Node {
         }
     }
     data (inputs: any) {
-        this.alpha = inputs['alpha'] && inputs['alpha'][0] instanceof Uint8ClampedArray ? inputs['alpha'][0] : null;
+        this.alpha = inputs['alpha'] && inputs['alpha'][0] instanceof Int16Array ? inputs['alpha'][0] : null;
         const red = (this.controls['red'] as Classic.InputControl<'number'>).value;
         const green = (this.controls['green'] as Classic.InputControl<'number'>).value;
         const blue = (this.controls['blue'] as Classic.InputControl<'number'>).value;
@@ -53,6 +53,6 @@ export class ColorNode extends Classic.Node {
         this.makeTexture();
         if(!this.texture) return {};
       (this.controls['preview'] as Preview).setTexture(this.texture);
-      return {value:<Uint8ClampedArray>this.texture};
+      return {value:this.texture};
     }
 }

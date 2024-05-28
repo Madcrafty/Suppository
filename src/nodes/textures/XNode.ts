@@ -6,7 +6,7 @@ export class XNode extends TextureNode {
       super("X-Coords");     
     }
     makeTexture() {
-        this.texture=new Uint8ClampedArray(4 * globals.textureRes * globals.textureRes);
+        this.texture=new Int16Array(4 * globals.textureRes * globals.textureRes);
         for (var y = 0; y < globals.textureRes; y++) {
             for (var x = 0; x < globals.textureRes; x++){
                 var cell = (x + y * globals.textureRes) * 4;

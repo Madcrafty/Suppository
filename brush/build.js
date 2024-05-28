@@ -224,7 +224,7 @@ function changeHeightTexture(wrapX, wrapY){
             var cell = (x + y * globals.textureRes) * 4; 
             var brushHeight = ((material.heightTexture[cell] + material.heightTexture[cell+1] + material.heightTexture[cell+2])/3);
             var finalBrushHeight = brushHeight * (material.heightTexture[cell+3]/255);
-            var newH = Math.min(255,Math.max(0,displaceArr[hcell] + brushHeight));
+            var newH = Math.min(255,Math.max(0,displaceArr[hcell] + finalBrushHeight));
             displaceArr[hcell] = displaceArr[hcell+1] = displaceArr[hcell+2] = newH;
         }
     }
@@ -248,7 +248,7 @@ function changeShineTexture(wrapX,wrapY){
             var cell = (x + y * globals.textureRes) * 4; 
             var brushShine = ((material.shineTexture[cell] + material.shineTexture[cell+1] + material.shineTexture[cell+2])/3);
             var finalBrushShine = brushShine * (material.shineTexture[cell+3]/255);
-            var newSH = Math.min(100,Math.max(0,specArr[scell] + brushShine));
+            var newSH = Math.min(100,Math.max(0,specArr[scell] + finalBrushShine));
 
             specArr[scell] = specArr[scell+1] = specArr[scell+2] = newSH;
         }
