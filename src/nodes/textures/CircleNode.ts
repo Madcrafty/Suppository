@@ -7,7 +7,7 @@ export class CircleNode extends TextureNode {
         super("Circle");     
     }
     makeTexture() {
-        this.texture=new Uint8ClampedArray(4 * globals.textureRes * globals.textureRes);
+        this.texture=new Int16Array(4 * globals.textureRes * globals.textureRes);
         for (var y = 0; y < globals.textureRes; y++) {
             for (var x = 0; x < globals.textureRes; x++){
 

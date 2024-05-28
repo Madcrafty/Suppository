@@ -13,3 +13,8 @@ export {MultiplyNode} from "./math/MultiplyNode.ts";
 export {DivideNode} from "./math/DivideNode.ts";
 export {DistanceNode} from "./math/DistanceNode.ts";
 export {PowerNode} from "./math/PowerNode.ts";
+export {SinNode} from "./math/SinNode.ts";
+export {CosNode} from "./math/CosNode.ts";
+export {TanNode} from "./math/TanNode.ts";
+export {AbsNode} from "./math/AbsNode.ts";
+export {SqrtNode} from "./math/SqrtNode.ts";

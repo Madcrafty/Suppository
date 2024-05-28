@@ -5,5 +5,6 @@
 export const globals = {
     splitRatio: 0.5,
     tickRate: 1,
-    textureRes: 140
+    textureRes: 140,
+    textureSize: 140*140*4
 }

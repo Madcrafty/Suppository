@@ -17,7 +17,12 @@ export type Node =
   | Nodes.MultiplyNode
   | Nodes.DivideNode
   | Nodes.DistanceNode
-  | Nodes.PowerNode;
+  | Nodes.PowerNode
+  | Nodes.SinNode
+  | Nodes.CosNode
+  | Nodes.TanNode
+  | Nodes.AbsNode
+  | Nodes.SqrtNode;
 export type Conn = 
   | Connection<Nodes.NumberNode, Nodes.OutputNode>
   | Connection<Nodes.NumberNode, Nodes.AddNode>

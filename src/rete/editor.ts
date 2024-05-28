@@ -42,6 +42,13 @@ export async function createEditor(container: HTMLElement) {
         ["Multiply", () => new Nodes.MultiplyNode()],
         ["Power", () => new Nodes.PowerNode()],
       ]],
+      ["Shaper", [
+        ['Sin', () => new Nodes.SinNode()],
+        ['Cos', () => new Nodes.CosNode()],
+        ['Tan', () => new Nodes.TanNode()],
+        ['Abs', () => new Nodes.AbsNode()],
+        ['Sqrt', () => new Nodes.SqrtNode()],
+      ]],
       ['Output', () => new Nodes.OutputNode()],
     ]),
   });
@@ -64,6 +71,8 @@ export async function createEditor(container: HTMLElement) {
   }));
   render.addPreset(ReactPresets.contextMenu.setup());
 
+  
+  const output = new Nodes.OutputNode();
   // #region Add Nodes and Connections to Editor
   //Create Starting Nodes
   /*const a = new Nodes.NumberNode(5, process);

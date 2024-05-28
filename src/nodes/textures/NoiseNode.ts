@@ -10,8 +10,8 @@ export class NoiseNode extends Classic.Node {
     perl: number[][]=[];
     width = 180;
     height = 270;
-    texture: null | Uint8ClampedArray = null;
-    alpha: null | Uint8ClampedArray = null;
+    texture: null | Int16Array = null;
+    alpha: null | Int16Array = null;
     constructor() {
       super("Noise");
       this.makePerlin();
@@ -28,7 +28,7 @@ export class NoiseNode extends Classic.Node {
         this.perl = perlin.create_map(grid, this.gridSize);
     }
     makeTexture() {
-        this.texture=new Uint8ClampedArray(4 * globals.textureRes * globals.textureRes);
+        this.texture=new Int16Array(4 * globals.textureRes * globals.textureRes);
         for (var y = 0; y < globals.textureRes; y++) {
             for (var x = 0; x < globals.textureRes; x++){
                 var cell = (x + y * globals.textureRes) * 4;
@@ -51,9 +51,9 @@ export class NoiseNode extends Classic.Node {
     }
     data (inputs: any) {
         if(!this.texture) return {};
-        this.alpha = inputs['alpha'] && inputs['alpha'][0] instanceof Uint8ClampedArray ? inputs['alpha'][0] : null;
+        this.alpha = inputs['alpha'] && inputs['alpha'][0] instanceof Int16Array ? inputs['alpha'][0] : null;
         this.makeTexture();
         (this.controls['preview'] as Preview).setTexture(this.texture);
-        return {value:<Uint8ClampedArray>this.texture};
+        return {value:this.texture};
       }
 }

@@ -11,7 +11,7 @@ export class PowerNode extends MathNode {
     data(inputs: any) {
         var result = super.calculate(inputs, 'pow(a, b)');
         (this.controls['result'] as ClassicPreset.InputControl<'number'>).setValue(result);
-        this.texture = result !== null && result instanceof Uint8ClampedArray ? result : this.makeTextureFromNumber(result);
+        this.texture = result !== null && result instanceof Int16Array ? result : this.makeTextureFromNumber(result);
       (this.controls['preview'] as Preview).setTexture(this.texture);
         return {
             value: result

@@ -4,7 +4,7 @@ import { globals } from '../../../globals';
 import { Preview } from '../../controls/preview';
 
 export class MathNode extends ClassicPreset.Node {
-    texture: null | Uint8ClampedArray = null;
+    texture: null | Int16Array = null;
     
     constructor(label:string) {
         super(label);
@@ -19,7 +19,7 @@ export class MathNode extends ClassicPreset.Node {
     }
     makeTextureFromNumber(result:number) {
         //Assumes RGBA
-        var tex = new Uint8ClampedArray(4 * globals.textureRes * globals.textureRes);
+        var tex = new Int16Array(4 * globals.textureRes * globals.textureRes);
         for (var y = 0; y < globals.textureRes; y++) {
           for (var x = 0; x < globals.textureRes; x++){
                 var cell = (x + y * globals.textureRes) * 4;
@@ -43,9 +43,8 @@ export class MathNode extends ClassicPreset.Node {
         const f = this.getFunction(expression);
 
         if (typeof a === 'number') {
-            if(b instanceof Uint8ClampedArray) {
-                const result = new Uint8ClampedArray(4 * globals.textureRes * globals.textureRes);
-                b instanceof Uint8ClampedArray;
+            if(b instanceof Int16Array) {
+                const result = new Int16Array(4 * globals.textureRes * globals.textureRes);
                 for (var x = 0; x < globals.textureRes; x++) {                  
                     for (var y = 0; y < globals.textureRes; y++) {
                         var cell = (x + y * globals.textureRes) * 4;
@@ -62,9 +61,9 @@ export class MathNode extends ClassicPreset.Node {
         }
 
 
-        if (a instanceof Uint8ClampedArray) {
-            const result = new Uint8ClampedArray(4 * globals.textureRes * globals.textureRes);
-            if(b instanceof Uint8ClampedArray) {
+        if (a instanceof Int16Array) {
+            const result = new Int16Array(4 * globals.textureRes * globals.textureRes);
+            if(b instanceof Int16Array) {
                 for (var x = 0; x < globals.textureRes; x++) {                  
                     for (var y = 0; y < globals.textureRes; y++) {
                         var cell = (x + y * globals.textureRes) * 4;
