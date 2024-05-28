@@ -292,6 +292,7 @@ function addShapes() {
     scene.add(ambietLight);
     scene.add(cameraLight);
     scene.add(light_dir);
+    scene.add(camera);
 }
 
 function setLight(){
