@@ -42,9 +42,9 @@ export function init(_renderer, _scene, _camera, _gui) {
     camera=_camera;
     gui = _gui;
 
-    textureArr = new Uint8ClampedArray( 4 * resolution * resolution );
-    displaceArr = new Uint8ClampedArray( 4 * resolution * resolution );
-    specArr = new Uint8ClampedArray( 4 * resolution * resolution );
+    textureArr = new Uint8Array( 4 * resolution * resolution );
+    displaceArr = new Uint8Array( 4 * resolution * resolution );
+    specArr = new Uint8Array( 4 * resolution * resolution );
 }
 
 //called on start
@@ -290,16 +290,15 @@ function makeSphere(){
 function addShapes() {
     scene.add(sphere);
     scene.add(ambietLight);
-    scene.add(cameraLight);
     scene.add(light_dir);
     scene.add(camera);
 }
 
 function setLight(){
-    cameraLight = new THREE.PointLight(new THREE.Color(0xffffff),1);
+    cameraLight = new THREE.PointLight(new THREE.Color(0xffffff),0.5);
     camera.add(cameraLight);
-    ambietLight = new THREE.AmbientLight(new THREE.Color(0xffffff),0.2);
-    light_dir = new THREE.DirectionalLight(0xffffff, 1);
+    ambietLight = new THREE.AmbientLight(new THREE.Color(0xffffff),1.0);
+    light_dir = new THREE.DirectionalLight(0xffffff, 1.0);
     light_dir.position.set(-50, 40, 50);
     light_dir.castShadow=true;
 }
