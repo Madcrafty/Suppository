@@ -304,7 +304,7 @@ function makeSphere() {
 }
 
 function makeCube(){
-    let geometry = new THREE.BoxGeometry(1, 1, 1, 4, 4, 4);
+    let geometry = new THREE.BoxGeometry(1, 1, 1, 20, 20, 20);
 
     let textureArrs = [];
     let displaceArrs = [];
