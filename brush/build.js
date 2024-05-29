@@ -119,15 +119,8 @@ export function run() {
     render();
 }
 
-<<<<<<< HEAD
 function setDragControls() {
     dControls = new DragControls(shapes, camera, renderer.domElement);
-=======
-function setDragControls()
-{
-    const dControls = new DragControls(shapes, camera, renderer.domElement);
-  
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
     dControls.enabled = false;
 
     window.addEventListener('keydown', function (event) {
@@ -242,11 +235,7 @@ function createSkybox() {
         scene.environment = skybox;
     });
 }
-<<<<<<< HEAD
 function createTexture(textureArr, displaceArr, specArr, alphArr, metArr, factor) {
-=======
-function createTexture(textureArr, displaceArr, specArr, alphArr, factor) {
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
     for (var y = 0; y < resolution; y++) {                  
         for (var x = 0; x < resolution; x++) {
             var cell = (x + y * resolution) * 4;                  
@@ -317,11 +306,7 @@ function RemoveMarker(wrapX,wrapY, textureArr){
     }
 }
 
-<<<<<<< HEAD
 function changeTexture(wrapX, wrapY, textureArr, displaceArr, specArr, alphArr, metArr) {
-=======
-function changeTexture(wrapX, wrapY, textureArr, displaceArr, specArr, alphArr) {
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
     for (var y = 0; y < globals.textureRes; y++) {
         for (var x = 0; x < globals.textureRes; x++){
             //here, ytexcell has parameters flipped to align the axes of the brush texture and the sphere texture!
@@ -358,7 +343,6 @@ function changeTexture(wrapX, wrapY, textureArr, displaceArr, specArr, alphArr) 
             var newSH = Math.min(255,Math.max(0,specArr[texcell] + finalBrushRough));
 
             specArr[texcell] = specArr[texcell+1] = specArr[texcell+2] = newSH;
-<<<<<<< HEAD
 
             var brushMet = ((material.metalTexture[cell] + material.metalTexture[cell+1] + material.metalTexture[cell+2])/3)/25;
             var finalBrushMet = brushMet * (material.metalTexture[cell+3]/255);
@@ -369,12 +353,6 @@ function changeTexture(wrapX, wrapY, textureArr, displaceArr, specArr, alphArr) 
             var brushAlph = ((material.alphTexture[cell] + material.alphTexture[cell+1] + material.alphTexture[cell+2])/3)/25;
             var finalBrushAlph = brushAlph * (material.alphTexture[cell+3]/255);
             var newAH = Math.min(255,Math.max(0,alphArr[texcell] + finalBrushAlph));
-=======
-          
-            var brushAlph = ((material.alphTexture[cell] + material.alphTexture[cell+1] + material.alphTexture[cell+2])/3);
-            var finalBrushAlph = brushAlph * (material.alphTexture[cell+3]/255);
-            var newAH = Math.min(100,Math.max(0,alphArr[texcell] + finalBrushAlph));
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
 
             alphArr[texcell] = alphArr[texcell+1] = alphArr[texcell+2] = newAH;
         }
@@ -415,32 +393,21 @@ function makeSphere(radius) {
     let displaceArr = new Uint8Array( 4 * resolution * resolution );
     let specArr = new Uint8Array( 4 * resolution * resolution );
     let alphArr = new Uint8Array( 4 * resolution * resolution );
-<<<<<<< HEAD
     let metArr = new Uint8Array( 4 * resolution * resolution );
 
     createTexture(textureArr, displaceArr, specArr, alphArr, metArr, 100);
-=======
-
-    createTexture(textureArr, displaceArr, specArr, alphArr, 100);
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
 
     let texture = new THREE.DataTexture(textureArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
     let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
     let stexture = new THREE.DataTexture(specArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
     let atexture = new THREE.DataTexture(alphArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
-<<<<<<< HEAD
     let mtexture = new THREE.DataTexture(metArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
-=======
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
 
     texture.needsUpdate = true;
     htexture.needsUpdate = true;
     stexture.needsUpdate = true;
     atexture.needsUpdate = true;
-<<<<<<< HEAD
     mtexture.needsUpdate = true;
-=======
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
 
     var specCol = new THREE.Color(10,10,10);
 
@@ -448,18 +415,12 @@ function makeSphere(radius) {
         map: texture,
         displacementMap:htexture,
         displacementScale: 1,
-<<<<<<< HEAD
         roughnessMap:stexture,
         metalnessMap:mtexture,
         alphaMap: atexture,
         envMap: cubeRenderTarget.texture,
         transparent: true,
         reflectivity: 1.0,
-=======
-        specularMap:stexture,
-        specular:specCol,
-        alphaMap: atexture
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
     });
 
     material.needsUpdate = true;
@@ -472,10 +433,7 @@ function makeSphere(radius) {
     sphere.displaceArr = new Uint8Array(displaceArr);
     sphere.specArr = new Uint8Array(specArr);
     sphere.alphArr = new Uint8Array(alphArr);
-<<<<<<< HEAD
     sphere.metArr = new Uint8Array(metArr);
-=======
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
 
     sphere.wrapX = false;
     sphere.wrapY = true;
@@ -493,10 +451,7 @@ function makeCube(wi, hi, le){
     let displaceArrs = [];
     let specArrs = [];
     let alphArrs = [];
-<<<<<<< HEAD
     let metArrs = [];
-=======
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
     let materials = [];
 
     for (let i = 0; i < 6; i++) {
@@ -504,48 +459,32 @@ function makeCube(wi, hi, le){
         let displaceArr = new Uint8Array(4 * resolution * resolution);
         let specArr = new Uint8Array(4 * resolution * resolution);
         let alphArr = new Uint8Array( 4 * resolution * resolution );
-<<<<<<< HEAD
         let metArr = new Uint8Array( 4 * resolution * resolution );
 
         createTexture(textureArr, displaceArr, specArr, alphArr, metArr, 0);
-=======
-
-        createTexture(textureArr, displaceArr, specArr, alphArr, 0);
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
 
         let texture = new THREE.DataTexture(textureArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
         let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
         let stexture = new THREE.DataTexture(specArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
         let atexture = new THREE.DataTexture(alphArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
-<<<<<<< HEAD
         let mtexture = new THREE.DataTexture(metArr, resolution, resolution, THREE.RGBAFormat,THREE.UnsignedByteType);
-=======
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
 
         texture.needsUpdate = true;
         htexture.needsUpdate = true;
         stexture.needsUpdate = true;
         atexture.needsUpdate = true;
-<<<<<<< HEAD
         mtexture.needsUpdate = true;
         var specCol = new THREE.Color(10,10,10);
-=======
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
 
         let material = new THREE.MeshPhysicalMaterial({
             map: texture,
             displacementMap: htexture,
             displacementScale: 1,
-<<<<<<< HEAD
             roughnessMap: stexture,
             alphaMap: atexture,
             metalnessMap: mtexture,
             transparent: true,
             reflectivity: 1.0,
-=======
-            specularMap: stexture,
-            alphaMap: atexture
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
         });
 
         material.needsUpdate = true;
@@ -554,10 +493,7 @@ function makeCube(wi, hi, le){
         displaceArrs.push(displaceArr);
         specArrs.push(specArr);
         alphArrs.push(alphArr);
-<<<<<<< HEAD
         metArrs.push(metArr);
-=======
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
         materials.push(material);
     }
 
@@ -569,10 +505,7 @@ function makeCube(wi, hi, le){
     cube.displaceArrs = displaceArrs;
     cube.specArrs = specArrs;
     cube.alphArrs = alphArrs;
-<<<<<<< HEAD
     cube.metArrs = metArrs;
-=======
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
     cube.wrapX = true;
     cube.wrapY = true;
 
@@ -589,10 +522,7 @@ function makeCylinder(rtop, rbot, height){
     let displaceArrs = [];
     let specArrs = [];
     let alphArrs = [];
-<<<<<<< HEAD
     let metArrs = [];
-=======
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
     let materials = [];
 
     for (let i = 0; i < 3; i++) {
@@ -608,35 +538,24 @@ function makeCylinder(rtop, rbot, height){
         let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
         let stexture = new THREE.DataTexture(specArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
         let atexture = new THREE.DataTexture(alphArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
-<<<<<<< HEAD
         let mtexture = new THREE.DataTexture(metArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
-=======
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
 
         texture.needsUpdate = true;
         htexture.needsUpdate = true;
         stexture.needsUpdate = true;
         atexture.needsUpdate = true;
-<<<<<<< HEAD
         mtexture.needsUpdate = true;
         var specCol = new THREE.Color(10,10,10);
-=======
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
 
         let material = new THREE.MeshPhysicalMaterial({
             map: texture,
             displacementMap: htexture,
             displacementScale: 1,
-<<<<<<< HEAD
             roughnessMap: stexture,
             alphaMap: atexture,
             metalnessMap: mtexture,
             transparent: true,
             reflectivity: 1.0,
-=======
-            specularMap: stexture,
-            alphaMap: atexture
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
         });
 
         material.needsUpdate = true;
@@ -645,10 +564,7 @@ function makeCylinder(rtop, rbot, height){
         displaceArrs.push(displaceArr);
         specArrs.push(specArr);
         alphArrs.push(alphArr);
-<<<<<<< HEAD
         metArrs.push(metArr);
-=======
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
         materials.push(material);
     }
 
@@ -660,10 +576,7 @@ function makeCylinder(rtop, rbot, height){
     cylinder.displaceArrs = displaceArrs;
     cylinder.specArrs = specArrs;
     cylinder.alphArrs = alphArrs;
-<<<<<<< HEAD
     cylinder.metArrs = metArrs;
-=======
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
 
     cylinder.wrapX = false;
     cylinder.wrapY = true;
@@ -711,10 +624,7 @@ function onMouseMove(event) {
         let displaceArr;
         let specArr;
         let alphArr;
-<<<<<<< HEAD
         let metArr;
-=======
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
 
 
         intersectedObject = obj;
@@ -743,10 +653,7 @@ function onMouseMove(event) {
             displaceArr = obj.displaceArrs[faceIndex];
             specArr = obj.specArrs[faceIndex];
             alphArr = obj.alphArrs[faceIndex];
-<<<<<<< HEAD
             metArr = obj.metArrs[faceIndex];
-=======
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
             faceIndexOut = faceIndex;
         } else if (obj.geometry instanceof THREE.CylinderGeometry) {
             let faceNormal = intersects[0].face.normal;
@@ -764,29 +671,19 @@ function onMouseMove(event) {
             displaceArr = obj.displaceArrs[faceIndex];
             specArr = obj.specArrs[faceIndex];
             alphArr = obj.alphArrs[faceIndex];
-<<<<<<< HEAD
             metArr = obj.metArrs[faceIndex];
-=======
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
             faceIndexOut = faceIndex;
         } else {
             textureArr = obj.textureArr;
             displaceArr = obj.displaceArr;
             specArr = obj.specArr;
             alphArr = obj.alphArr;
-<<<<<<< HEAD
             metArr = obj.metArr;
-=======
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
         }
 
         if(mouseDown && active){
           
-<<<<<<< HEAD
             changeTexture(obj.wrapX, obj.wrapY, textureArr, displaceArr, specArr, alphArr, metArr);
-=======
-            changeTexture(obj.wrapX, obj.wrapY, textureArr, displaceArr, specArr, alphArr);
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
 
 
             let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
@@ -798,7 +695,6 @@ function onMouseMove(event) {
             let atexture = new THREE.DataTexture(alphArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
             atexture.needsUpdate = true;
 
-<<<<<<< HEAD
             let mtexture = new THREE.DataTexture(metArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
             mtexture.needsUpdate = true;
 
@@ -806,21 +702,12 @@ function onMouseMove(event) {
                 obj.material[faceIndexOut].displacementMap = htexture;
                 obj.material[faceIndexOut].roughnessMap = stexture;
                 obj.material[faceIndexOut].metalnessMap = mtexture;
-=======
-            if (obj.geometry instanceof THREE.BoxGeometry || obj.geometry instanceof THREE.CylinderGeometry) {
-                obj.material[faceIndexOut].displacementMap = htexture;
-                obj.material[faceIndexOut].specularMap = stexture;
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
                 obj.material[faceIndexOut].alphaMap = atexture;
                 obj.material.needsUpdate = true;
             } else {
                 obj.material.displacementMap = htexture;
-<<<<<<< HEAD
                 obj.material.roughnessMap = stexture;
                 obj.material.metalnessMap = mtexture;
-=======
-                obj.material.specularMap = stexture;
->>>>>>> f52f9f730dbbad8e6b1f92061893a6e330563039
                 obj.material.alphaMap = atexture;
                 obj.material.needsUpdate = true;
             }
