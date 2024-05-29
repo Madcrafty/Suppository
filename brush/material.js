@@ -6,11 +6,8 @@ import { globals } from '../globals.js';
 //use parameters.variable to access a particular variable.
 
 export const material = {
-    brushTexture: new Uint8Array(4*globals.textureRes* globals.textureRes),
-    heightTexture: new Int16Array(4*globals.textureRes* globals.textureRes),
-    shineTexture: new Int16Array(4*globals.textureRes* globals.textureRes),
-    alphTexture: new Int16Array(4*globals.textureRes* globals.textureRes),
-    normalTexture: new Uint8ClampedArray(4*globals.textureRes* globals.textureRes),
-    roughTexture: new Uint8ClampedArray(4*globals.textureRes* globals.textureRes),
-    metalTexture: new Uint8ClampedArray(4*globals.textureRes* globals.textureRes)
+    brushTexture: new Uint8Array(globals.textureSize),
+    heightTexture: new Int16Array(globals.textureSize),
+    shineTexture: new Int16Array(globals.textureSize),
+    alphTexture: new Int16Array(globals.textureSize),
 }

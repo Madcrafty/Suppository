@@ -20,7 +20,7 @@ export class ShaperNode extends ClassicPreset.Node {
     }
     makeTextureFromNumber(result:number) {
         //Assumes RGBA
-        var tex = new Int16Array(4 * globals.textureRes * globals.textureRes);
+        var tex = new Int16Array(globals.textureSize);
         for (var y = 0; y < globals.textureRes; y++) {
           for (var x = 0; x < globals.textureRes; x++){
                 var cell = (x + y * globals.textureRes) * 4;
@@ -52,7 +52,7 @@ export class ShaperNode extends ClassicPreset.Node {
         }
 
         if (a instanceof Int16Array) {
-            const result = new Int16Array(4 * globals.textureRes * globals.textureRes);
+            const result = new Int16Array(globals.textureSize);
             for (var x = 0; x < globals.textureRes; x++) {                  
                 for (var y = 0; y < globals.textureRes; y++) {
                     var cell = (x + y * globals.textureRes) * 4;

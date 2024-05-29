@@ -3,6 +3,8 @@ import * as THREE from 'three';
 import {material} from './material.js'
 import { globals } from "../globals.js";
 import { uv } from 'three/examples/jsm/nodes/Nodes.js';
+import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
+
 
 //Core Variables
 var renderer;
@@ -47,6 +49,7 @@ export function init(_renderer, _scene, _camera, _gui) {
     scene=_scene;
     camera=_camera;
     gui = _gui;
+    
 }
 
 //called on start
@@ -58,23 +61,11 @@ export function start() {
 
     for (let i = 0; i < 3; i++) {
         let sphere = makeSphere(1);
-        sphere.position.set(i * 3, 0, 0);
-        shapes.push(sphere);
-        scene.add(sphere);
-    }
-
-    for (let i = 0; i < 3; i++) {
+        sphere.position.set(i * 5, 0, 0);
         let cube = makeCube(2, 2, 2);
-        cube.position.set(i * 3, 3, 0);
-        shapes.push(cube);
-        scene.add(cube);
-    }
-
-    for (let i = 0; i < 3; i++) {
+        cube.position.set(i * 5, 5, 0);
         let cylinder = makeCylinder(1, 1, 2);
-        cylinder.position.set(i * 3, -3, 0);
-        shapes.push(cylinder);
-        scene.add(cylinder);
+        cylinder.position.set(i * 5, -5, 0);
     }
 
     addShapes();
@@ -86,7 +77,8 @@ export function run() {
 
 function setDragControls()
 {
-    const dControls = new DragControls(spheres, camera, renderer.domElement);
+    const dControls = new DragControls(shapes, camera, renderer.domElement);
+  
     dControls.enabled = false;
 
     window.addEventListener('keydown', function (event) {
@@ -102,34 +94,27 @@ function setDragControls()
 function render() {
     if (intersectedObject) {
         if ((intersectedObject.geometry instanceof THREE.BoxGeometry) || (intersectedObject.geometry instanceof THREE.CylinderGeometry)) {
-            AddMarker(intersectedObject.wrapX, intersectedObject.wrapY, intersectedObject.textureArrs[faceIndexOut]);
+            var texarr = intersectedObject.textureArrs[faceIndexOut];
+            var mat = intersectedObject.material[faceIndexOut];
         } else {
-            AddMarker(intersectedObject.wrapX, intersectedObject.wrapY, intersectedObject.textureArr);
+            var texarr = intersectedObject.textureArr;
+            var mat = intersectedObject.material;
         }
-    }
 
-    if ((intersectedObject.geometry instanceof THREE.BoxGeometry) || (intersectedObject.geometry instanceof THREE.CylinderGeometry)) {
-        let texture = new THREE.DataTexture(intersectedObject.textureArrs[j], resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
+        AddMarker(intersectedObject.wrapX, intersectedObject.wrapY, texarr);
+
+
+        renderer.render(scene, camera);
+
+        RemoveMarker(intersectedObject.wrapX, intersectedObject.wrapY, texarr);
+        let texture = new THREE.DataTexture(texarr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
         texture.needsUpdate = true;
-        intersectedObject.material[faceIndexOut].map = texture;
-        intersectedObject.material[faceIndexOut].needsUpdate = true;
+        mat.map = texture;
+        mat.needsUpdate = true;
     } else {
-        let texture = new THREE.DataTexture(intersectedObject.textureArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
-        texture.needsUpdate = true;
-    
-        intersectedObject.material.map = texture;
-        intersectedObject.material.needsUpdate = true;
+        renderer.render(scene, camera);
     }
-    renderer.render(scene, camera);
 
-    if (intersectedObject) {
-        if ((intersectedObject.geometry instanceof THREE.BoxGeometry) || (intersectedObject.geometry instanceof THREE.CylinderGeometry)) {
-            RemoveMarker(intersectedObject.wrapX, intersectedObject.wrapY, intersectedObject.textureArrs[faceIndexOut]);
-        } else {
-            RemoveMarker(intersectedObject.wrapX, intersectedObject.wrapY, intersectedObject.textureArr);
-        }
-        
-    }
 }
 
 function setupMouse() {
@@ -172,19 +157,8 @@ function createTexture(textureArr, displaceArr, specArr, alphArr, factor) {
             var cell = (x + y * resolution) * 4;                  
             textureArr[cell] = textureArr[cell + 1] = textureArr[cell + 2] = 255;                               
             textureArr[cell + 3] = 255; // parameters.brushAlpha.
-        }
-    }
-
-    for (var y = 0; y < resolution; y++) {                  
-        for (var x = 0; x < resolution; x++) {
-            var cell = (x + y * resolution) * 4;                  
             displaceArr[cell] = displaceArr[cell + 1] = displaceArr[cell + 2] = factor;   
-            displaceArr[cell + 3]=0;                            
-        }
-    }
-    for (var y = 0; y < resolution; y++) {                  
-        for (var x = 0; x < resolution; x++) {
-            var cell = (x + y * resolution) * 4;                  
+            displaceArr[cell + 3]=0;  
             specArr[cell] = specArr[cell + 1] = specArr[cell + 2] = 0;                               
         }
     }
@@ -197,7 +171,6 @@ function createTexture(textureArr, displaceArr, specArr, alphArr, factor) {
 }
 
 function AddMarker(wrapX, wrapY, textureArr){
-    if(!material.brushTexture) return;
     for (var y = 0; y < globals.textureRes; y++) {
         for (var x = 0; x < globals.textureRes; x++){
             //here, ytexcell has parameters flipped to align the axes of the brush texture and the sphere texture!
@@ -215,17 +188,15 @@ function AddMarker(wrapX, wrapY, textureArr){
             var cell = (x + y * globals.textureRes) * 4; 
 
             if(material.brushTexture[cell + 3] > 0 || material.heightTexture[cell + 3] > 0 || material.shineTexture[cell + 3] > 0){
-                textureArr[texcell+1] = textureArr[texcell+1] + 50;
+                textureArr[texcell+1] += 50;
             }
         }
     }
 }
 
 function RemoveMarker(wrapX,wrapY, textureArr){
-    if(!material.brushTexture) return;
     for (var y = 0; y < globals.textureRes; y++) {
         for (var x = 0; x < globals.textureRes; x++){
-
             //here, ytexcell has parameters flipped to align the axes of the brush texture and the sphere texture!
             var xtexcell = (mouseX + x - Math.ceil(globals.textureRes/2))
             var ytexcell = (mouseY - y + Math.ceil(globals.textureRes/2))
@@ -241,15 +212,13 @@ function RemoveMarker(wrapX,wrapY, textureArr){
             var cell = (x + y * globals.textureRes) * 4; 
             
             if(material.brushTexture[cell + 3] > 0 || material.heightTexture[cell + 3] > 0 || material.shineTexture[cell + 3] > 0){
-                textureArr[texcell+1] = textureArr[texcell+1] - 50;
+                textureArr[texcell+1] -= 50;
             }
         }
     }
 }
 
-
-function changeAreaTexture(wrapX, wrapY, textureArr){
-    if(!material.brushTexture) return; 
+function changeTexture(wrapX, wrapY, textureArr, displaceArr, specArr, alphArr) {
     for (var y = 0; y < globals.textureRes; y++) {
         for (var x = 0; x < globals.textureRes; x++){
             //here, ytexcell has parameters flipped to align the axes of the brush texture and the sphere texture!
@@ -275,59 +244,27 @@ function changeAreaTexture(wrapX, wrapY, textureArr){
             textureArr[texcell] = Math.ceil(brushR+texR);
             textureArr[texcell+1] = Math.ceil(brushG+texG);
             textureArr[texcell+2] = Math.ceil(brushB+texB);
-        }
-    }
-}
 
-function changeHeightTexture(wrapX, wrapY, displaceArr){
-    if(!material.heightTexture) return;
-    for (var y = 0; y < globals.textureRes; y++) {
-        for (var x = 0; x < globals.textureRes; x++){
-            //here, yhcell has parameters flipped to align the axes of the brush texture and the sphere texture!
-            var xhcell = (mouseX + x - Math.ceil(globals.textureRes/2))
-            var yhcell = (mouseY - y + Math.ceil(globals.textureRes/2))
-
-            if(wrapY && (yhcell >= resolution || yhcell < 0)){
-                continue;
-            }
-            if(wrapX && (xhcell >= resolution || xhcell < 0)){
-                continue;
-            }
-
-            var hcell = ((xhcell + (yhcell* resolution)) * 4) % (4*resolution*resolution);
-            var cell = (x + y * globals.textureRes) * 4; 
-            var brushHeight = ((material.heightTexture[cell] + material.heightTexture[cell+1] + material.heightTexture[cell+2])/3);
+            var brushHeight = ((material.heightTexture[cell] + material.heightTexture[cell+1] + material.heightTexture[cell+2])/3)/25;
             var finalBrushHeight = brushHeight * (material.heightTexture[cell+3]/255);
-            var newH = Math.min(255,Math.max(0,displaceArr[hcell] + finalBrushHeight));
-            displaceArr[hcell] = displaceArr[hcell+1] = displaceArr[hcell+2] = newH;
-        }
-    }
-}
+            var newH = Math.min(255,Math.max(0,displaceArr[texcell] + finalBrushHeight));
+            displaceArr[texcell] = displaceArr[texcell+1] = displaceArr[texcell+2] = newH;
 
-function changeShineTexture(wrapX,wrapY, specArr){
-    for (var y = 0; y < globals.textureRes; y++) {
-        for (var x = 0; x < globals.textureRes; x++){
-            //here, yhcell has parameters flipped to align the axes of the brush texture and the sphere texture!
-            var xscell = (mouseX + x - Math.ceil(globals.textureRes/2))
-            var yscell = (mouseY - y + Math.ceil(globals.textureRes/2))
-
-            if(wrapY && (yscell >= resolution || yscell < 0)){
-                continue;
-            }
-            if(wrapX && (xscell >= resolution || xscell < 0)){
-                continue;
-            }
-
-            var scell = ((xscell + (yscell* resolution)) * 4) % (4*resolution*resolution);
-            var cell = (x + y * globals.textureRes) * 4; 
-            var brushShine = ((material.shineTexture[cell] + material.shineTexture[cell+1] + material.shineTexture[cell+2])/3);
+            var brushShine = ((material.shineTexture[cell] + material.shineTexture[cell+1] + material.shineTexture[cell+2])/3)/25;
             var finalBrushShine = brushShine * (material.shineTexture[cell+3]/255);
-            var newSH = Math.min(100,Math.max(0,specArr[scell] + finalBrushShine));
+            var newSH = Math.min(100,Math.max(0,specArr[texcell] + finalBrushShine));
 
-            specArr[scell] = specArr[scell+1] = specArr[scell+2] = newSH;
+            specArr[texcell] = specArr[texcell+1] = specArr[texcell+2] = newSH;
+          
+            var brushAlph = ((material.alphTexture[cell] + material.alphTexture[cell+1] + material.alphTexture[cell+2])/3);
+            var finalBrushAlph = brushAlph * (material.alphTexture[cell+3]/255);
+            var newAH = Math.min(100,Math.max(0,alphArr[texcell] + finalBrushAlph));
+
+            alphArr[texcell] = alphArr[texcell+1] = alphArr[texcell+2] = newAH;
         }
     }
 }
+
 
 function changeAlphaTexture(wrapX,wrapY, alphArr){
     for (var y = 0; y < globals.textureRes; y++) {
@@ -353,7 +290,6 @@ function changeAlphaTexture(wrapX,wrapY, alphArr){
         }
     }
 }
-
 
 
 function makeSphere(radius) {
@@ -397,8 +333,12 @@ function makeSphere(radius) {
     sphere.displaceArr = new Uint8Array(displaceArr);
     sphere.specArr = new Uint8Array(specArr);
     sphere.alphArr = new Uint8Array(alphArr);
+
     sphere.wrapX = false;
     sphere.wrapY = true;
+
+    shapes.push(sphere);
+    scene.add(sphere); 
 
     return sphere;
 }
@@ -454,8 +394,12 @@ function makeCube(wi, hi, le){
     cube.textureArrs = textureArrs;
     cube.displaceArrs = displaceArrs;
     cube.specArrs = specArrs;
+    cube.alphArrs = alphArrs;
     cube.wrapX = true;
     cube.wrapY = true;
+
+    shapes.push(cube);
+    scene.add(cube);
 
     return cube;
 }
@@ -511,8 +455,12 @@ function makeCylinder(rtop, rbot, height){
     cylinder.displaceArrs = displaceArrs;
     cylinder.specArrs = specArrs;
     cylinder.alphArrs = alphArrs;
+
     cylinder.wrapX = false;
     cylinder.wrapY = true;
+
+    shapes.push(cylinder);
+    scene.add(cylinder);
 
     return cylinder;
 }
@@ -550,6 +498,7 @@ function onMouseMove(event) {
         let textureArr;
         let displaceArr;
         let specArr;
+        let alphArr;
 
 
         intersectedObject = obj;
@@ -604,10 +553,9 @@ function onMouseMove(event) {
         }
 
         if(mouseDown && active){
-            changeAreaTexture(obj.wrapX, obj.wrapY, textureArr);
-            changeHeightTexture(obj.wrapX, obj.wrapY, displaceArr);
-            changeShineTexture(obj.wrapX, obj.wrapY, specArr);
-            changeAlphaTexture(obj.wrapX, obj.wrapY, alphArr);
+          
+            changeTexture(obj.wrapX, obj.wrapY, textureArr, displaceArr, specArr, alphArr);
+
 
             let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
             htexture.needsUpdate = true;
@@ -629,7 +577,6 @@ function onMouseMove(event) {
                 obj.material.alphaMap = atexture;
                 obj.material.needsUpdate = true;
             }
-            console.log(obj.material);
 
             active = false;
             setTimeout(() => {
