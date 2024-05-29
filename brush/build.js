@@ -258,7 +258,8 @@ function AddMarker(wrapX, wrapY, textureArr){
             var texcell = ((xtexcell + (ytexcell* resolution)) * 4) % (4*resolution*resolution);
             var cell = (x + y * globals.textureRes) * 4; 
 
-            if(material.brushTexture[cell + 3] > 0 || material.heightTexture[cell + 3] > 0 || material.shineTexture[cell + 3] > 0){
+            if(material.brushTexture[cell + 3] > 0 || material.heightTexture[cell + 3] > 0 || material.roughTexture[cell + 3] > 0 
+                || material.metalTexture[cell + 3] > 0 || material.alphTexture[cell + 3] > 0){
                 textureArr[texcell+1] += 50;
             }
         }
@@ -282,7 +283,8 @@ function RemoveMarker(wrapX,wrapY, textureArr){
             var texcell = ((xtexcell + (ytexcell* resolution)) * 4) % (4*resolution*resolution);
             var cell = (x + y * globals.textureRes) * 4; 
             
-            if(material.brushTexture[cell + 3] > 0 || material.heightTexture[cell + 3] > 0 || material.shineTexture[cell + 3] > 0){
+            if(material.brushTexture[cell + 3] > 0 || material.heightTexture[cell + 3] > 0 || material.roughTexture[cell + 3] > 0 
+                || material.metalTexture[cell + 3] > 0 || material.alphTexture[cell + 3] > 0){
                 textureArr[texcell+1] -= 50;
             }
         }
@@ -321,9 +323,9 @@ function changeTexture(wrapX, wrapY, textureArr, displaceArr, specArr, alphArr, 
             var newH = Math.min(255,Math.max(0,displaceArr[texcell] + finalBrushHeight));
             displaceArr[texcell] = displaceArr[texcell+1] = displaceArr[texcell+2] = newH;
 
-            var brushShine = ((material.shineTexture[cell] + material.shineTexture[cell+1] + material.shineTexture[cell+2])/3)/25;
-            var finalBrushShine = brushShine * (material.shineTexture[cell+3]/255);
-            var newSH = Math.min(100,Math.max(0,specArr[texcell] + finalBrushShine));
+            var brushRough = ((material.roughTexture[cell] + material.roughTexture[cell+1] + material.roughTexture[cell+2])/3)/25;
+            var finalBrushRough = brushRough * (material.roughTexture[cell+3]/255);
+            var newSH = Math.min(100,Math.max(0,specArr[texcell] + finalBrushRough));
 
             specArr[texcell] = specArr[texcell+1] = specArr[texcell+2] = newSH;
 
@@ -487,7 +489,7 @@ function makeCylinder(rtop, rbot, height){
         let alphArr = new Uint8Array( 4 * resolution * resolution );
         let metArr = new Uint8Array( 4 * resolution * resolution );
 
-        createTexture(textureArr, displaceArr, specArr, alphArr, 0);
+        createTexture(textureArr, displaceArr, specArr, alphArr, metArr, 0);
 
         let texture = new THREE.DataTexture(textureArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
         let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
