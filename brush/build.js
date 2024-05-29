@@ -93,7 +93,7 @@ function render() {
     }
 
     if ((intersectedObject.geometry instanceof THREE.BoxGeometry) || (intersectedObject.geometry instanceof THREE.CylinderGeometry)) {
-        let texture = new THREE.DataTexture(intersectedObject.textureArrs[faceIndexOut], resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
+        let texture = new THREE.DataTexture(intersectedObject.textureArrs[j], resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
         texture.needsUpdate = true;
         intersectedObject.material[faceIndexOut].map = texture;
         intersectedObject.material[faceIndexOut].needsUpdate = true;
@@ -345,8 +345,8 @@ function makeSphere(radius) {
     sphere.textureArr = new Uint8Array(textureArr);
     sphere.displaceArr = new Uint8Array(displaceArr);
     sphere.specArr = new Uint8Array(specArr);
-    sphere.wrapX = true;
-    sphere.wrapY = false;
+    sphere.wrapX = false;
+    sphere.wrapY = true;
 
     return sphere;
 }
@@ -396,8 +396,8 @@ function makeCube(wi, hi, le){
     cube.textureArrs = textureArrs;
     cube.displaceArrs = displaceArrs;
     cube.specArrs = specArrs;
-    cube.wrapX = false;
-    cube.wrapY = false;
+    cube.wrapX = true;
+    cube.wrapY = true;
 
     return cube;
 }
@@ -447,8 +447,8 @@ function makeCylinder(rtop, rbot, height){
     cylinder.textureArrs = textureArrs;
     cylinder.displaceArrs = displaceArrs;
     cylinder.specArrs = specArrs;
-    cylinder.wrapX = true;
-    cylinder.wrapY = false;
+    cylinder.wrapX = false;
+    cylinder.wrapY = true;
 
     return cylinder;
 }
