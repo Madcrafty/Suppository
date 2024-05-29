@@ -42,7 +42,7 @@ var ambietLight;
 var light_dir
 
 var shapes = [];
-
+var skybox;
 // Drag
 export var dControls;
 
@@ -176,12 +176,12 @@ function render() {
             var mat = intersectedObject.material;
         }
 
-        AddMarker(intersectedObject.wrapX, intersectedObject.wrapY, texarr);
+        //AddMarker(intersectedObject.wrapX, intersectedObject.wrapY, texarr);
 
 
         renderer.render(scene, camera);
 
-        RemoveMarker(intersectedObject.wrapX, intersectedObject.wrapY, texarr);
+        //RemoveMarker(intersectedObject.wrapX, intersectedObject.wrapY, texarr);
         let texture = new THREE.DataTexture(texarr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
         texture.needsUpdate = true;
         mat.map = texture;
@@ -216,7 +216,7 @@ function setupMouse() {
 }
 function createSkybox() {
     const cubeLoader = new THREE.CubeTextureLoader();
-    const skybox = cubeLoader.load([
+    skybox = cubeLoader.load([
     'models/skybox_left-x.png',
     'models/skybox_right-x.png',
     'models/skybox_up-y.png',
@@ -230,13 +230,15 @@ function createTexture(textureArr, displaceArr, specArr, alphArr, metArr, factor
     for (var y = 0; y < resolution; y++) {                  
         for (var x = 0; x < resolution; x++) {
             var cell = (x + y * resolution) * 4;                  
-            textureArr[cell] = textureArr[cell + 1] = textureArr[cell + 2] = 255;                               
+            textureArr[cell] = textureArr[cell + 1] = textureArr[cell + 2] = 0;                               
             textureArr[cell + 3] = 255; // parameters.brushAlpha.
             displaceArr[cell] = displaceArr[cell + 1] = displaceArr[cell + 2] = factor;   
             displaceArr[cell + 3]=0;  
             specArr[cell] = specArr[cell + 1] = specArr[cell + 2] = 0; 
-            metArr[cell] = metArr[cell + 1] = metArr[cell + 2] = 0;  
-            alphArr[cell] = alphArr[cell + 1] = alphArr[cell + 2] = 255;                          
+            specArr[cell+3] = 255;
+            metArr[cell] = metArr[cell + 1] = metArr[cell + 2] = metArr[cell + 3] = 255;  
+            alphArr[cell] = alphArr[cell + 1] = alphArr[cell + 2] = 255; 
+            alphArr[cell+3] = 0;                         
         }
     }
 }
@@ -258,7 +260,7 @@ function AddMarker(wrapX, wrapY, textureArr){
             var texcell = ((xtexcell + (ytexcell* resolution)) * 4) % (4*resolution*resolution);
             var cell = (x + y * globals.textureRes) * 4; 
 
-            if(material.brushTexture[cell + 3] > 0 || material.heightTexture[cell + 3] > 0 || material.shineTexture[cell + 3] > 0){
+            if(material.brushTexture[cell + 3] > 0 || material.heightTexture[cell + 3] > 0 || material.roughTexture[cell + 3] > 0|| material.metalTexture[cell + 3] > 0|| material.alphTexture[cell + 3] > 0){
                 textureArr[texcell+1] += 50;
             }
         }
@@ -282,7 +284,7 @@ function RemoveMarker(wrapX,wrapY, textureArr){
             var texcell = ((xtexcell + (ytexcell* resolution)) * 4) % (4*resolution*resolution);
             var cell = (x + y * globals.textureRes) * 4; 
             
-            if(material.brushTexture[cell + 3] > 0 || material.heightTexture[cell + 3] > 0 || material.shineTexture[cell + 3] > 0){
+            if(material.brushTexture[cell + 3] > 0 || material.heightTexture[cell + 3] > 0 || material.roughTexture[cell + 3] > 0|| material.metalTexture[cell + 3] > 0|| material.alphTexture[cell + 3] > 0){
                 textureArr[texcell+1] -= 50;
             }
         }
@@ -321,15 +323,15 @@ function changeTexture(wrapX, wrapY, textureArr, displaceArr, specArr, alphArr, 
             var newH = Math.min(255,Math.max(0,displaceArr[texcell] + finalBrushHeight));
             displaceArr[texcell] = displaceArr[texcell+1] = displaceArr[texcell+2] = newH;
 
-            var brushShine = ((material.shineTexture[cell] + material.shineTexture[cell+1] + material.shineTexture[cell+2])/3)/25;
-            var finalBrushShine = brushShine * (material.shineTexture[cell+3]/255);
-            var newSH = Math.min(100,Math.max(0,specArr[texcell] + finalBrushShine));
+            var brushRough = ((material.roughTexture[cell] + material.roughTexture[cell+1] + material.roughTexture[cell+2])/3)/25;
+            var finalBrushRough = brushRough * (material.roughTexture[cell+3]/255);
+            var newRH = Math.min(255,Math.max(0,specArr[texcell] + finalBrushRough));
 
-            specArr[texcell] = specArr[texcell+1] = specArr[texcell+2] = newSH;
+            specArr[texcell] = specArr[texcell+1] = specArr[texcell+2] = newRH;
 
             var brushMet = ((material.metalTexture[cell] + material.metalTexture[cell+1] + material.metalTexture[cell+2])/3)/25;
             var finalBrushMet = brushMet * (material.metalTexture[cell+3]/255);
-            var newMH = Math.min(100,Math.max(0,specArr[texcell] + finalBrushMet));
+            var newMH = Math.min(255,Math.max(0,metArr[texcell] + finalBrushMet));
 
             metArr[texcell] = metArr[texcell+1] = metArr[texcell+2] = newMH;
           
@@ -369,13 +371,16 @@ function makeSphere(radius) {
 
     let material = new THREE.MeshPhysicalMaterial({
         map: texture,
-        displacementMap:htexture,
+        displacementMap: htexture,
         displacementScale: 1,
-        roughnessMap:stexture,
-        metalnessMap:mtexture,
+        roughnessMap: stexture,
         alphaMap: atexture,
+        metalnessMap: mtexture,
         transparent: true,
-        reflectivity: 1.0,
+        reflectivity: 1,
+        specularIntensity:1,
+        specularColor:specCol,
+        envMap: skybox,
     });
 
     material.needsUpdate = true;
@@ -429,7 +434,7 @@ function makeCube(wi, hi, le){
         stexture.needsUpdate = true;
         atexture.needsUpdate = true;
         mtexture.needsUpdate = true;
-        var specCol = new THREE.Color(10,10,10);
+        var specCol = new THREE.Color(255,255,255);
 
         let material = new THREE.MeshPhysicalMaterial({
             map: texture,
@@ -439,7 +444,10 @@ function makeCube(wi, hi, le){
             alphaMap: atexture,
             metalnessMap: mtexture,
             transparent: true,
-            reflectivity: 1.0,
+            reflectivity: 1,
+            specularIntensity:1,
+            specularColor:specCol,
+            envMap: skybox,
         });
 
         material.needsUpdate = true;
@@ -487,7 +495,7 @@ function makeCylinder(rtop, rbot, height){
         let alphArr = new Uint8Array( 4 * resolution * resolution );
         let metArr = new Uint8Array( 4 * resolution * resolution );
 
-        createTexture(textureArr, displaceArr, specArr, alphArr, 0);
+        createTexture(textureArr, displaceArr, specArr, alphArr, metArr, 0);
 
         let texture = new THREE.DataTexture(textureArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
         let htexture = new THREE.DataTexture(displaceArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
@@ -510,7 +518,10 @@ function makeCylinder(rtop, rbot, height){
             alphaMap: atexture,
             metalnessMap: mtexture,
             transparent: true,
-            reflectivity: 1.0,
+            reflectivity: 1,
+            specularIntensity:1,
+            specularColor:specCol,
+            envMap: skybox,
         });
 
         material.needsUpdate = true;
