@@ -27,7 +27,7 @@ export class LayeredNoiseNode extends Classic.Node {
         this.perl = perlin.create_layered_map(grid, this.gridSize, 4, 0.5, 2);
     }
     makeTexture() {
-        this.texture=new Int16Array(4 * globals.textureRes * globals.textureRes);
+        this.texture=new Int16Array(globals.textureSize);
         for (var y = 0; y < globals.textureRes; y++) {
             for (var x = 0; x < globals.textureRes; x++){
                 var cell = (x + y * globals.textureRes) * 4;

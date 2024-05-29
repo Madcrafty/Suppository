@@ -49,6 +49,7 @@ export function init(_renderer, _scene, _camera, _gui) {
     scene=_scene;
     camera=_camera;
     gui = _gui;
+    
 }
 
 //called on start
@@ -60,23 +61,11 @@ export function start() {
 
     for (let i = 0; i < 3; i++) {
         let sphere = makeSphere(1);
-        sphere.position.set(i * 3, 0, 0);
-        shapes.push(sphere);
-        scene.add(sphere);
-    }
-
-    for (let i = 0; i < 3; i++) {
+        sphere.position.set(i * 5, 0, 0);
         let cube = makeCube(2, 2, 2);
-        cube.position.set(i * 3, 3, 0);
-        shapes.push(cube);
-        scene.add(cube);
-    }
-
-    for (let i = 0; i < 3; i++) {
+        cube.position.set(i * 5, 5, 0);
         let cylinder = makeCylinder(1, 1, 2);
-        cylinder.position.set(i * 3, -3, 0);
-        shapes.push(cylinder);
-        scene.add(cylinder);
+        cylinder.position.set(i * 5, -5, 0);
     }
 
     addShapes();
@@ -301,6 +290,9 @@ function makeSphere(radius) {
     sphere.wrapX = false;
     sphere.wrapY = true;
 
+    shapes.push(sphere);
+    scene.add(sphere); 
+
     return sphere;
 }
 
@@ -352,6 +344,9 @@ function makeCube(wi, hi, le){
     cube.wrapX = true;
     cube.wrapY = true;
 
+    shapes.push(cube);
+    scene.add(cube);
+
     return cube;
 }
 
@@ -402,6 +397,9 @@ function makeCylinder(rtop, rbot, height){
     cylinder.specArrs = specArrs;
     cylinder.wrapX = false;
     cylinder.wrapY = true;
+
+    shapes.push(cylinder);
+    scene.add(cylinder);
 
     return cylinder;
 }

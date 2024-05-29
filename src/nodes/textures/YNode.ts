@@ -6,10 +6,9 @@ export class YNode extends TextureNode {
       super("Y-Coords");     
     }
     makeTexture() {
-        this.texture=new Int16Array(4 * globals.textureRes * globals.textureRes);                  
+        this.texture=new Int16Array(globals.textureSize);                  
         for (var y = 0; y < globals.textureRes; y++) {
             for (var x = 0; x < globals.textureRes; x++){
-                
                 var cell = (x + y * globals.textureRes) * 4;
                 var val = (1-y/globals.textureRes)*255;
                 if(this.alpha) {

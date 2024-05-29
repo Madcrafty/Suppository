@@ -19,7 +19,7 @@ export class TextureNode extends Classic.Node {
     }
     makeTexture() {
         //Assumes RGBA
-        this.texture=new Int16Array(4 * globals.textureRes * globals.textureRes);
+        this.texture=new Int16Array(globals.textureSize);
         for (var y = 0; y < globals.textureRes; y++) {
           for (var x = 0; x < globals.textureRes; x++){
                 var cell = (x + y * globals.textureRes) * 4;
