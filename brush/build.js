@@ -86,7 +86,36 @@ export function init(_renderer, _scene, _camera, _gui) {
             let cylinder = makeCylinder(1, 1, 2);
             cylinder.position.copy(intersectionPoint);
         }
-    });   
+    });
+        // Folder
+        var sphereFolder = gui.addFolder("Sphere properties");
+        var squareFolder = gui.addFolder("Square properties");
+        var cylinderFolder = gui.addFolder("Cylinder properties");
+        // Fill Folders
+        // Sphere
+        sphereFolder.add(globals, "radius", 0,20).onChange(function(val){
+            globals.radius = val;
+        });
+        // Square
+        squareFolder.add(globals, "width", 0,20).onChange(function(val){
+            globals.width = val;
+        });
+        squareFolder.add(globals, "height", 0,20).onChange(function(val){
+            globals.height = val;
+        });
+        squareFolder.add(globals, "length", 0,20).onChange(function(val){
+            globals.length = val;
+        });
+        // Cylinder
+        cylinderFolder.add(globals, "rtop", 0,20).onChange(function(val){
+            globals.rtop = val;
+        });
+        cylinderFolder.add(globals, "rbot", 0,20).onChange(function(val){
+            globals.rbot = val;
+        });
+        cylinderFolder.add(globals, "hight", 0,20).onChange(function(val){
+            globals.hight = val;
+        }); 
 }
 
 //called on start
@@ -117,48 +146,48 @@ function setDragControls() {
     dControls = new DragControls(shapes, camera, renderer.domElement);
     dControls.enabled = false;
 
-    window.addEventListener('keydown', function (event) {
-        var keyCode = event.code;
-        console.log(keyCode); 
-        if(keyCode == "Space"){
-            globals.mode++;
-            console.log(globals.mode);
-            if (globals.mode > 2) {globals.mode = 0;}
+    // window.addEventListener('keydown', function (event) {
+    //     var keyCode = event.code;
+    //     console.log(keyCode); 
+    //     if(keyCode == "Space"){
+    //         globals.mode++;
+    //         console.log(globals.mode);
+    //         if (globals.mode > 2) {globals.mode = 0;}
 
-            if (globals.mode == 0){
-                dControls.enabled = false;
-                active = true;
-            } else if (globals.mode == 1){
-                dControls.enabled = true;
-                active = false;
-            } else if (globals.mode == 2){
-                console.log("mode 2");
-                dControls.enabled = false;
-                active = false;
-            }
-        }
-        if(keyCode == "KeyQ"){
-            globals.shape++;
-            if(globals.shape > 2){globals.shape = 0;}
-        }
-        if(keyCode == "KeyE"){
-            globals.shape--;
-            if(globals.shape < 0){globals.shape = 2;}
-        }
-    }, false);
+    //         if (globals.mode == 0){
+    //             dControls.enabled = false;
+    //             active = true;
+    //         } else if (globals.mode == 1){
+    //             dControls.enabled = true;
+    //             active = false;
+    //         } else if (globals.mode == 2){
+    //             console.log("mode 2");
+    //             dControls.enabled = false;
+    //             active = false;
+    //         }
+    //     }
+    //     if(keyCode == "KeyQ"){
+    //         globals.shape++;
+    //         if(globals.shape > 2){globals.shape = 0;}
+    //     }
+    //     if(keyCode == "KeyE"){
+    //         globals.shape--;
+    //         if(globals.shape < 0){globals.shape = 2;}
+    //     }
+    // }, false);
 }
 
 function setInstantiationControls() {
     window.addEventListener('click', function(e){
         if  (globals.mode == 2){
             if (globals.shape == 0){
-                let sphere = makeSphere(1);
+                let sphere = makeSphere(globals.radius);
                 sphere.position.copy(intersectionPoint);
             }   else if (globals.shape == 1) {
-                let cube = makeCube(2, 2, 2);
+                let cube = makeCube(globals.width, globals.height, globals.length);
                 cube.position.copy(intersectionPoint);
             }   else if (globals.shape == 2) {
-                let cylinder = makeCylinder(1, 1, 2);
+                let cylinder = makeCylinder(globals.rtop, globals.rbot, globals.hight);
                 cylinder.position.copy(intersectionPoint);
             }
             
@@ -570,9 +599,12 @@ function setLight(){
 }
 
 function onMouseMove(event) {
-    
+    //var planePoint = new THREE.Vector3();
     mouse.set((event.clientX / renderer.domElement.clientWidth) * 2 - 1, -(event.clientY / renderer.domElement.clientHeight) * 2 + 1);
     planeNormal.copy(camera.position).normalize();
+    //camera.getWorldDirection(cameraDir);
+    //planePoint = THREE.Vector3.addVectors(camera.position, THREE.Vector3.multiplyVectors(cameraDir, new THREE.Vector3(globals.placeDist, globals.placeDist, globals.placeDist)));
+    //console.log(planePoint);
     plane.setFromNormalAndCoplanarPoint(planeNormal, scene.position);
     raycaster.setFromCamera(mouse, camera);
     raycaster.ray.intersectPlane(plane,intersectionPoint);
