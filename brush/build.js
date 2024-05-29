@@ -43,12 +43,16 @@ var light_dir
 
 var shapes = [];
 
+// Drag
+export var dControls;
+
 //instantiate objects
 var intersectionPoint = new THREE.Vector3();
 var planeNormal = new THREE.Vector3();
 var plane = new THREE.Plane();
-var mode = 0;
-var shape = 0;
+//var mode = 0;
+//var shape = 0;
+
 
 //init is used to initialise any core variables.
 export function init(_renderer, _scene, _camera, _gui) {
@@ -56,7 +60,33 @@ export function init(_renderer, _scene, _camera, _gui) {
     scene=_scene;
     camera=_camera;
     gui = _gui;
-    
+    gui.add(globals, "mode", 0, 2).onChange(function(val){
+        globals.mode = Math.round(val);
+        console.log(globals.mode + " in menu");
+        if (globals.mode == 0){
+            dControls.enabled = false;
+            active = true;
+        } else if (globals.mode == 1){
+            dControls.enabled = true;
+            active = false;
+        } else if (globals.mode == 2){
+            dControls.enabled = false;
+            active = false;
+        }
+    });
+    gui.add(globals, "shape", 0, 2).onChange(function(val){
+        globals.shape = Math.round(val);
+        if (globals.shape == 0){
+            let sphere = makeSphere(1);
+            sphere.position.copy(intersectionPoint);
+        }   else if (globals.shape == 1) {
+            let cube = makeCube(2, 2, 2);
+            cube.position.copy(intersectionPoint);
+        }   else if (globals.shape == 2) {
+            let cylinder = makeCylinder(1, 1, 2);
+            cylinder.position.copy(intersectionPoint);
+        }
+    });   
 }
 
 //called on start
@@ -84,49 +114,50 @@ export function run() {
 }
 
 function setDragControls() {
-    const dControls = new DragControls(shapes, camera, renderer.domElement);
+    dControls = new DragControls(shapes, camera, renderer.domElement);
     dControls.enabled = false;
 
     window.addEventListener('keydown', function (event) {
         var keyCode = event.code;
         console.log(keyCode); 
         if(keyCode == "Space"){
-            mode++;
-            console.log(mode);
-            if (mode > 2) {mode = 0;}
-            if (mode == 0){
+            globals.mode++;
+            console.log(globals.mode);
+            if (globals.mode > 2) {globals.mode = 0;}
+
+            if (globals.mode == 0){
                 dControls.enabled = false;
                 active = true;
-            } else if (mode == 1){
+            } else if (globals.mode == 1){
                 dControls.enabled = true;
                 active = false;
-            } else if (mode == 2){
+            } else if (globals.mode == 2){
                 console.log("mode 2");
                 dControls.enabled = false;
                 active = false;
             }
         }
         if(keyCode == "KeyQ"){
-            shape++;
-            if(shape > 2){shape = 0;}
+            globals.shape++;
+            if(globals.shape > 2){globals.shape = 0;}
         }
         if(keyCode == "KeyE"){
-            shape--;
-            if(shape < 0){shape = 2;}
+            globals.shape--;
+            if(globals.shape < 0){globals.shape = 2;}
         }
     }, false);
 }
 
 function setInstantiationControls() {
     window.addEventListener('click', function(e){
-        if  (mode == 2){
-            if (shape == 0){
+        if  (globals.mode == 2){
+            if (globals.shape == 0){
                 let sphere = makeSphere(1);
                 sphere.position.copy(intersectionPoint);
-            }   else if (shape == 1) {
+            }   else if (globals.shape == 1) {
                 let cube = makeCube(2, 2, 2);
                 cube.position.copy(intersectionPoint);
-            }   else if (shape == 2) {
+            }   else if (globals.shape == 2) {
                 let cylinder = makeCylinder(1, 1, 2);
                 cylinder.position.copy(intersectionPoint);
             }
@@ -302,7 +333,7 @@ function changeTexture(wrapX, wrapY, textureArr, displaceArr, specArr, alphArr, 
 
             metArr[texcell] = metArr[texcell+1] = metArr[texcell+2] = newMH;
           
-            var brushAlph = ((material.alphTexture[cell] + material.alphTexture[cell+1] + material.alphTexture[cell+2])/3);
+            var brushAlph = ((material.alphTexture[cell] + material.alphTexture[cell+1] + material.alphTexture[cell+2])/3)/25;
             var finalBrushAlph = brushAlph * (material.alphTexture[cell+3]/255);
             var newAH = Math.min(255,Math.max(0,alphArr[texcell] + finalBrushAlph));
 

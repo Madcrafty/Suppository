@@ -8,7 +8,8 @@ import { globals } from '../globals.js';
 export const material = {
     brushTexture: new Uint8Array(globals.textureSize),
     heightTexture: new Int16Array(globals.textureSize),
-    shineTexture: new Int16Array(globals.textureSize),
+    roughTexture: new Int16Array(globals.textureSize),
+    metalTexture: new Int16Array(globals.textureSize),
     alphTexture: new Int16Array(globals.textureSize),
     metTexture: new Int16Array(globals.textureSize),
 }

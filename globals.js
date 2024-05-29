@@ -7,5 +7,7 @@ export const globals = {
     tickRate: 1,
     programTickRate: 1,
     textureRes: 140,
-    textureSize: 140*140*4
+    textureSize: 140*140*4,
+    mode: 0,
+    shape: 0
 }
