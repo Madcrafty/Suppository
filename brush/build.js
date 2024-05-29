@@ -53,6 +53,12 @@ var plane = new THREE.Plane();
 //var mode = 0;
 //var shape = 0;
 
+const cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 256 );
+cubeRenderTarget.texture.type = THREE.HalfFloatType;
+
+const cubeCamera = new THREE.CubeCamera( 1, 1000, cubeRenderTarget );
+
+
 
 //init is used to initialise any core variables.
 export function init(_renderer, _scene, _camera, _gui) {
@@ -223,8 +229,11 @@ function createSkybox() {
     'models/skybox_down-y.png',
     'models/skybox_front-z.png',
     'models/skybox_back-z.png',
-    ]);
-    scene.background = skybox;
+    ], function(texture){
+        //texture.mapping = THREE.EquirectangularReflectionMapping;
+        scene.background = skybox;
+        scene.environment = skybox;
+    });
 }
 function createTexture(textureArr, displaceArr, specArr, alphArr, metArr, factor) {
     for (var y = 0; y < resolution; y++) {                  
@@ -235,7 +244,7 @@ function createTexture(textureArr, displaceArr, specArr, alphArr, metArr, factor
             displaceArr[cell] = displaceArr[cell + 1] = displaceArr[cell + 2] = factor;   
             displaceArr[cell + 3]=0;  
             specArr[cell] = specArr[cell + 1] = specArr[cell + 2] = 0; 
-            metArr[cell] = metArr[cell + 1] = metArr[cell + 2] = 0;  
+            metArr[cell] = metArr[cell + 1] = metArr[cell + 2] = 255;  
             alphArr[cell] = alphArr[cell + 1] = alphArr[cell + 2] = 255;                          
         }
     }
@@ -325,13 +334,13 @@ function changeTexture(wrapX, wrapY, textureArr, displaceArr, specArr, alphArr, 
 
             var brushRough = ((material.roughTexture[cell] + material.roughTexture[cell+1] + material.roughTexture[cell+2])/3)/25;
             var finalBrushRough = brushRough * (material.roughTexture[cell+3]/255);
-            var newSH = Math.min(100,Math.max(0,specArr[texcell] + finalBrushRough));
+            var newSH = Math.min(255,Math.max(0,specArr[texcell] + finalBrushRough));
 
             specArr[texcell] = specArr[texcell+1] = specArr[texcell+2] = newSH;
 
             var brushMet = ((material.metalTexture[cell] + material.metalTexture[cell+1] + material.metalTexture[cell+2])/3)/25;
             var finalBrushMet = brushMet * (material.metalTexture[cell+3]/255);
-            var newMH = Math.min(100,Math.max(0,specArr[texcell] + finalBrushMet));
+            var newMH = Math.min(255,Math.max(0,specArr[texcell] + finalBrushMet));
 
             metArr[texcell] = metArr[texcell+1] = metArr[texcell+2] = newMH;
           
@@ -376,6 +385,7 @@ function makeSphere(radius) {
         roughnessMap:stexture,
         metalnessMap:mtexture,
         alphaMap: atexture,
+        envMap: cubeRenderTarget.texture,
         transparent: true,
         reflectivity: 1.0,
     });
