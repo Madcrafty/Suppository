@@ -92,21 +92,17 @@ function render() {
         }
     }
 
-    for (let i = 0; i < shapes.length; i++) {
-        if ((shapes[i].geometry instanceof THREE.BoxGeometry) || (shapes[i].geometry instanceof THREE.CylinderGeometry)) {
-            for (let j = 0; j < shapes[i].material.length; j++) {
-                let texture = new THREE.DataTexture(shapes[i].textureArrs[j], resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
-                texture.needsUpdate = true;
-                shapes[i].material[j].map = texture;
-                shapes[i].material[j].needsUpdate = true;
-            }
-        } else {
-            let texture = new THREE.DataTexture(shapes[i].textureArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
-            texture.needsUpdate = true;
-        
-            shapes[i].material.map = texture;
-            shapes[i].material.needsUpdate = true;
-        }
+    if ((intersectedObject.geometry instanceof THREE.BoxGeometry) || (intersectedObject.geometry instanceof THREE.CylinderGeometry)) {
+        let texture = new THREE.DataTexture(intersectedObject.textureArrs[faceIndexOut], resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
+        texture.needsUpdate = true;
+        intersectedObject.material[faceIndexOut].map = texture;
+        intersectedObject.material[faceIndexOut].needsUpdate = true;
+    } else {
+        let texture = new THREE.DataTexture(intersectedObject.textureArr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
+        texture.needsUpdate = true;
+    
+        intersectedObject.material.map = texture;
+        intersectedObject.material.needsUpdate = true;
     }
     renderer.render(scene, camera);
 
