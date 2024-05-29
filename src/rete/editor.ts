@@ -49,6 +49,7 @@ export async function createEditor(container: HTMLElement) {
         ['Tan', () => new Nodes.TanNode()],
         ['Abs', () => new Nodes.AbsNode()],
         ['Sqrt', () => new Nodes.SqrtNode()],
+        ['Neg', () => new Nodes.NegNode()],
       ]],
       ['Output', () => new Nodes.OutputNode()],
     ]),

@@ -21,6 +21,7 @@ export type Node =
   | Nodes.CosNode
   | Nodes.TanNode
   | Nodes.AbsNode
+  | Nodes.NegNode
   | Nodes.SqrtNode;
 export type Conn = 
   | Connection<Nodes.NumberNode, Nodes.OutputNode>
