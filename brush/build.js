@@ -295,7 +295,7 @@ function changeTexture(wrapX, wrapY, textureArr, displaceArr, specArr, alphArr) 
 
             specArr[texcell] = specArr[texcell+1] = specArr[texcell+2] = newSH;
           
-            var brushAlph = ((material.alphTexture[cell] + material.alphTexture[cell+1] + material.alphTexture[cell+2])/3);
+            var brushAlph = ((material.alphTexture[cell] + material.alphTexture[cell+1] + material.alphTexture[cell+2])/3)/25;
             var finalBrushAlph = brushAlph * (material.alphTexture[cell+3]/255);
             var newAH = Math.min(255,Math.max(0,alphArr[texcell] + finalBrushAlph));
 
