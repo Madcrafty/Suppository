@@ -326,41 +326,14 @@ function changeTexture(wrapX, wrapY, textureArr, displaceArr, specArr, alphArr) 
 
             specArr[texcell] = specArr[texcell+1] = specArr[texcell+2] = newSH;
           
-            var brushAlph = ((material.alphTexture[cell] + material.alphTexture[cell+1] + material.alphTexture[cell+2])/3);
+            var brushAlph = ((material.alphTexture[cell] + material.alphTexture[cell+1] + material.alphTexture[cell+2])/3)/25;
             var finalBrushAlph = brushAlph * (material.alphTexture[cell+3]/255);
-            var newAH = Math.min(100,Math.max(0,alphArr[texcell] + finalBrushAlph));
+            var newAH = Math.min(255,Math.max(0,alphArr[texcell] + finalBrushAlph));
 
             alphArr[texcell] = alphArr[texcell+1] = alphArr[texcell+2] = newAH;
         }
     }
 }
-
-
-function changeAlphaTexture(wrapX,wrapY, alphArr){
-    for (var y = 0; y < globals.textureRes; y++) {
-        for (var x = 0; x < globals.textureRes; x++){
-            //here, yhcell has parameters flipped to align the axes of the brush texture and the sphere texture!
-            var xscell = (mouseX + x - Math.ceil(globals.textureRes/2))
-            var yscell = (mouseY - y + Math.ceil(globals.textureRes/2))
-
-            if(wrapY && (yscell >= resolution || yscell < 0)){
-                continue;
-            }
-            if(wrapX && (xscell >= resolution || xscell < 0)){
-                continue;
-            }
-
-            var scell = ((xscell + (yscell* resolution)) * 4) % (4*resolution*resolution);
-            var cell = (x + y * globals.textureRes) * 4; 
-            var brushAlph = ((material.alphTexture[cell] + material.alphTexture[cell+1] + material.alphTexture[cell+2])/3);
-            var finalBrushAlph = brushAlph * (material.alphTexture[cell+3]/255);
-            var newSH = Math.min(100,Math.max(0,alphArr[scell] + finalBrushAlph));
-
-            alphArr[scell] = alphArr[scell+1] = alphArr[scell+2] = newSH;
-        }
-    }
-}
-
 
 function makeSphere(radius) {
     let geometry = new THREE.SphereGeometry(radius,100,100);
@@ -382,7 +355,7 @@ function makeSphere(radius) {
     stexture.needsUpdate = true;
     atexture.needsUpdate = true;
 
-    var specCol = new THREE.Color(0,0,0);
+    var specCol = new THREE.Color(10,10,10);
 
     let material = new THREE.MeshPhongMaterial({
         map: texture,
@@ -390,7 +363,8 @@ function makeSphere(radius) {
         displacementScale: 1,
         specularMap:stexture,
         specular:specCol,
-        alphaMap: atexture
+        alphaMap: atexture,
+        transparent: true,
     });
 
     material.needsUpdate = true;
@@ -439,13 +413,16 @@ function makeCube(wi, hi, le){
         htexture.needsUpdate = true;
         stexture.needsUpdate = true;
         atexture.needsUpdate = true;
+        var specCol = new THREE.Color(10,10,10);
 
         let material = new THREE.MeshPhongMaterial({
             map: texture,
             displacementMap: htexture,
             displacementScale: 1,
             specularMap: stexture,
-            alphaMap: atexture
+            specular:specCol,
+            alphaMap: atexture,
+            transparent: true
         });
 
         material.needsUpdate = true;
@@ -500,13 +477,16 @@ function makeCylinder(rtop, rbot, height){
         htexture.needsUpdate = true;
         stexture.needsUpdate = true;
         atexture.needsUpdate = true;
+        var specCol = new THREE.Color(10,10,10);
 
         let material = new THREE.MeshPhongMaterial({
             map: texture,
             displacementMap: htexture,
             displacementScale: 1,
             specularMap: stexture,
-            alphaMap: atexture
+            specCol,
+            alphaMap: atexture,
+            transparent: true
         });
 
         material.needsUpdate = true;
