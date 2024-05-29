@@ -53,6 +53,12 @@ var plane = new THREE.Plane();
 //var mode = 0;
 //var shape = 0;
 
+const cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 256 );
+cubeRenderTarget.texture.type = THREE.HalfFloatType;
+
+const cubeCamera = new THREE.CubeCamera( 1, 1000, cubeRenderTarget );
+
+
 
 //init is used to initialise any core variables.
 export function init(_renderer, _scene, _camera, _gui) {
@@ -223,8 +229,11 @@ function createSkybox() {
     'models/skybox_down-y.png',
     'models/skybox_front-z.png',
     'models/skybox_back-z.png',
-    ]);
-    scene.background = skybox;
+    ], function(texture){
+        //texture.mapping = THREE.EquirectangularReflectionMapping;
+        scene.background = skybox;
+        scene.environment = skybox;
+    });
 }
 function createTexture(textureArr, displaceArr, specArr, alphArr, metArr, factor) {
     for (var y = 0; y < resolution; y++) {                  
@@ -237,6 +246,12 @@ function createTexture(textureArr, displaceArr, specArr, alphArr, metArr, factor
             specArr[cell] = specArr[cell + 1] = specArr[cell + 2] = 0; 
             metArr[cell] = metArr[cell + 1] = metArr[cell + 2] = 255;  
             alphArr[cell] = alphArr[cell + 1] = alphArr[cell + 2] = 255;                          
+        }
+    }
+    for (var y = 0; y < resolution; y++) {                  
+        for (var x = 0; x < resolution; x++) {
+            var cell = (x + y * resolution) * 4;                  
+            alphArr[cell] = alphArr[cell + 1] = alphArr[cell + 2] = 0;                               
         }
     }
 }
@@ -344,6 +359,33 @@ function changeTexture(wrapX, wrapY, textureArr, displaceArr, specArr, alphArr, 
     }
 }
 
+
+function changeAlphaTexture(wrapX,wrapY, alphArr){
+    for (var y = 0; y < globals.textureRes; y++) {
+        for (var x = 0; x < globals.textureRes; x++){
+            //here, yhcell has parameters flipped to align the axes of the brush texture and the sphere texture!
+            var xscell = (mouseX + x - Math.ceil(globals.textureRes/2))
+            var yscell = (mouseY - y + Math.ceil(globals.textureRes/2))
+
+            if(wrapY && (yscell >= resolution || yscell < 0)){
+                continue;
+            }
+            if(wrapX && (xscell >= resolution || xscell < 0)){
+                continue;
+            }
+
+            var scell = ((xscell + (yscell* resolution)) * 4) % (4*resolution*resolution);
+            var cell = (x + y * globals.textureRes) * 4; 
+            var brushAlph = ((material.alphTexture[cell] + material.alphTexture[cell+1] + material.alphTexture[cell+2])/3);
+            var finalBrushAlph = brushAlph * (material.alphTexture[cell+3]/255);
+            var newSH = Math.min(100,Math.max(0,alphArr[scell] + finalBrushAlph));
+
+            alphArr[scell] = alphArr[scell+1] = alphArr[scell+2] = newSH;
+        }
+    }
+}
+
+
 function makeSphere(radius) {
     let geometry = new THREE.SphereGeometry(radius,100,100);
     
@@ -376,6 +418,7 @@ function makeSphere(radius) {
         roughnessMap:stexture,
         metalnessMap:mtexture,
         alphaMap: atexture,
+        envMap: cubeRenderTarget.texture,
         transparent: true,
         reflectivity: 1.0,
         envMap: skybox
