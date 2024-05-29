@@ -54,6 +54,7 @@ export function start() {
     setupMouse();
     setLight();
     createSkybox();
+    setDragControls();  
 
     for (let i = 0; i < 3; i++) {
         let sphere = makeSphere(1);
@@ -81,6 +82,21 @@ export function start() {
 
 export function run() {
     render();
+}
+
+function setDragControls()
+{
+    const dControls = new DragControls(spheres, camera, renderer.domElement);
+    dControls.enabled = false;
+
+    window.addEventListener('keydown', function (event) {
+        var keyCode = event.code;
+        console.log(keyCode); 
+        if(keyCode == "Space"){
+            dControls.enabled = !dControls.enabled;
+            active = !active;
+        }
+    }, false);
 }
 
 function render() {
