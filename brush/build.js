@@ -53,7 +53,7 @@ export function init(_renderer, _scene, _camera, _gui) {
 export function start() {
     setupMouse();
     setLight();
-    
+    createSkybox();
 
     for (let i = 0; i < 3; i++) {
         let sphere = makeSphere(1);
@@ -142,7 +142,18 @@ function setupMouse() {
         }
     }, false);
 }
-
+function createSkybox() {
+    const cubeLoader = new THREE.CubeTextureLoader();
+    const skybox = cubeLoader.load([
+    'models/skybox_left-x.png',
+    'models/skybox_right-x.png',
+    'models/skybox_up-y.png',
+    'models/skybox_down-y.png',
+    'models/skybox_front-z.png',
+    'models/skybox_back-z.png',
+    ]);
+    scene.background = skybox;
+}
 function createTexture(textureArr, displaceArr, specArr, factor) {
     for (var y = 0; y < resolution; y++) {                  
         for (var x = 0; x < resolution; x++) {
