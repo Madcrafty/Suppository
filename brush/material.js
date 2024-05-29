@@ -9,5 +9,5 @@ export const material = {
     brushTexture: new Uint8Array(globals.textureSize),
     heightTexture: new Int16Array(globals.textureSize),
     shineTexture: new Int16Array(globals.textureSize),
-    alphaTexture: new Int16Array(globals.textureSize),
+    alphTexture: new Int16Array(globals.textureSize),
 }

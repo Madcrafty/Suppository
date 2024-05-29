@@ -19,7 +19,7 @@ export class OutputNode extends Classic.Node {
       material.brushTexture = inputs['texture'] && inputs['texture'][0] instanceof Int16Array ? utils.int16touint8(inputs['texture'][0]) : material.brushTexture;
       material.heightTexture = inputs['height'] && inputs['height'][0] instanceof Int16Array ? inputs['height'][0] : material.heightTexture;
       material.shineTexture = inputs['shine'] && inputs['shine'][0] instanceof Int16Array ? inputs['shine'][0] : material.shineTexture;
-      material.alphaTexture = inputs['alpha'] && inputs['alpha'][0] instanceof Int16Array ? inputs['alpha'][0] : material.alphaTexture;
+      material.alphTexture = inputs['alpha'] && inputs['alpha'][0] instanceof Int16Array ? inputs['alpha'][0] : material.alphTexture;
       return {};
     }
   }
