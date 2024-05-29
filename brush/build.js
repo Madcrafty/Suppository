@@ -176,12 +176,12 @@ function render() {
             var mat = intersectedObject.material;
         }
 
-        //AddMarker(intersectedObject.wrapX, intersectedObject.wrapY, texarr);
+        AddMarker(intersectedObject.wrapX, intersectedObject.wrapY, texarr);
 
 
         renderer.render(scene, camera);
 
-        //RemoveMarker(intersectedObject.wrapX, intersectedObject.wrapY, texarr);
+        RemoveMarker(intersectedObject.wrapX, intersectedObject.wrapY, texarr);
         let texture = new THREE.DataTexture(texarr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
         texture.needsUpdate = true;
         mat.map = texture;
