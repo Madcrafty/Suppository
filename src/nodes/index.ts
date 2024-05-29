@@ -19,3 +19,4 @@ export {CosNode} from "./shaper/CosNode.ts";
 export {TanNode} from "./shaper/TanNode.ts";
 export {AbsNode} from "./shaper/AbsNode.ts";
 export {SqrtNode} from "./shaper/SqrtNode.ts";
+export {NegNode} from "./shaper/NegNode.ts";
