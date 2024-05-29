@@ -48,6 +48,7 @@ var intersectionPoint = new THREE.Vector3();
 var planeNormal = new THREE.Vector3();
 var plane = new THREE.Plane();
 var mode = 0;
+var shape = 0;
 
 //init is used to initialise any core variables.
 export function init(_renderer, _scene, _camera, _gui) {
@@ -105,16 +106,31 @@ function setDragControls() {
                 active = false;
             }
         }
+        if(keyCode == "KeyQ"){
+            shape++;
+            if(shape > 2){shape = 0;}
+        }
+        if(keyCode == "KeyE"){
+            shape--;
+            if(shape < 0){shape = 2;}
+        }
     }, false);
 }
 
 function setInstantiationControls() {
     window.addEventListener('click', function(e){
         if  (mode == 2){
-            let sphere = makeSphere(1);
-            sphere.position.copy(intersectionPoint);
-            shapes.push(sphere);
-            scene.add(sphere);
+            if (shape == 0){
+                let sphere = makeSphere(1);
+                sphere.position.copy(intersectionPoint);
+            }   else if (shape == 1) {
+                let cube = makeCube(2, 2, 2);
+                cube.position.copy(intersectionPoint);
+            }   else if (shape == 2) {
+                let cylinder = makeCylinder(1, 1, 2);
+                cylinder.position.copy(intersectionPoint);
+            }
+            
         }        
     })
 }
