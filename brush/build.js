@@ -298,7 +298,7 @@ function setLight(){
     cameraLight = new THREE.PointLight(new THREE.Color(0xffffff),1.0);
     camera.add(cameraLight);
     ambietLight = new THREE.AmbientLight(new THREE.Color(0xffffff),0.2);
-    light_dir = new THREE.DirectionalLight(0xffffff, 0.0);
+    light_dir = new THREE.DirectionalLight(0xffffff, 1.0);
     light_dir.position.set(-50, 40, 50);
     light_dir.castShadow=true;
 }
