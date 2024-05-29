@@ -42,7 +42,7 @@ var ambietLight;
 var light_dir
 
 var shapes = [];
-
+var skybox;
 // Drag
 export var dControls;
 
@@ -216,7 +216,7 @@ function setupMouse() {
 }
 function createSkybox() {
     const cubeLoader = new THREE.CubeTextureLoader();
-    const skybox = cubeLoader.load([
+    skybox = cubeLoader.load([
     'models/skybox_left-x.png',
     'models/skybox_right-x.png',
     'models/skybox_up-y.png',
@@ -235,7 +235,7 @@ function createTexture(textureArr, displaceArr, specArr, alphArr, metArr, factor
             displaceArr[cell] = displaceArr[cell + 1] = displaceArr[cell + 2] = factor;   
             displaceArr[cell + 3]=0;  
             specArr[cell] = specArr[cell + 1] = specArr[cell + 2] = 0; 
-            metArr[cell] = metArr[cell + 1] = metArr[cell + 2] = 0;  
+            metArr[cell] = metArr[cell + 1] = metArr[cell + 2] = 255;  
             alphArr[cell] = alphArr[cell + 1] = alphArr[cell + 2] = 255;                          
         }
     }
@@ -325,13 +325,13 @@ function changeTexture(wrapX, wrapY, textureArr, displaceArr, specArr, alphArr, 
 
             var brushRough = ((material.roughTexture[cell] + material.roughTexture[cell+1] + material.roughTexture[cell+2])/3)/25;
             var finalBrushRough = brushRough * (material.roughTexture[cell+3]/255);
-            var newSH = Math.min(100,Math.max(0,specArr[texcell] + finalBrushRough));
+            var newSH = Math.min(255,Math.max(0,specArr[texcell] + finalBrushRough));
 
             specArr[texcell] = specArr[texcell+1] = specArr[texcell+2] = newSH;
 
             var brushMet = ((material.metalTexture[cell] + material.metalTexture[cell+1] + material.metalTexture[cell+2])/3)/25;
             var finalBrushMet = brushMet * (material.metalTexture[cell+3]/255);
-            var newMH = Math.min(100,Math.max(0,specArr[texcell] + finalBrushMet));
+            var newMH = Math.min(255,Math.max(0,specArr[texcell] + finalBrushMet));
 
             metArr[texcell] = metArr[texcell+1] = metArr[texcell+2] = newMH;
           
@@ -378,6 +378,7 @@ function makeSphere(radius) {
         alphaMap: atexture,
         transparent: true,
         reflectivity: 1.0,
+        envMap: skybox
     });
 
     material.needsUpdate = true;
@@ -442,6 +443,7 @@ function makeCube(wi, hi, le){
             metalnessMap: mtexture,
             transparent: true,
             reflectivity: 1.0,
+            envMap: skybox
         });
 
         material.needsUpdate = true;
@@ -513,6 +515,7 @@ function makeCylinder(rtop, rbot, height){
             metalnessMap: mtexture,
             transparent: true,
             reflectivity: 1.0,
+            envMap: skybox
         });
 
         material.needsUpdate = true;
