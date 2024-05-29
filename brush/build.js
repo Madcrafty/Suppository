@@ -327,8 +327,8 @@ function changeTexture(wrapX, wrapY, textureArr, displaceArr, specArr, alphArr, 
 
             specArr[texcell] = specArr[texcell+1] = specArr[texcell+2] = newSH;
 
-            var brushMet = ((material.metTexture[cell] + material.metTexture[cell+1] + material.metTexture[cell+2])/3)/25;
-            var finalBrushMet = brushMet * (material.metTexture[cell+3]/255);
+            var brushMet = ((material.metalTexture[cell] + material.metalTexture[cell+1] + material.metalTexture[cell+2])/3)/25;
+            var finalBrushMet = brushMet * (material.metalTexture[cell+3]/255);
             var newMH = Math.min(100,Math.max(0,specArr[texcell] + finalBrushMet));
 
             metArr[texcell] = metArr[texcell+1] = metArr[texcell+2] = newMH;

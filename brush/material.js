@@ -11,5 +11,4 @@ export const material = {
     roughTexture: new Int16Array(globals.textureSize),
     metalTexture: new Int16Array(globals.textureSize),
     alphTexture: new Int16Array(globals.textureSize),
-    metTexture: new Int16Array(globals.textureSize),
 }
