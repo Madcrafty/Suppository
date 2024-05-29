@@ -307,7 +307,7 @@ function makeSphere(radius) {
     stexture.needsUpdate = true;
     atexture.needsUpdate = true;
 
-    var specCol = new THREE.Color(0,0,0);
+    var specCol = new THREE.Color(10,10,10);
 
     let material = new THREE.MeshPhongMaterial({
         map: texture,
@@ -364,12 +364,14 @@ function makeCube(wi, hi, le){
         htexture.needsUpdate = true;
         stexture.needsUpdate = true;
         atexture.needsUpdate = true;
+        var specCol = new THREE.Color(10,10,10);
 
         let material = new THREE.MeshPhongMaterial({
             map: texture,
             displacementMap: htexture,
             displacementScale: 1,
             specularMap: stexture,
+            specular:specCol,
             alphaMap: atexture
         });
 
@@ -425,12 +427,14 @@ function makeCylinder(rtop, rbot, height){
         htexture.needsUpdate = true;
         stexture.needsUpdate = true;
         atexture.needsUpdate = true;
+        var specCol = new THREE.Color(10,10,10);
 
         let material = new THREE.MeshPhongMaterial({
             map: texture,
             displacementMap: htexture,
             displacementScale: 1,
             specularMap: stexture,
+            specCol,
             alphaMap: atexture
         });
 
