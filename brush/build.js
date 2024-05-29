@@ -43,6 +43,12 @@ var light_dir
 
 var shapes = [];
 
+//instantiate objects
+var intersectionPoint = new THREE.Vector3();
+var planeNormal = new THREE.Vector3();
+var plane = new THREE.Plane();
+var mode = 0;
+
 //init is used to initialise any core variables.
 export function init(_renderer, _scene, _camera, _gui) {
     renderer=_renderer;
@@ -58,6 +64,7 @@ export function start() {
     setLight();
     createSkybox();
     setDragControls();  
+    setInstantiationControls();
 
     for (let i = 0; i < 3; i++) {
         let sphere = makeSphere(1);
@@ -75,20 +82,41 @@ export function run() {
     render();
 }
 
-function setDragControls()
-{
+function setDragControls() {
     const dControls = new DragControls(shapes, camera, renderer.domElement);
-  
     dControls.enabled = false;
 
     window.addEventListener('keydown', function (event) {
         var keyCode = event.code;
         console.log(keyCode); 
         if(keyCode == "Space"){
-            dControls.enabled = !dControls.enabled;
-            active = !active;
+            mode++;
+            console.log(mode);
+            if (mode > 2) {mode = 0;}
+            if (mode == 0){
+                dControls.enabled = false;
+                active = true;
+            } else if (mode == 1){
+                dControls.enabled = true;
+                active = false;
+            } else if (mode == 2){
+                console.log("mode 2");
+                dControls.enabled = false;
+                active = false;
+            }
         }
     }, false);
+}
+
+function setInstantiationControls() {
+    window.addEventListener('click', function(e){
+        if  (mode == 2){
+            let sphere = makeSphere(1);
+            sphere.position.copy(intersectionPoint);
+            shapes.push(sphere);
+            scene.add(sphere);
+        }        
+    })
 }
 
 function render() {
@@ -480,7 +508,10 @@ function setLight(){
 function onMouseMove(event) {
     
     mouse.set((event.clientX / renderer.domElement.clientWidth) * 2 - 1, -(event.clientY / renderer.domElement.clientHeight) * 2 + 1);
+    planeNormal.copy(camera.position).normalize();
+    plane.setFromNormalAndCoplanarPoint(planeNormal, scene.position);
     raycaster.setFromCamera(mouse, camera);
+    raycaster.ray.intersectPlane(plane,intersectionPoint);
   
     let intersects = raycaster.intersectObjects(scene.children, true);
 
