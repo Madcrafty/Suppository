@@ -3,6 +3,8 @@ import * as THREE from 'three';
 import {material} from './material.js'
 import { globals } from "../globals.js";
 import { uv } from 'three/examples/jsm/nodes/Nodes.js';
+import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
+
 
 //Core Variables
 var renderer;
@@ -86,7 +88,7 @@ export function run() {
 
 function setDragControls()
 {
-    const dControls = new DragControls(spheres, camera, renderer.domElement);
+    const dControls = new DragControls(shapes, camera, renderer.domElement);
     dControls.enabled = false;
 
     window.addEventListener('keydown', function (event) {
@@ -110,16 +112,11 @@ function render() {
         }
 
         AddMarker(intersectedObject.wrapX, intersectedObject.wrapY, texarr);
-        
-        let texture = new THREE.DataTexture(texarr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
-        texture.needsUpdate = true;
-        mat.map = texture;
-        mat.needsUpdate = true;
 
         renderer.render(scene, camera);
 
         RemoveMarker(intersectedObject.wrapX, intersectedObject.wrapY, texarr);
-        texture = new THREE.DataTexture(texarr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
+        let texture = new THREE.DataTexture(texarr, resolution, resolution, THREE.RGBAFormat, THREE.UnsignedByteType);
         texture.needsUpdate = true;
         mat.map = texture;
         mat.needsUpdate = true;
@@ -251,12 +248,12 @@ function changeTexture(wrapX, wrapY, textureArr, displaceArr, specArr) {
             textureArr[texcell+1] = Math.ceil(brushG+texG);
             textureArr[texcell+2] = Math.ceil(brushB+texB);
 
-            var brushHeight = ((material.heightTexture[cell] + material.heightTexture[cell+1] + material.heightTexture[cell+2])/3);
+            var brushHeight = ((material.heightTexture[cell] + material.heightTexture[cell+1] + material.heightTexture[cell+2])/3)/25;
             var finalBrushHeight = brushHeight * (material.heightTexture[cell+3]/255);
             var newH = Math.min(255,Math.max(0,displaceArr[texcell] + finalBrushHeight));
             displaceArr[texcell] = displaceArr[texcell+1] = displaceArr[texcell+2] = newH;
 
-            var brushShine = ((material.shineTexture[cell] + material.shineTexture[cell+1] + material.shineTexture[cell+2])/3);
+            var brushShine = ((material.shineTexture[cell] + material.shineTexture[cell+1] + material.shineTexture[cell+2])/3)/25;
             var finalBrushShine = brushShine * (material.shineTexture[cell+3]/255);
             var newSH = Math.min(100,Math.max(0,specArr[texcell] + finalBrushShine));
 
@@ -352,8 +349,8 @@ function makeCube(wi, hi, le){
     cube.textureArrs = textureArrs;
     cube.displaceArrs = displaceArrs;
     cube.specArrs = specArrs;
-    cube.wrapX = false;
-    cube.wrapY = false;
+    cube.wrapX = true;
+    cube.wrapY = true;
 
     return cube;
 }
@@ -403,8 +400,8 @@ function makeCylinder(rtop, rbot, height){
     cylinder.textureArrs = textureArrs;
     cylinder.displaceArrs = displaceArrs;
     cylinder.specArrs = specArrs;
-    cylinder.wrapX = true;
-    cylinder.wrapY = false;
+    cylinder.wrapX = false;
+    cylinder.wrapY = true;
 
     return cylinder;
 }
