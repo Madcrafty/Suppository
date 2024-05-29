@@ -51,7 +51,8 @@ export function init(_renderer, _scene, _camera, _gui) {
 export function start() {
     setupMouse();
     setLight();
-    
+    createSkybox();
+
     createTexture();
 
     sphere = makeSphere();
@@ -96,6 +97,19 @@ function setupMouse() {
             mouseDown = false;
         }
     }, false);
+}
+
+function createSkybox() {
+    const cubeLoader = new THREE.CubeTextureLoader();
+    const skybox = cubeLoader.load([
+    'models/skybox_left-x.png',
+    'models/skybox_right-x.png',
+    'models/skybox_up-y.png',
+    'models/skybox_down-y.png',
+    'models/skybox_front-z.png',
+    'models/skybox_back-z.png',
+    ]);
+    scene.background = skybox;
 }
 
 function createTexture(){
@@ -298,7 +312,7 @@ function setLight(){
     cameraLight = new THREE.PointLight(new THREE.Color(0xffffff),1.0);
     camera.add(cameraLight);
     ambietLight = new THREE.AmbientLight(new THREE.Color(0xffffff),0.2);
-    light_dir = new THREE.DirectionalLight(0xffffff, 1.0);
+    light_dir = new THREE.DirectionalLight(0xffffff, 0.0);
     light_dir.position.set(-50, 40, 50);
     light_dir.castShadow=true;
 }
